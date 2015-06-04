@@ -121,22 +121,22 @@ public class MainActivity extends Activity {
     public String wifiListJsonString() throws JSONException {
         JSONArray jsonArray = new JSONArray();
 
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("SSID", "Mary");
-        jsonObject.put("level", 10);
-        jsonArray.put(jsonObject);
-        JSONObject jsonObject2 = new JSONObject();
-        jsonObject2.put("SSID", "NetGear");
-        jsonObject2.put("level", 90);
-        jsonArray.put(jsonObject2);
-        
-//        getWifiList();
-//        for (ScanResult scanResult : list) {
-//            JSONObject jsonObject = new JSONObject();  
-//			jsonObject.put("SSID", scanResult.SSID);
-//			jsonObject.put("level", scanResult.level);
-//            jsonArray.put(jsonObject);
-//        }
+//        JSONObject jsonObject = new JSONObject();
+//        jsonObject.put("SSID", "Mary");
+//        jsonObject.put("level", 10);
+//        jsonArray.put(jsonObject);
+//        JSONObject jsonObject2 = new JSONObject();
+//        jsonObject2.put("SSID", "NetGear");
+//        jsonObject2.put("level", 90);
+//        jsonArray.put(jsonObject2);
+//        
+        getWifiList();
+        for (ScanResult scanResult : list) {
+            JSONObject jsonObject = new JSONObject();  
+			jsonObject.put("SSID", scanResult.SSID);
+			jsonObject.put("level", scanResult.level);
+            jsonArray.put(jsonObject);
+        }
         
         JSONObject jsonObject3 = new JSONObject();
         jsonObject3.put("wifilist", jsonArray);
