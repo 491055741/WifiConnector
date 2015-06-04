@@ -59,7 +59,13 @@ public class MainActivity extends Activity {
 	    	 {
 	    	        super.onPageFinished(view, url);
 //	    	        getWifiList();
-	    	        String jsonStr = wifiListJsonString();
+	    	        String jsonStr = null;
+					try {
+						jsonStr = wifiListJsonString();
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 	    	        Log.d("tag", jsonStr);
 	    	        webView.loadUrl("javascript:refreshWifiList()" );
 	    	 }
@@ -103,17 +109,18 @@ public class MainActivity extends Activity {
 		}else {
 //			webView.loadUrl("javascript:changeImage01()");
 		}
-		webView.loadUrl("javascript:refreshWifiList()" );
+//		webView.loadUrl("javascript:refreshWifiList()" );
     }
     
     @JavascriptInterface
-    public void onClickWifi(int idx) {
-    	Log.d("tag", "click a wifi!");
+    public void clickOnWifi(int idx) {
+    	Log.d("tag", "selected a wifi ["+idx+"]");
     }
     
     @JavascriptInterface
     public String wifiListJsonString() throws JSONException {
         JSONArray jsonArray = new JSONArray();
+
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("SSID", "Mary");
         jsonObject.put("level", 10);
@@ -122,10 +129,12 @@ public class MainActivity extends Activity {
         jsonObject2.put("SSID", "NetGear");
         jsonObject2.put("level", 90);
         jsonArray.put(jsonObject2);
+        
+//        getWifiList();
 //        for (ScanResult scanResult : list) {
 //            JSONObject jsonObject = new JSONObject();  
-//				jsonObject.put("SSID", scanResult.SSID);
-//				jsonObject.put("level", scanResult.level);
+//			jsonObject.put("SSID", scanResult.SSID);
+//			jsonObject.put("level", scanResult.level);
 //            jsonArray.put(jsonObject);
 //        }
         
