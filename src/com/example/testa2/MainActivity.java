@@ -73,6 +73,7 @@ public class MainActivity extends Activity {
 
 	private void init() throws JSONException{
 
+		registerWIFI();
         wifiAdmin = new WifiAdmin(getBaseContext()); 
         boolean open = wifiAdmin.openWifi();
         Log.i(TAG, "wifi open:" + open);
