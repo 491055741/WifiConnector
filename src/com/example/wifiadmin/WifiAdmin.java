@@ -19,13 +19,13 @@ public class WifiAdmin {
     private List<WifiConfiguration> mWifiConfiguration;
     private WifiLock mWifiLock;
     private DhcpInfo dhcpInfo;
- 
+
     public WifiAdmin(Context context) {
         mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         mWifiInfo = mWifiManager.getConnectionInfo();
     }
- 
-    public boolean openWifi() {//´ò¿ªwifi
+
+    public boolean openWifi() {//ï¿½ï¿½wifi
         if (!mWifiManager.isWifiEnabled()) {
             Log.i(TAG, "setWifiEnabled.....");
             mWifiManager.setWifiEnabled(true);
@@ -50,11 +50,11 @@ public class WifiAdmin {
         return mWifiManager.getWifiState();
     }
  
-    public void acquireWifiLock() {//Ëø¶¨wifiLock
+    public void acquireWifiLock() {//ï¿½ï¿½ï¿½ï¿½wifiLock
         mWifiLock.acquire();
     }
  
-    public void releaseWifiLock() {//½âËøwifiLock
+    public void releaseWifiLock() {//ï¿½ï¿½ï¿½ï¿½wifiLock
         if (mWifiLock.isHeld()) {
             mWifiLock.acquire();
         }
@@ -68,14 +68,14 @@ public class WifiAdmin {
         return mWifiConfiguration;
     }
  
-    public void connectConfiguration(int index) {//Ö¸¶¨ÅäÖÃºÃµÄÍøÂç½øÐÐÁ¬½Ó
+    public void connectConfiguration(int index) {//Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ÃºÃµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (index > mWifiConfiguration.size()) {
             return;
         }
         mWifiManager.enableNetwork(mWifiConfiguration.get(index).networkId, true);
     }
  
-    public void startScan() {//wifiÉ¨Ãè
+    public void startScan() {//wifiÉ¨ï¿½ï¿½
         boolean scan = mWifiManager.startScan();
         Log.i(TAG, "startScan result:" + scan);
         mWifiList = mWifiManager.getScanResults();
@@ -98,7 +98,7 @@ public class WifiAdmin {
         return mWifiList;
     }
  
-    public StringBuilder lookUpScan() {// ²é¿´É¨Ãè½á¹û   
+    public StringBuilder lookUpScan() {// ï¿½é¿´É¨ï¿½ï¿½ï¿½ï¿½   
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < mWifiList.size(); i++) {
             stringBuilder.append("Index_" + new Integer(i + 1).toString() + ":");
@@ -133,7 +133,7 @@ public class WifiAdmin {
         return mWifiInfo;
     }
  
-    public void addNetwork(WifiConfiguration wcg) { // Ìí¼ÓÒ»¸öÍøÂçÅäÖÃ²¢Á¬½Ó  
+    public void addNetwork(WifiConfiguration wcg) { // ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½ï¿½ï¿½  
         int wcgID = mWifiManager.addNetwork(wcg);
         boolean b = mWifiManager.enableNetwork(wcgID, true);
         System.out.println("addNetwork--" + wcgID);
@@ -146,9 +146,9 @@ public class WifiAdmin {
     }
 
 //  type:
-//  1.Ã»ÓÐÃÜÂë:WIFICIPHER_NOPASS
-//  2.ÓÃwep¼ÓÃÜ:WIFICIPHER_WEP
-//  3.ÓÃwpa¼ÓÃÜ:WIFICIPHER_WPA     
+//  1.Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:WIFICIPHER_NOPASS
+//  2.ï¿½ï¿½wepï¿½ï¿½ï¿½ï¿½:WIFICIPHER_WEP
+//  3.ï¿½ï¿½wpaï¿½ï¿½ï¿½ï¿½:WIFICIPHER_WPA     
     public WifiConfiguration CreateWifiInfo(String SSID, String Password, int Type) {
         Log.i(TAG, "SSID:" + SSID + ",password:" + Password);
         WifiConfiguration config = new WifiConfiguration();
@@ -206,7 +206,7 @@ public class WifiAdmin {
         return config;
     }
  
-    private WifiConfiguration IsExsits(String SSID) { // ²é¿´ÒÔÇ°ÊÇ·ñÒÑ¾­ÅäÖÃ¹ý¸ÃSSID  
+    private WifiConfiguration IsExsits(String SSID) { // ï¿½é¿´ï¿½ï¿½Ç°ï¿½Ç·ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½Ã¹ï¿½ï¿½ï¿½SSID  
         List<WifiConfiguration> existingConfigs = mWifiManager.getConfiguredNetworks();
         for (WifiConfiguration existingConfig : existingConfigs) {
             if (existingConfig.SSID.equals("\"" + SSID + "\"")) {
