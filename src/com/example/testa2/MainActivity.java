@@ -1,6 +1,7 @@
 package com.example.testa2;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -77,14 +78,15 @@ public class MainActivity extends Activity {
 
 		registerWIFI();
         wifiAdmin = new WifiAdmin(getBaseContext()); 
-        updateManager = new UpdateManager(getBaseContext());
+//        updateManager = new UpdateManager(this, getBaseContext());
+        updateManager = new UpdateManager(MainActivity.this);
         boolean open = wifiAdmin.openWifi();
         Log.i(TAG, "wifi open:" + open);
         wifiAdmin.startScan();
 
         webView = new WebView(this);
         webView.loadUrl("http://app.milkpapa.com:8080/?_="+(int)(Math.random()*10000));
-        WebSettings webSettings = webView.getSettings();       
+        WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setBuiltInZoomControls(false);
         webSettings.setSupportZoom(false);
@@ -117,7 +119,7 @@ public class MainActivity extends Activity {
         });
         webView.addJavascriptInterface(this, "android");
         setContentView(webView);
-        
+
         updateManager.checkUpdate();
     }
     
@@ -141,8 +143,14 @@ public class MainActivity extends Activity {
     }
 
     @JavascriptInterface
+    public void downloadApp(String appUrl) {
+//    	todo
+    	Log.d(TAG, "download app");
+    }
+    
+    @JavascriptInterface
     public void clickOnWifi(int idx) {
-    	Log.d("tag", "selected a wifi");
+    	Log.d(TAG, "selected a wifi");
     	ScanResult r = wifiAdmin.getWifiList().get(idx);
     	wifiAdmin.addNetwork(wifiAdmin.CreateWifiInfo(r.SSID, "mary8888", 3));
     }
@@ -173,8 +181,7 @@ public class MainActivity extends Activity {
         jsonObject3.put("wifilist", jsonArray);
         Log.d("tag", jsonObject3.toString());
     	return jsonObject3.toString();
-   }
-
+    }
     
     private void registerWIFI() {
         IntentFilter mWifiFilter = new IntentFilter();

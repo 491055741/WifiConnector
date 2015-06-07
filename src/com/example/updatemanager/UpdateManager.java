@@ -27,11 +27,14 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
+import android.app.Activity;
+import com.example.httpconnection.*;
+import com.example.testa2.*;
 
 public class UpdateManager
 {
@@ -48,6 +51,7 @@ public class UpdateManager
     /* 是否取消更新 */
     private boolean cancelUpdate = false;
 
+    private Activity activity;
     private Context mContext;
     /* 更新进度条 */
     private ProgressBar mProgress;
@@ -74,8 +78,9 @@ public class UpdateManager
         };
     };
 
-    public UpdateManager(Context context)
+    public UpdateManager(/*Activity activity, */Context context)
     {
+//    	this.activity = activity;
         this.mContext = context;
     }
 
@@ -83,7 +88,6 @@ public class UpdateManager
     {
         if (isUpdate())
         {
-            // 显示提示对话框
             showNoticeDialog();
         } else
         {
@@ -97,11 +101,16 @@ public class UpdateManager
         int versionCode = getVersionCode(mContext);
         // 把version.xml放到网络上，然后获取文件信息
 
-        String jsonString = "";
+        String jsonString = "{\"version\":\"2.1\", \"url\":\"http://app.milkpapa.com:8080/static/WifiConnector.apk\"}}";
+        mHashMap = new HashMap<String, String>();
+        mHashMap.put("name", "aaa.apk");
+        mHashMap.put("url", "http://app.milkpapa.com:8080/static/WifiConnector.apk");    
         JSONObject jsonObj = new JSONObject(jsonString);
-        int serviceCode = jsonObj.getInt("version");
+        String serviceCode = jsonObj.getString("version");
+        Log.d("TAG", serviceCode);
         // 版本判断
-        return serviceCode > versionCode;
+//        return serviceCode > versionCode;
+        return true;
     }
 
 	private int getVersionCode(Context context)

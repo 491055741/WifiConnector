@@ -25,7 +25,7 @@ public class WifiAdmin {
         mWifiInfo = mWifiManager.getConnectionInfo();
     }
 
-    public boolean openWifi() {//��wifi
+    public boolean openWifi() {
         if (!mWifiManager.isWifiEnabled()) {
             Log.i(TAG, "setWifiEnabled.....");
             mWifiManager.setWifiEnabled(true);
@@ -50,11 +50,11 @@ public class WifiAdmin {
         return mWifiManager.getWifiState();
     }
  
-    public void acquireWifiLock() {//����wifiLock
+    public void acquireWifiLock() {
         mWifiLock.acquire();
     }
  
-    public void releaseWifiLock() {//����wifiLock
+    public void releaseWifiLock() {
         if (mWifiLock.isHeld()) {
             mWifiLock.acquire();
         }
@@ -68,14 +68,14 @@ public class WifiAdmin {
         return mWifiConfiguration;
     }
  
-    public void connectConfiguration(int index) {//ָ�����úõ������������
+    public void connectConfiguration(int index) {
         if (index > mWifiConfiguration.size()) {
             return;
         }
         mWifiManager.enableNetwork(mWifiConfiguration.get(index).networkId, true);
     }
  
-    public void startScan() {//wifiɨ��
+    public void startScan() {
         boolean scan = mWifiManager.startScan();
         Log.i(TAG, "startScan result:" + scan);
         mWifiList = mWifiManager.getScanResults();
@@ -98,7 +98,7 @@ public class WifiAdmin {
         return mWifiList;
     }
  
-    public StringBuilder lookUpScan() {// �鿴ɨ����   
+    public StringBuilder lookUpScan() {   
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < mWifiList.size(); i++) {
             stringBuilder.append("Index_" + new Integer(i + 1).toString() + ":");
