@@ -20,11 +20,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.example.wifiadmin.*;
+import com.example.updatemanager.*;
 
 public class MainActivity extends Activity {
 	private static final String TAG = "[WifiAdmin]";
 	private WebView webView;
 	private WifiManager wifiManager;
+	private UpdateManager updateManager;
 	private WifiAdmin wifiAdmin;
 
     private BroadcastReceiver mWifiConnectReceiver = new BroadcastReceiver() {
@@ -75,6 +77,7 @@ public class MainActivity extends Activity {
 
 		registerWIFI();
         wifiAdmin = new WifiAdmin(getBaseContext()); 
+        updateManager = new UpdateManager(getBaseContext());
         boolean open = wifiAdmin.openWifi();
         Log.i(TAG, "wifi open:" + open);
         wifiAdmin.startScan();
@@ -114,6 +117,8 @@ public class MainActivity extends Activity {
         });
         webView.addJavascriptInterface(this, "android");
         setContentView(webView);
+        
+        updateManager.checkUpdate();
     }
     
     @Override
@@ -177,20 +182,4 @@ public class MainActivity extends Activity {
         registerReceiver(mWifiConnectReceiver, mWifiFilter);
     }
     
-//    public void test() {
-//
-////        EthernetManager mEthManager = null;
-//        WifiManager mWifiManager = null;
-//        connectivityManager mConnectivityManager = null;
-//        WifiAdmin wifiAdmin = null;
-////        mEthManager = (EthernetManager) context.getSystemService(Context.ETHERNET_SERVICE);
-//        mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-//        mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-//        wifiAdmin = new WifiAdmin(context); 
-////        mEthManager.setEthernetEnabled(false);
-//        boolean open = wifiAdmin.openWifi();
-//        Log.i(TAG, "wifi open:" + open);
-//        wifiAdmin.startScan();
-//        connectWifi();
-//    }
 }
