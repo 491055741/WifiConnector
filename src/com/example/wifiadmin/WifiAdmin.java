@@ -146,9 +146,9 @@ public class WifiAdmin {
     }
 
 //  type:
-//  1.û������:WIFICIPHER_NOPASS
-//  2.��wep����:WIFICIPHER_WEP
-//  3.��wpa����:WIFICIPHER_WPA     
+//  1.WIFICIPHER_NOPASS
+//  2.WIFICIPHER_WEP
+//  3.WIFICIPHER_WPA     
     public WifiConfiguration CreateWifiInfo(String SSID, String Password, int Type) {
         Log.i(TAG, "SSID:" + SSID + ",password:" + Password);
         WifiConfiguration config = new WifiConfiguration();

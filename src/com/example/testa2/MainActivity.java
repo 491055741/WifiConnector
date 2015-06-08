@@ -16,6 +16,8 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.WebSettings;
+
+import java.net.MalformedURLException;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -78,7 +80,6 @@ public class MainActivity extends Activity {
 
 		registerWIFI();
         wifiAdmin = new WifiAdmin(getBaseContext()); 
-//        updateManager = new UpdateManager(this, getBaseContext());
         updateManager = new UpdateManager(MainActivity.this);
         boolean open = wifiAdmin.openWifi();
         Log.i(TAG, "wifi open:" + open);
@@ -112,7 +113,7 @@ public class MainActivity extends Activity {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-	    	        Log.d("tag", jsonStr);
+                    Log.d("tag", jsonStr);
 	    	        webView.loadUrl("javascript:refreshWifiList()" );
 	    	 }
 
@@ -144,15 +145,26 @@ public class MainActivity extends Activity {
 
     @JavascriptInterface
     public void downloadApp(String appUrl) {
-//    	todo
     	Log.d(TAG, "download app");
+    	try {
+			updateManager.downloadApk(appUrl, "_"+(int)(Math.random()*100000)+".apk");
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     @JavascriptInterface
-    public void clickOnWifi(int idx) {
-    	Log.d(TAG, "selected a wifi");
-    	ScanResult r = wifiAdmin.getWifiList().get(idx);
-    	wifiAdmin.addNetwork(wifiAdmin.CreateWifiInfo(r.SSID, "mary8888", 3));
+    public void connectWifi(String ssid, String passwd) {
+    	Log.d(TAG, "Try to connect wifi");
+    //  1.WIFICIPHER_NOPASS
+    //  2.WIFICIPHER_WEP
+    //  3.WIFICIPHER_WPA   
+    	int type = 3;
+    	if (passwd == "") {
+    		type = 1;
+    	}
+    	wifiAdmin.addNetwork(wifiAdmin.CreateWifiInfo(ssid, passwd, type));
     }
     
     @JavascriptInterface
@@ -179,7 +191,6 @@ public class MainActivity extends Activity {
 
         JSONObject jsonObject3 = new JSONObject();
         jsonObject3.put("wifilist", jsonArray);
-        Log.d("tag", jsonObject3.toString());
     	return jsonObject3.toString();
     }
     

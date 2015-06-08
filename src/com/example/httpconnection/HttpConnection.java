@@ -56,7 +56,7 @@ public class HttpConnection implements Runnable {
         ConnectionManager.getInstance().push(this);
     }
  
-    public void get(String url) {
+    public void get(String url, CallbackListener listener) {
         create(GET, url, null, listener);
     }
  

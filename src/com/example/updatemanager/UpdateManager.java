@@ -31,10 +31,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
-import android.app.Activity;
 import com.example.httpconnection.*;
-import com.example.testa2.*;
+//import android.widget.Toast;
+import com.example.httpconnection.HttpTask.HttpTaskHandler;
 
 public class UpdateManager
 {
@@ -42,16 +41,15 @@ public class UpdateManager
     private static final int DOWNLOAD = 1;
     /* 下载结束 */
     private static final int DOWNLOAD_FINISH = 2;
+    
+    private static String TAG = "UpdateManager";
     /* 保存解析的XML信息 */
     HashMap<String, String> mHashMap;
     /* 下载保存路径 */
     private String mSavePath;
-    /* 记录进度条数量 */
-    private int progress;
     /* 是否取消更新 */
     private boolean cancelUpdate = false;
 
-    private Activity activity;
     private Context mContext;
     /* 更新进度条 */
     private ProgressBar mProgress;
@@ -63,14 +61,13 @@ public class UpdateManager
         {
             switch (msg.what)
             {
-            // 正在下载
             case DOWNLOAD:
-                // 设置进度条位置
-                mProgress.setProgress(progress);
+            	if (mProgress != null) {
+                    mProgress.setProgress(msg.arg1);            		
+            	}
                 break;
             case DOWNLOAD_FINISH:
-                // 安装文件
-                installApk();
+                installApk( msg.obj.toString());
                 break;
             default:
                 break;
@@ -78,39 +75,81 @@ public class UpdateManager
         };
     };
 
-    public UpdateManager(/*Activity activity, */Context context)
+    public UpdateManager(Context context)
     {
-//    	this.activity = activity;
         this.mContext = context;
     }
 
     public void checkUpdate() throws NotFoundException, JSONException
     {
-        if (isUpdate())
-        {
-            showNoticeDialog();
-        } else
-        {
-            Toast.makeText(mContext, R.string.soft_update_no, Toast.LENGTH_LONG).show();
-        }
-    }
+//        HttpConnection httpConnection = new HttpConnection();
+//        httpConnection.get("app.milkpapa.com:8080/static/json/version.json", 
+//        		new HttpConnection.CallbackListener() {
+//	            @Override
+//	            public void callBack(String result) {
+//	            	JSONObject jsonObj;
+//					try {
+//						if (result != "fail") {
+//							jsonObj = new JSONObject(result);
+//							if (jsonObj.get("ret_code") == "0") {
+//						        mHashMap = new HashMap<String, String>();
+//						        mHashMap.put("versionCode", "2");
+//						        mHashMap.put("name", "WifiConnector.apk");
+//						        mHashMap.put("url", "http://app.milkpapa.com:8080/static/WifiConnector.apk");
+//						        mHashMap.put("force", "YES");
+//						        int versionCode = getVersionCode(mContext);
+//						        int serviceCode = Integer.parseInt(mHashMap.get("versionCode"));
+//						        if (serviceCode > versionCode) {
+//							        showNoticeDialog();
+//						        }
+//							} else {
+//								Log.d(TAG, "Get version result error.");
+//							}
+//						} else {
+//							Log.d(TAG, "Get version failed.");
+//						}
+//					} catch (JSONException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//	            }
+//    		}
+//        );
 
-    private boolean isUpdate() throws JSONException
-    {
-        // 获取当前软件版本
-        int versionCode = getVersionCode(mContext);
-        // 把version.xml放到网络上，然后获取文件信息
+    	HttpTask task = new HttpTask();
+    	task.setTaskHandler(new HttpTaskHandler(){
+    	    public void taskSuccessful(String json) {
+    	    JSONObject jsonObj;
+				try {
+				    if (json != "fail") {
+						jsonObj = new JSONObject(json);
+						if (jsonObj.getInt("ret_code") == 0) {
+					        mHashMap = new HashMap<String, String>();
+					        mHashMap.put("name", jsonObj.getString("name"));
+					        mHashMap.put("url", jsonObj.getString("url"));
+					        mHashMap.put("force", jsonObj.getString("force"));
+					        int versionCode = getVersionCode(mContext);
+					        int serviceCode = jsonObj.getInt("versionCode");
+					        if (serviceCode > versionCode) {
+						        showNoticeDialog();
+					        }
+						} else {
+							Log.d(TAG, "Get version result error.");
+						}
+					} else {
+						Log.d(TAG, "Get version failed.");
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
-        String jsonString = "{\"version\":\"2.1\", \"url\":\"http://app.milkpapa.com:8080/static/WifiConnector.apk\"}}";
-        mHashMap = new HashMap<String, String>();
-        mHashMap.put("name", "aaa.apk");
-        mHashMap.put("url", "http://app.milkpapa.com:8080/static/WifiConnector.apk");    
-        JSONObject jsonObj = new JSONObject(jsonString);
-        String serviceCode = jsonObj.getString("version");
-        Log.d("TAG", serviceCode);
-        // 版本判断
-//        return serviceCode > versionCode;
-        return true;
+    	    }
+
+    	    public void taskFailed() {
+    	    }
+    	});
+    	task.execute("http://app.milkpapa.com:8080/static/json/version.json");
     }
 
 	private int getVersionCode(Context context)
@@ -141,23 +180,30 @@ public class UpdateManager
             {
                 dialog.dismiss();
                 // 显示下载对话框
-                showDownloadDialog();
+                try {
+					showDownloadDialog();
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
         // 稍后更新
-        builder.setNegativeButton(R.string.soft_update_later, new OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialog, int which)
+        if (mHashMap.get("force") == null || mHashMap.get("force") == "NO") {
+            builder.setNegativeButton(R.string.soft_update_later, new OnClickListener()
             {
-                dialog.dismiss();
-            }
-        });
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    dialog.dismiss();
+                }
+            });
+        }
         Dialog noticeDialog = builder.create();
         noticeDialog.show();
     }
 
-    private void showDownloadDialog()
+    private void showDownloadDialog() throws MalformedURLException
     {
         // 构造软件下载对话框
         AlertDialog.Builder builder = new Builder(mContext);
@@ -179,17 +225,22 @@ public class UpdateManager
         });
         mDownloadDialog = builder.create();
         mDownloadDialog.show();
-        downloadApk();
+        downloadApk(mHashMap.get("url"), mHashMap.get("name"));
     }
 
-    private void downloadApk()
+    public void downloadApk(String url, String fileName) throws MalformedURLException
     {
-        // 启动新线程下载软件
-        new downloadApkThread().start();
+    	new DownloadFileThread(url, fileName).start();
     }
 
-    private class downloadApkThread extends Thread
+    private class DownloadFileThread extends Thread
     {
+    	private URL url;
+    	private String fileName;
+    	public DownloadFileThread(String url, String fileName) throws MalformedURLException {
+    		this.url = new URL(url);
+    		this.fileName = fileName;
+    	}
         @Override
         public void run()
         {
@@ -201,7 +252,6 @@ public class UpdateManager
                     // 获得存储卡的路径
                     String sdpath = Environment.getExternalStorageDirectory() + "/";
                     mSavePath = sdpath + "download";
-                    URL url = new URL(mHashMap.get("url"));
                     // 创建连接
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.connect();
@@ -216,7 +266,7 @@ public class UpdateManager
                     {
                         file.mkdir();
                     }
-                    File apkFile = new File(mSavePath, mHashMap.get("name"));
+                    File apkFile = new File(mSavePath, fileName);
                     FileOutputStream fos = new FileOutputStream(apkFile);
                     int count = 0;
                     // 缓存
@@ -227,13 +277,19 @@ public class UpdateManager
                         int numread = is.read(buf);
                         count += numread;
                         // 计算进度条位置
-                        progress = (int) (((float) count / length) * 100);
                         // 更新进度
-                        mHandler.sendEmptyMessage(DOWNLOAD);
+                        Message msg = new Message();
+                        msg.what = DOWNLOAD;
+                        msg.arg1 = (int) (((float) count / length) * 100);
+                        mHandler.sendMessage(msg);
                         if (numread <= 0)
                         {
                             // 下载完成
-                            mHandler.sendEmptyMessage(DOWNLOAD_FINISH);
+                            Message msg2 = new Message();
+                            msg2.what = DOWNLOAD_FINISH;
+                            msg2.obj = fileName;
+                            mHandler.sendMessage(msg2);
+
                             break;
                         }
                         // 写入文件
@@ -250,13 +306,16 @@ public class UpdateManager
                 e.printStackTrace();
             }
             // 取消下载对话框显示
-            mDownloadDialog.dismiss();
+            if (mDownloadDialog != null) {
+                mDownloadDialog.dismiss();
+                mDownloadDialog = null;
+            }
         }
     };
 
-    private void installApk()
+    private void installApk(String fileName)
     {
-        File apkfile = new File(mSavePath, mHashMap.get("name"));
+        File apkfile = new File(mSavePath, fileName);
         if (!apkfile.exists())
         {
             return;
