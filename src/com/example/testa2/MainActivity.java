@@ -1,15 +1,20 @@
 package com.example.testa2;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.NetworkInfo.State;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.JavascriptInterface;
@@ -17,8 +22,11 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.WebSettings;
 
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.List;
+
+import org.apache.http.util.EncodingUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,7 +36,7 @@ import com.example.updatemanager.*;
 public class MainActivity extends Activity {
 	private static final String TAG = "[WifiAdmin]";
 	private WebView webView;
-	private WifiManager wifiManager;
+//	private WifiManager wifiManager;
 	private UpdateManager updateManager;
 	private WifiAdmin wifiAdmin;
 
@@ -76,9 +84,14 @@ public class MainActivity extends Activity {
 		}
     }
 
-	private void init() throws JSONException{
+	@SuppressLint("SetJavaScriptEnabled") private void init() throws JSONException{
 
 		registerWIFI();
+		
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+		registerReceiver(connectionReceiver, intentFilter); 
+		
         wifiAdmin = new WifiAdmin(getBaseContext()); 
         updateManager = new UpdateManager(MainActivity.this);
         boolean open = wifiAdmin.openWifi();
@@ -86,13 +99,19 @@ public class MainActivity extends Activity {
         wifiAdmin.startScan();
 
         webView = new WebView(this);
-        webView.loadUrl("http://app.milkpapa.com:8080/?_="+(int)(Math.random()*10000));
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setBuiltInZoomControls(false);
         webSettings.setSupportZoom(false);
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-        //覆盖WebView默认使用第三方或系统默认浏览器打开网页的行为，使网页用WebView打开
+        
+        
+//        String html = getAssetsFileContent("static/html/appBase.html");
+//        webView.loadDataWithBaseURL("file:///android_asset/", html, "text/html", "UTF-8", null);  
+      webView.loadUrl("http://app.milkpapa.com:8080/?_="+(int)(Math.random()*10000));
+//      webView.loadUrl("file:///android_asset/static/html/appBase.html");
+
+            //覆盖WebView默认使用第三方或系统默认浏览器打开网页的行为，使网页用WebView打开
         webView.setWebViewClient(new WebViewClient(){
             @Override
 	        public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -114,7 +133,7 @@ public class MainActivity extends Activity {
 						e.printStackTrace();
 					}
                     Log.d("tag", jsonStr);
-	    	        webView.loadUrl("javascript:refreshWifiList()" );
+	    	        webView.loadUrl("javascript: refreshWifiList()" );
 	    	 }
 
         });
@@ -143,6 +162,15 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public boolean onKeyDown(int keyCoder,KeyEvent event){
+        if(webView.canGoBack() && keyCoder == KeyEvent.KEYCODE_BACK){
+              webView.goBack();   //goBack()表示返回webView的上一页面
+                 return true;
+           }
+        return false;
+   }
+    
     @JavascriptInterface
     public void downloadApp(String appUrl) {
     	Log.d(TAG, "download app");
@@ -167,6 +195,19 @@ public class MainActivity extends Activity {
     	wifiAdmin.addNetwork(wifiAdmin.CreateWifiInfo(ssid, passwd, type));
     }
     
+    @JavascriptInterface
+    public boolean isWifiAvailable() {
+        ConnectivityManager conMan = (ConnectivityManager)(getBaseContext())
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        State wifi = conMan.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+                .getState();
+        if (State.CONNECTED == wifi) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @JavascriptInterface
     public String wifiListJsonString() throws JSONException {
         JSONArray jsonArray = new JSONArray();
@@ -200,4 +241,42 @@ public class MainActivity extends Activity {
         registerReceiver(mWifiConnectReceiver, mWifiFilter);
     }
     
+    private String getAssetsFileContent(String fileName) {
+        String res="";   
+        try{   
+          
+           //得到资源中的asset数据流  
+           InputStream in = getResources().getAssets().open(fileName);   
+          
+           int length = in.available();           
+           byte [] buffer = new byte[length];          
+          
+           in.read(buffer);              
+           in.close();  
+           res = EncodingUtils.getString(buffer, "UTF-8");       
+          
+        }catch(Exception e){   
+          
+              e.printStackTrace();           
+          
+        }
+        return res;
+    }
+
+    BroadcastReceiver connectionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            webView.loadUrl("javascript: wifiStatusChanged()");
+//            ConnectivityManager connectMgr = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+//            NetworkInfo wifiNetInfo = connectMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+//            if (!wifiNetInfo.isConnected()) {
+//                Log.i(TAG, "unconnect");
+//                // unconnect network
+//
+//            }else {
+//                // connect network
+//                
+//            }
+        }
+     }; 
 }
