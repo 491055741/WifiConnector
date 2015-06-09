@@ -206,8 +206,11 @@ public class WifiAdmin {
         return config;
     }
  
-    private WifiConfiguration IsExsits(String SSID) { // �鿴��ǰ�Ƿ��Ѿ����ù���SSID  
+    private WifiConfiguration IsExsits(String SSID) {  
         List<WifiConfiguration> existingConfigs = mWifiManager.getConfiguredNetworks();
+        if (existingConfigs == null) {
+        	return null;
+        }
         for (WifiConfiguration existingConfig : existingConfigs) {
             if (existingConfig.SSID.equals("\"" + SSID + "\"")) {
                 return existingConfig;

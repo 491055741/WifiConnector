@@ -113,9 +113,9 @@ public class MainActivity extends Activity {
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         
         
-//        String html = getAssetsFileContent("static/html/appBase.html");
-//        webView.loadDataWithBaseURL("file:///android_asset/", html, "text/html", "UTF-8", null);  
-      webView.loadUrl("http://app.milkpapa.com:8080/?_="+(int)(Math.random()*10000));
+        String html = getAssetsFileContent("appBase.html");
+        webView.loadDataWithBaseURL("file:///android_asset/", html, "text/html", "UTF-8", null);
+//      webView.loadUrl("http://app.milkpapa.com:8080/?_="+(int)(Math.random()*10000));
 //      webView.loadUrl("file:///android_asset/static/html/appBase.html");
 
             //覆盖WebView默认使用第三方或系统默认浏览器打开网页的行为，使网页用WebView打开
@@ -289,15 +289,14 @@ public class MainActivity extends Activity {
 
     @JavascriptInterface
     public boolean isAppInstalled(String appName, int versionCode) {
-//        ArrayList<AppInfo> list = getAllAppList();
-//        for (Iterator<AppInfo> iterator = list.iterator(); iterator.hasNext();) {
-//            AppInfo appInfo = (AppInfo) iterator.next();
-//            if (appName == appInfo.getAppname()) { // todo: 
-//                return true;
-//            }
-//        }
-//        return false;
-        return true;
+        ArrayList<AppInfo> list = getAllAppList();
+        for (Iterator<AppInfo> iterator = list.iterator(); iterator.hasNext();) {
+            AppInfo appInfo = (AppInfo) iterator.next();
+            if (appName == appInfo.getAppname()) { // todo: 
+                return true;
+            }
+        }
+        return false;
     }
 
     private ArrayList<AppInfo> getAllAppList() {
