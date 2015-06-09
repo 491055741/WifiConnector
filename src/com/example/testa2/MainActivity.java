@@ -33,6 +33,13 @@ import org.json.JSONObject;
 import com.example.wifiadmin.*;
 import com.example.updatemanager.*;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+ 
+import android.content.pm.PackageInfo;
+import android.os.Bundle;
+
 public class MainActivity extends Activity {
 	private static final String TAG = "[WifiAdmin]";
 	private WebView webView;
@@ -169,7 +176,7 @@ public class MainActivity extends Activity {
                  return true;
            }
         return false;
-   }
+    }
     
     @JavascriptInterface
     public void downloadApp(String appUrl) {
@@ -278,5 +285,33 @@ public class MainActivity extends Activity {
 //                
 //            }
         }
-     }; 
+    };
+
+    @JavascriptInterface
+    public boolean isAppInstalled(String appName, int versionCode) {
+//        ArrayList<AppInfo> list = getAllAppList();
+//        for (Iterator<AppInfo> iterator = list.iterator(); iterator.hasNext();) {
+//            AppInfo appInfo = (AppInfo) iterator.next();
+//            if (appName == appInfo.getAppname()) { // todo: 
+//                return true;
+//            }
+//        }
+//        return false;
+        return true;
+    }
+
+    private ArrayList<AppInfo> getAllAppList() {
+        ArrayList<AppInfo> appList = new ArrayList<AppInfo>();
+        List<PackageInfo> packageInfos=getPackageManager().getInstalledPackages(0);
+        for (int i = 0; i < packageInfos.size(); i++) {
+            PackageInfo pInfo=packageInfos.get(i);
+            AppInfo appInfo= new AppInfo();
+            appInfo.setAppname(pInfo.applicationInfo.loadLabel(getPackageManager()).toString());//应用程序的名称
+//            appInfo.setPackagename(pInfo.packageName);//应用程序的包
+            appInfo.setVersionCode(pInfo.versionCode);//版本号
+            appList.add(appInfo);
+        }
+        return appList;
+    }
+
 }
