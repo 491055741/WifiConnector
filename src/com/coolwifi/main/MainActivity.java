@@ -21,7 +21,7 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.WebSettings;
-
+import com.igexin.sdk.PushManager;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.List;
@@ -96,7 +96,7 @@ public class MainActivity extends Activity {
 	@SuppressLint("SetJavaScriptEnabled") private void init() throws JSONException{
 
 		registerWIFI();
-		
+		PushManager.getInstance().initialize(this.getApplicationContext());
 		IntentFilter intentFilter = new IntentFilter();
 		intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 		registerReceiver(connectionReceiver, intentFilter); 
