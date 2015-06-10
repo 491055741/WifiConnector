@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -119,7 +120,7 @@ public class MainActivity extends Activity {
         webView.loadDataWithBaseURL("file:///android_asset/", html, "text/html", "UTF-8", null);
 //      webView.loadUrl("http://app.milkpapa.com:8080/?_="+(int)(Math.random()*10000));
 //      webView.loadUrl("file:///android_asset/static/html/appBase.html");
-
+        CookieManager.getInstance().setAcceptCookie(true);
             //覆盖WebView默认使用第三方或系统默认浏览器打开网页的行为，使网页用WebView打开
         webView.setWebViewClient(new WebViewClient(){
             @Override
