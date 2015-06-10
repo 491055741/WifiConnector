@@ -19,10 +19,12 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, text
 .wifiLabel {padding-top: 50px;}
 #wifiSwitch img {width: 150px; height: 100px; }
 #connectionStatus .ui-btn {width: 40%; }
+#connectionStatus .ui-btn.statusOff {width: 40%; background-color: orange; }
+#connectionStatus .ui-btn.statusOff {width: 40%; background-color: green; }
 
 .text_disabled {color:gray;}
+.acount_list {padding: 10px; }
 .account_item {font-size: 16px; }
-.avatar {border-bottom: 1px #d4d5d6 solid; }
 .avatar img {width: 96px; height: 96px; margin-top: 50px; margin-bottom: 20px; }
 .app-list .coin_icon {position: absolute; width: 20px; top:25px; right: 5px;}
 .app-list .coin_num  {position: absolute; width: 20px; top:30px; right: 35px; color: orange;}

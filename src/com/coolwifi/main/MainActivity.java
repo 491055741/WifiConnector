@@ -143,6 +143,7 @@ public class MainActivity extends Activity {
 					}
                     Log.d("tag", jsonStr);
 	    	        webView.loadUrl("javascript: refreshWifiList()" );
+	                webView.loadUrl("javascript: wifiStatusChanged()" );
 	    	 }
 
         });
