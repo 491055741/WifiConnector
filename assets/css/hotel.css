@@ -1,51 +1,50 @@
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, textarea, select, optgroup, option, fieldset, legend, p, blockquote, th, td { margin: 0; padding: 0; font-size: 14px; /*	-webkit-tap-highlight-color:rgba(0,0,0,0); 	-webkit-user-select:none; 	-webkit-touch-callout:none;*/ font-family: Helvetica,STHeiti,Droid Sans Fallback; }
-.text_overflow {
-    white-space:nowrap; 
-    text-overflow:ellipsis; 
-    -o-text-overflow:ellipsis; 
-    overflow:hidden;
-}
-
+.text_overflow {white-space:nowrap; text-overflow:ellipsis; -o-text-overflow:ellipsis; overflow:hidden; }
+a { text-decoration:none;} 
 .goBack {height: 12px;}
 .ui-content {padding: 0;}
 .account-wrapper { padding:15px; }
-#loginBtn {width: 35%; float:right; margin-top:10px; }
+
+#loginBtn {width: 35%; float:right; margin-top:10px; background-color: #FF8800; color: white; text-shadow:0 0 0;}
 #toRegistBtn {width: 35%; float:left; margin-top:10px; }
-#verifyCodeBtn {width: 70%; float: right; margin-top: 20px; }
+.verifyCodeBtn {width: 70%; float: right; margin-top: 20px; }
+#LoginPage .changePwdBtn {float: right; padding-top: 20px; }
 
-.wifiStatus {height: 150px; margin-top: 50px;}
-.wifiStatus .item-icon {float:left; padding-left: 10px; width: 40%; }
-
-.wifiLabel {padding-top: 50px;}
-#wifiSwitch img {width: 150px; height: 100px; }
-#connectionStatus .ui-btn {width: 40%; }
-#connectionStatus .ui-btn.statusOff {width: 40%; background-color: orange; }
-#connectionStatus .ui-btn.statusOff {width: 40%; background-color: green; }
+.connection_bg {height: 230px; background: url(../images/night.png) no-repeat; background-size: contain;}
+.wifiStatus img {margin-top: 20px; width: 150px; height: 100px; }
+.wifiStatus .ui-btn {margin-top: 50px; width: 40%; height: 20px;}
+.wifiStatus .ui-btn.statusOff {background-color: #FF8800;  text-shadow:0 0 0; color: white; }
+.wifiStatus .ui-btn.statusOn {background-color: #008800; text-shadow:0 0 0; color: white; }
 
 .text_disabled {color:gray;}
+
+.app-list .coin_icon {position: absolute; width: 20px; top:30px; right: 75px;}
+.app-list .coin_num  {position: absolute; width: 20px; top:30px; right: 100px; color: #FF8800;}
+.app-list .installBtn {position: absolute; width: 20px; height: 20px; top:10px; right: 10px; background: url(../images/download.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center;}
+.app-list .installBtn.inactive {background: url(../images/download_disabled.png) no-repeat; background-size:22px,22px;background-position: center;}
+
+.avatar_bg img {width: 100%; margin-bottom: 20px; }
 .acount_list {padding: 10px; }
 .account_item {font-size: 16px; }
-.avatar img {width: 96px; height: 96px; margin-top: 50px; margin-bottom: 20px; }
-.app-list .coin_icon {position: absolute; width: 20px; top:25px; right: 5px;}
-.app-list .coin_num  {position: absolute; width: 20px; top:30px; right: 35px; color: orange;}
-.app-list .installStatus {position: absolute; width: 50px; top:30px; right: 5px; color: orange;}
+.acount_list img {width: 25px; height: 25px; float: left; }
 #mineView dt {float: left; height: 30px; padding-top: 10px; }
 #mineView dd {right: 10px; text-align: right; height: 30px; padding-top: 10px; border-bottom: 1px #d4d5d6 solid; }
-#mineView dt div { font-size: 18px; color: #45484d; }
-#mineView dd div { font-size: 18px; color: #999; }
+#mineView dt div { font-size: 18px; color: #45484d; float: right; padding-left: 5px; }
+#mineView dd div, #mineView dd a { font-size: 18px; color: #999; width: 100%;}
+#logoutBtn {background-color: #FF8800; text-shadow: 0 0 0; color: white; }
 
-.ui-footer .ui-navbar .ui-btn {font-size: 14px; }
+.ui-footer .ui-navbar .ui-btn {font-size: 14px;}
+.ui-footer .ui-navbar .ui-btn.ui-btn-active {background-color: #f6f6f6; font-size: 14px; color: #38c; text-shadow:0 0 0 ;}
+
+
 .ui-icon-choice:after {background: url(../images/tab_choice.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center;}
 .ui-icon-mine:after {background: url(../images/tab_mine.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center;}
 .ui-icon-wifi:after {background: url(../images/tab_wifi.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center;}
-.comboSprite li a {border-left-width:0; border-right-width:0; }
+.ui-btn-active.ui-icon-choice:after {background: url(../images/tab_choice_active.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center;}
+.ui-btn-active.ui-icon-mine:after {background: url(../images/tab_mine_active.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center;}
+.ui-btn-active.ui-icon-wifi:after {background: url(../images/tab_wifi_active.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center;}
 
-.wifi-list {border-bottom: 1px #d4d5d6 solid; }
-.wifi-list .item, .wifi-list .index-item { height: 60px; border-top: 1px #d4d5d6 solid; background-color: #fafafa; position: relative; }
-.wifi-list .wifi-desc {float: right; margin-right: 10px; margin-top: -15px; }
-.wifi-list .index-item .index-item-main .item-icon { float: left; margin-left: 7px; margin-top: 3px; height: 50px;}
-.wifi-list .index-item .index-item-main .item-icon img { width: 25px; height: 20px; padding-top: 15px; }
-.wifi-list .index-item .index-item-main .item-title { font-size: 26px; color: #45484d; padding-top: 20px; padding-left: 100px; }
+.comboSprite li a {border-left-width:0; border-right-width:0; }
 
 a { text-decoration: none; }
 li { list-style: none; }
@@ -56,8 +55,8 @@ li { list-style: none; }
 .fouce .img_box ul { overflow: hidden; }
 .fouce .img_box ul li { float: left; width: 320px; height: 167px; }
 .fouce .img_box ul li img { display: block; width: 100%; height:100%; background: url(../images/default-slidericon.png) no-repeat scroll center center rgba(0, 0, 0, 0); background-size:100% 100%; margin: 0 auto;}
-.fouce ol { position: absolute; right: 8px; bottom: 8px; height: 16px; -webkit-border-radius: 8px; border-radius: 8px; background-color: rgba(255,255,255,0); -webkit-box-shadow: inset 0 0 1px 1px rgba(230,230,230,.09); box-shadow: inset 0 0 1px 1px rgba(230,230,230,.09); border: solid 1px #000; background: #a7a6a7; padding: 0 6px; }
-.fouce ol li { width: 8px; height: 8px; -webkit-border-radius: 4px; border-radius: 4px; background-color: #000; -webkit-box-shadow: 0 1px 1px rgba(255,255,255,.31); box-shadow: 0 1px 1px rgba(255,255,255,.31); float: left; margin: 4px 2px 0; }
+.fouce ol { position: absolute; right: 8px; bottom: 8px; height: 16px; -webkit-border-radius: 8px; border-radius: 8px; background-color: rgba(255,255,255,0); -webkit-box-shadow: inset 0 0 1px 1px rgba(230,230,230,.09); box-shadow: inset 0 0 1px 1px rgba(230,230,230,.09); background: #a7a6a7; padding: 0 6px; }
+.fouce ol li { width: 8px; height: 8px; -webkit-border-radius: 4px; border-radius: 4px; background-color: white; -webkit-box-shadow: 0 1px 1px rgba(255,255,255,.31); box-shadow: 0 1px 1px rgba(255,255,255,.31); float: left; margin: 4px 2px 0; }
 .fouce ol .cur { -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.31), inset 0 0 2px rgba(133,200,234,.6); box-shadow: 0 1px 1px rgba(0,0,0,.31), inset 0 0 2px rgba(133,200,234,.6); background-image: -webkit-linear-gradient(bottom, #2ca0dc, #77c2e8); background-image: linear-gradient(to top, #2ca0dc, #77c2e8);}
 .score-star { background: url(../images/star.png); width: 65px; line-height: 14px; height: 14px; background-position: 0 0; display: inline-block; background-size: 65px 15px; vertical-align: middle; margin:1px 0 0;}
 .score-star span { background: url(../images/stat5.png); height: 14px; display: inline-block; background-position: 0 0; padding: 0 !important; background-size: 65px 15px; }

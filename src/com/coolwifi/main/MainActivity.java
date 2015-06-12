@@ -18,7 +18,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.CookieManager;
-import android.webkit.JavascriptInterface;
+//import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.WebSettings;
@@ -114,12 +114,19 @@ public class MainActivity extends Activity {
         webSettings.setJavaScriptEnabled(true);
         webSettings.setBuiltInZoomControls(false);
         webSettings.setSupportZoom(false);
-        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+//        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+
+//        webSettings.setUserAgentString(getUserAgent());
+        webSettings.setAllowFileAccess(true);
+        webSettings.setAppCacheEnabled(true);
+        webSettings.setDomStorageEnabled(true);
+        webSettings.setDatabaseEnabled(true);
         
-        String html = getAssetsFileContent("appBase.html");
-        webView.loadDataWithBaseURL("file:///android_asset/", html, "text/html", "UTF-8", null);
+        
+//        String html = getAssetsFileContent("appBase.html");
+//        webView.loadDataWithBaseURL("file:///android_asset/", html, "text/html", "UTF-8", null);
 //      webView.loadUrl("http://app.milkpapa.com:8080/?_="+(int)(Math.random()*10000));
-//      webView.loadUrl("file:///android_asset/static/html/appBase.html");
+      webView.loadUrl("file:///android_asset/appBase.html");
         CookieManager.getInstance().setAcceptCookie(true);
             //覆盖WebView默认使用第三方或系统默认浏览器打开网页的行为，使网页用WebView打开
         webView.setWebViewClient(new WebViewClient(){
@@ -182,7 +189,7 @@ public class MainActivity extends Activity {
         return false;
     }
     
-    @JavascriptInterface
+//    @JavascriptInterface
     public void downloadApp(String appUrl) {
     	Log.d(TAG, "download app");
     	try {
@@ -193,20 +200,20 @@ public class MainActivity extends Activity {
 		}
     }
     
-    @JavascriptInterface
+//    @JavascriptInterface
     public void connectWifi(String ssid, String passwd) {
     	Log.d(TAG, "Try to connect wifi");
     //  1.WIFICIPHER_NOPASS
     //  2.WIFICIPHER_WEP
     //  3.WIFICIPHER_WPA   
     	int type = 3;
-    	if (passwd == "") {
+    	if (passwd.equals("")) {
     		type = 1;
     	}
     	wifiAdmin.addNetwork(wifiAdmin.CreateWifiInfo(ssid, passwd, type));
     }
     
-    @JavascriptInterface
+//    @JavascriptInterface
     public boolean isWifiAvailable() {
         ConnectivityManager conMan = (ConnectivityManager)(getBaseContext())
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -219,7 +226,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    @JavascriptInterface
+//    @JavascriptInterface
     public String wifiListJsonString() throws JSONException {
         JSONArray jsonArray = new JSONArray();
 
@@ -232,7 +239,6 @@ public class MainActivity extends Activity {
 //        jsonObject2.put("SSID", "NetGear");
 //        jsonObject2.put("level", 90);
 //        jsonArray.put(jsonObject2);
-//        
 
         for (ScanResult scanResult : wifiAdmin.getWifiList()) {
             JSONObject jsonObject = new JSONObject();  
@@ -291,7 +297,7 @@ public class MainActivity extends Activity {
         }
     };
 
-    @JavascriptInterface
+//    @JavascriptInterface
     public boolean isAppInstalled(String appName, int versionCode) {
         ArrayList<AppInfo> list = getAllAppList();
         for (Iterator<AppInfo> iterator = list.iterator(); iterator.hasNext();) {

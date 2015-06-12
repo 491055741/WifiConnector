@@ -153,16 +153,6 @@ function dateDiff(date1Str, date2Str)
     return parseInt(Math.abs(date1.getTime() - date2.getTime())/1000/60/60/24);    // ms -> day
 }
 
-function showMask()
-{
-    $("body").attr("ontouchmove", "return false;");
-}
-
-function hideMask()
-{
-    $("body").attr("ontouchmove", "");
-}
-
 function changePage(pageName)
 {
     if (isAndroid()) {
@@ -191,6 +181,15 @@ function hideLoader() {
     $.mobile.loading('hide');  
 }
 
+function changePageAndHideLoader(pageName) {
+    if (isAndroid()) {
+        $.mobile.changePage($(pageName), {transition: "none"});
+    } else {
+        $.mobile.changePage($(pageName), {transition: "slidefade"});
+    }
+    hideLoader();
+}
+
 function scrollToObj(obj) {
     window.scrollTo(0, obj.offset().top);
 }
@@ -200,6 +199,7 @@ var slide = {
     scrollX: 0,
     isGesture: false,
     isRun: false,
+    isInited : false,
     intIndex: 1,
     itemWidth: 0,
     itemLen: 0,
@@ -228,6 +228,7 @@ var slide = {
 
         $('#slidebox').css({ "width": slide.itemWidth * (slide.itemLen + 2) });
         slide.bind();
+        slide.isInited = true;
     },
     bind: function () {
 

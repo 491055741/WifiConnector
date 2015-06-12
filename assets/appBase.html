@@ -37,9 +37,9 @@
             <label for="checkbox-1">记住密码</label>
         </fieldset>
         <br>
-        <a class="ui-btn" href="#RegisterPage" id="toRegistBtn">注册</a>
+        <a class="ui-btn" href="" id="toRegistBtn">注册</a>
         <a class="ui-btn" href="" id="loginBtn">登录</a>
-
+        <div class="changePwdBtn">忘记密码？</div>
     </div>
 </div>
 
@@ -56,7 +56,7 @@
                 <input type="text" id="registVerifyCode"/>
             </div>
             <div class="ui-grid-b" style="width:50%">
-                <a class="ui-btn" name="getVerifyCode" id="verifyCodeBtn">获取验证码</a>
+                <a class="ui-btn verifyCodeBtn" name="getVerifyCode" >获取验证码</a>
             </div>
         </div>
         <p style="backg"><font color="#2EB1E8" >密 码</font></p>
@@ -67,63 +67,27 @@
 
         <br>
         <div>
-            <center><a class="ui-btn" id="registBtn">立即注册</a></center>
+            <center><a class="ui-btn" id="registBtn">提   交</a></center>
         </div>
     </div>
 </div>
 
-<!-- <div data-role="page" id="SetPasswordPage" data-title="Wifi酷连">
-
-    <div role="main" class="ui-content account-wrapper">
-        <br>
-        <p style="backg"><font color="#2EB1E8" >用户名</font></p>
-        <input type="tel" id="registPhoneNumber" value="手机号"/>
-        <br>
-        <div class="ui-grid-a">
-            <div class="ui-block-a" style="width:50%">
-            <p style="backg"><font color="#2EB1E8" >验证码</font></p>
-                <input type="text" id="registVerifyCode"/>
-            </div>
-            <div class="ui-grid-b" style="width:50%">
-                <a class="ui-btn" name="getVerifyCode" id="verifyCodeBtn">获取验证码</a>
-            </div>
-        </div>
-        <p style="backg"><font color="#2EB1E8" >输入新密码</font></p>
-        <input type="password" id="registPassword"/>
-
-        <p style="backg"><font color="#2EB1E8" >再次输入新密码</font></p>
-        <input type="password" id="repeatPassword"/>
-
-        <br>
-        <div>
-            <center><a class="ui-btn" id="registBtn">设置新密码</a></center>
-        </div>
-    </div>
-</div>
- -->
 <div data-role="page" id="MainPage" data-title="Wifi酷连">
 
     <div role="main" class="ui-content">
 
         <div id="connectionView">
-            <div class="wifiStatus">
-                <dl class="clearfix">
-                    <dt class="item-icon">
-                        <div id="wifiSwitch">
-                            <img class="statusOff" src="images/wifi_state_off.png">
-                            <img class="statusOn" src="images/wifi_state_on.png" style="display:none;">
-                        </div>
-                    </dt>
-                    <dd class="wifiLabel">
-                        <div id="connectionStatus">
-                            <a class="statusOff ui-btn">一键连接Wifi</a>
-                            <a class="statusOn ui-btn" style="display:none;">Wifi已连接</a>
-                        </div>
-                    </dd>
-                </dl>
+            <div class="connection_bg">
             </div>
-
-            <div class="wifi-list"></div>
+            <center>
+            <div class="wifiStatus">
+                <img class="statusOff" src="images/wifi_state_off.png">
+                <img class="statusOn" src="images/wifi_state_on.png" style="display:none;">
+                <a class="statusOff ui-btn">一键连接WiFi</a>
+                <a class="statusOn ui-btn" style="display:none;">WiFi已连接</a>
+            </div>
+            </center>
+            <!-- <div class="wifi-list"></div> -->
 <!--             <center><svg id="circleLoading" viewBox="0 0 120 120" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
             <g id="circle" class="g-circles g-circles--v1">
                 <circle id="12" transform="translate(35, 16.698730) rotate(-30) translate(-35, -16.698730) " cx="35" cy="16.6987298" r="10"></circle>
@@ -144,10 +108,10 @@
 
         <div id="choiceView">
 
-            <div class="fouce" style="display: block;">
+            <div class="fouce" style="display: none;">
                 <div id="divSlidePanle" style="overflow: hidden;">
                     <div id="slidebox" class="img_box" style="width: 13153px; -webkit-transition-property: -webkit-transform; transition-property: -webkit-transform; -webkit-transform-origin: 0px 0px 0px; -webkit-transform: translate3d(-5637px, 0px, 0px) scale(1);">
-                        <ul id="fouce">
+                        <ul id="adlist">
                         </ul>
                     </div>
                 </div>
@@ -163,17 +127,20 @@
         </div>
 
         <div id="mineView">
+            <div class="avatar_bg">
+                <image src="images/dubai.jpg" />
+            </div>
+
             <div class="account-wrapper">
-                <div class="avatar">
-                    <center><image src="images/avatar.png" /></center>
-                </div>
                 <dl class="acount_list">
-                    <dt><div>账  号</div></dt>
+                    <dt><img src="images/account.png"><div>账  号</div></dt>
                     <dd><div class="account_item" id="account">account</div></dd>
-                    <dt><div>金  币</div></dt>
+                    <dt><img src="images/coins.png"><div>金  币</div></dt>
                     <dd><div class="account_item" id="coin" >coin</div></dd>
+                    <dt><img src="images/key.png"><div>修改密码</div></dt>
+                    <dd><div class="account_item changePwdBtn">****</div></dd>
                 </dl>
-                <div style="margin-top:60%;">
+                <div style="margin-top:30%;">
                     <center><a href="" id="logoutBtn" class="ui-btn">退出登录</a></center>
                 </div>
             </div>

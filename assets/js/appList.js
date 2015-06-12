@@ -1,7 +1,5 @@
-
 var appServerUrl = "http://livew.mobdsp.com/cb"; var callback = "callback=?";
 // var appServerUrl = "http://127.0.0.1:5000"; var callback = "";
-
 
 (function($){
     // changePage("#LoginPage")
@@ -11,12 +9,17 @@ var appServerUrl = "http://livew.mobdsp.com/cb"; var callback = "callback=?";
 var refreshWifiList = function () {
     me.requestWifiList();
 }
+
 // js-Android interface
 var wifiStatusChanged = function () {
+    console.log("wifiStatusChanged.");
     if (window.android != undefined) {
-
         if (window.android.isWifiAvailable()) {
-            // todo: access the special URL, and check the external link status.
+            var url="http://sucrq.tuancity.com/v1.1/?surl=http://ht.yeahwifi.com/guide/succeed/?sid=yeahwifi_222&tk=123456&uid=yeahwifi_222";
+            console.log(url);
+            $.get(url, function(data, status) {
+                console.log("access ok.");
+            });
             $(".wifiStatus .statusOn").show();
             $(".wifiStatus .statusOff").hide();
         } else {
@@ -34,9 +37,9 @@ $("#LoginPage").on("pageshow", function () {
 
 $("#LoginPage").on("pageinit", function () {
     console.log("login page init");
-    $("#loginUsername").attr("value", $.cookie("userName"));
-    $("#loginPassword").attr("value", $.cookie("passWord"));
-    $("#checkbox-1").prop("checked",  $.cookie("rmbUser")).checkboxradio("refresh");
+    $("#loginUsername").attr("value", localStorage.getItem("userName"));
+    $("#loginPassword").attr("value", localStorage.getItem("passWord"));
+    $("#checkbox-1").prop("checked",  localStorage.getItem("rmbUser")).checkboxradio("refresh");
 });
 
 $("#RegisterPage").on("pageshow", function () {
@@ -68,7 +71,6 @@ $("#registBtn").fastClick(function() {
     me.register();
 });
 
-
 $("#loginBtn").fastClick( function() {
     me.login();
 });
@@ -78,24 +80,34 @@ $("input").bind("focus", function() {
         $(this).attr("value",""); 
 });
 
-$("#verifyCodeBtn").fastClick(function() {
+$(".verifyCodeBtn").fastClick(function() {
     me.requestVerifyCode();
 });
 
+$(".changePwdBtn").fastClick(function() {
+    me.isChangingPassword = true;
+    changePage("#RegisterPage");
+});
+
+$("#toRegistBtn").fastClick(function() {
+    me.isChangingPassword = false;
+    changePage("#RegisterPage");
+});
+
 $(".wifiStatus").fastClick(function() {
-    if (window.android != undefined && !window.android.isWifiAvailable()) {
-        me.connectWifi(this);
-        $(".wifiStatus .statusOff").show();
-        $(".wifiStatus .statusOn").hide();
-    } else {
-        console.log("wifi unavailable or window.android undefined.");
-    }
+    me.connectWifi(this);
+            //     $(".wifiStatus .statusOn").show();
+            // $(".wifiStatus .statusOff").hide();
+
 });
 
 
 var me = {
     countDownSeconds : 0, 
-    kuLianWifi : {"wifilist": [{"SSID":"SuperMary", "password":"mary8888"},{"SSID":"SuperMary-5G", "password":"mary8888"}]},
+    isChangingPassword : false,
+    currentTabIdx : 0,
+    // kuLianWifi : {"wifilist": [{"SSID":"SuperMary", "password":"mary8888"},{"SSID":"SuperMary-5G", "password":"mary8888"}]},
+    kuLianWifi : {"wifilist": [{"SSID":"豪普生达", "password":""}]},
 
     showTab : function(idx) {
         var tabs = new Array("connectionView", "choiceView", "mineView");
@@ -110,8 +122,8 @@ var me = {
                 $("#" + tabs[i] + "Btn").removeClass("ui-btn-active");
             }
         }
-        currentCat = tabs[idx];
-        if (idx == 1) {
+        me.currentTabIdx = idx;
+        if (idx == 1 && slide.isInited == true) {
             slide.show();
         } else {
             slide.hide();
@@ -127,6 +139,9 @@ var me = {
             var obj = eval("(" + data +")");
             me.parseAds(obj);
             slide.init();
+            if (me.currentTabIdx == 1) {
+                $(".fouce").show();
+            }
         });
     },
 
@@ -136,8 +151,8 @@ var me = {
         // var obj = eval("("+data+")"); // json to object
         var html = me.adsTemplate(data);
 
-        $("#fouce").empty();
-        $("#fouce").append(html);
+        $("#adlist").empty();
+        $("#adlist").append(html);
     },
 
     adsTemplate : function(data)
@@ -199,52 +214,57 @@ var me = {
 
         for (var i = 0; i < data.length; i++) {
 
-            // if (panle.find("#myId" + data[i].AppId).length == 0) {
-                var isKuLian = false;
-                var passwd = "";
-                for (var j = 0; j < arrKuLianWifi.length; j++) {
-                    if (arrKuLianWifi[j].SSID == data[i].SSID) {
-                        isKuLian = true;
-                        passwd = arrKuLianWifi[j].password;
-                        $(".wifiStatus").data("wifissid", data[i].SSID);
-                        $(".wifiStatus").data("wifipasswd", passwd);
-                        break;
-                    }
+            var isKuLian = false;
+            var passwd = "";
+            for (var j = 0; j < arrKuLianWifi.length; j++) {
+                if (arrKuLianWifi[j].SSID == data[i].SSID) {
+                    isKuLian = true;
+                    passwd = arrKuLianWifi[j].password;
+                    $(".wifiStatus").data("wifissid", data[i].SSID);
+                    $(".wifiStatus").data("wifipasswd", passwd);
+                    break;
                 }
+            }
 
-                var level = Math.abs(data[i].level);
-                if (level > 90) { level = 1;
-                } else if (level > 70) { level = 2;
-                } else if (level > 50) { level = 3;
-                } else {                 level = 4; }
-                arrHtml.push("<li data-wifissid='"+data[i].SSID+"' data-wifipasswd='"+passwd+"' class=\"index-item list-index\" >"); // style=\"display:none;\"
-                arrHtml.push("<div class=\"index-item-main\">");
-                arrHtml.push("<dl class=\"clearfix\">");
-                arrHtml.push("<dt class=\"item-icon\">");
-                arrHtml.push("<img src=\"images/wifi_signal_"+ level +".png\" />");
-                arrHtml.push("</dt>");
-                arrHtml.push("<dd class=\"item-title\">");
-                arrHtml.push("<div class=\"wifi-SSID\">");
-                arrHtml.push(subString.autoAddEllipsis(data[i].SSID, 22, true));
-                arrHtml.push("</div>");
-                if (isKuLian) {
-                    arrHtml.push("<div class=\"wifi-desc\">可连接</div>");
-                }
-                arrHtml.push("</dd></dl></div>");
-                arrHtml.push("</li>");
-            // }
+            var level = Math.abs(data[i].level);
+            if (level > 90) { level = 1;
+            } else if (level > 70) { level = 2;
+            } else if (level > 50) { level = 3;
+            } else {                 level = 4; }
+            arrHtml.push("<li data-wifissid='"+data[i].SSID+"' data-wifipasswd='"+passwd+"' class=\"index-item list-index\" >"); // style=\"display:none;\"
+            arrHtml.push("<div class=\"index-item-main\">");
+            arrHtml.push("<dl class=\"clearfix\">");
+            arrHtml.push("<dt class=\"item-icon\">");
+            arrHtml.push("<img src=\"images/wifi_signal_"+ level +".png\" />");
+            arrHtml.push("</dt>");
+            arrHtml.push("<dd class=\"item-title\">");
+            arrHtml.push("<div class=\"wifi-SSID\">");
+            arrHtml.push(subString.autoAddEllipsis(data[i].SSID, 22, true));
+            arrHtml.push("</div>");
+            if (isKuLian) {
+                arrHtml.push("<div class=\"wifi-desc\">可连接</div>");
+            }
+            arrHtml.push("</dd></dl></div>");
+            arrHtml.push("</li>");
         }
 
         return arrHtml.join("");
     },
 
     connectWifi : function (obj) {
-        console.log("connectWifi " + $(obj).data("wifissid"));
-        showLoader("正在连接Wifi，请稍候");
-        setTimeout("hideLoader()", 3000);
-
         if (window.android != undefined) {
-            window.android.connectWifi($(obj).data("wifissid"), $(obj).data("wifipasswd"));
+            var ssid = $(obj).data("wifissid");
+            var pwd = $(obj).data("wifipasswd");
+            if (ssid == undefined) {
+                ssid = me.kuLianWifi.wifilist[0].SSID;
+                pwd = me.kuLianWifi.wifilist[0].password;
+            }
+
+            console.log("connectWifi " + ssid);
+            showLoader("正在连接Wifi，请稍候");
+            setTimeout("hideLoader()", 3000);
+
+            window.android.connectWifi(ssid, pwd);
         } else {
             console.log("try to connect wifi but window.android is undefined");
         }
@@ -277,6 +297,9 @@ var me = {
         $(".app-list li").fastClick(function() {
            me.clickOnApp(this);
         });
+        $(".app-list .installBtn").fastClick(function() {
+           me.downloadApp(this);
+        });
     },
 
     appListTemplate : function(res) {
@@ -303,7 +326,7 @@ var me = {
             arrHtml.push("<div class=\"baiying-name\">");
             arrHtml.push(subString.autoAddEllipsis(data[i].AppName, 22, true) + "</div></div></dd>");
             arrHtml.push("<dd class=\"item-star\">");
-            arrHtml.push("<span class=\"score-star\"><span style=\"width:" + data[i].AppScore + "%;\"></span></span>");
+            // arrHtml.push("<span class=\"score-star\"><span style=\"width:" + data[i].AppScore + "%;\"></span></span>");
 
             if (data[i].AppSize != "") {
                 arrHtml.push("<span class=\"new-item-size\">" + data[i].AppSize + "</span>");
@@ -315,11 +338,13 @@ var me = {
             arrHtml.push(data[i].BriefSummary == "" ? "暂无介绍" : data[i].BriefSummary);
             arrHtml.push("</div></dd></dl></div>");
 
+            arrHtml.push("<div class='coin_num' >+10</div>");
+            arrHtml.push("<img class='coin_icon' src='images/coins.png' />");
+
             if (isAppInstalled) {
-                arrHtml.push("<div class='installStatus'>已安装</div>");
+                arrHtml.push("<div class='ui-btn installBtn inactive' data-installed='YES' ></div>");
             } else {
-                arrHtml.push("<div class='coin_num' >+10</div>");
-                arrHtml.push("<img class='coin_icon' src='images/coins.png' />");
+                arrHtml.push("<div class='ui-btn installBtn' data-installed='NO' data-appurl=\""+data.AppSource+"\" data-appid="+data.AppId+"></div>");
             }
 
             arrHtml.push("</li>");
@@ -370,6 +395,14 @@ var me = {
             window.android.downloadApp($(obj).data("appurl"));
             showLoader("已加入下载队列");
             setTimeout("hideLoader()", 2000);
+        
+            var phone_number = $(".acount_list #account").text();
+            var appId = $(obj).data("addid");
+            var url = appServerUrl+"/download_report?"+callback+"&appid="+appId+"&phone_number="+phone_number;
+            console.log(url);
+            $.getJSON(url, function(data) {
+                console.log(data);
+            });
         }
     },
 
@@ -384,7 +417,6 @@ var me = {
         }
         arrHtml.push("</div>");
         arrHtml.push(me.descriptionTemplate(data))
-        arrHtml.push(me.commentTemplate(data));
         return arrHtml.join("");
     },
 
@@ -421,7 +453,7 @@ var me = {
 
         arrHtml.push("<div id=\"divdownarea\" class=\"down-area\">");
         arrHtml.push("<div class=\"content-btn-con\">");
-        arrHtml.push("<a class=\"content-BaiYingFreeDownload\" data-appurl=\"" + data.AppSource + "\"");
+        arrHtml.push("<a class=\"content-BaiYingFreeDownload\" data-appurl=\""+data.AppSource+"\" data-appid="+data.AppId);
         if (isAppInstalled) {
             arrHtml.push("data-installed='YES' >已安装</a>");
         } else {
@@ -443,77 +475,16 @@ var me = {
         arrHtml.push("<div class=\"content-navdes-wrapper\">");
         arrHtml.push("<div class=\"des-main\">");
         arrHtml.push("<div class=\"des-indent des-short\">");
-        arrHtml.push("<div class=\"des-short-content\">");
-        arrHtml.push("<p>" + data.BriefSummary + "</p>");
-        arrHtml.push("</div>");
+
         arrHtml.push("<div class=\"des-long-content\">");
         arrHtml.push("<p>" + data.BriefSummary + "</p>");
         arrHtml.push("<br />");
         arrHtml.push("<p>" + data.AppSummary + "</p>");
         arrHtml.push("</div>");
-        arrHtml.push("<a id=\"desmore\" href=\"javascript:void(0);\" onclick=\"$('.des-short-content,.des-long-content').toggle();if($('.des-short-content').is(':visible')){scrollToObj($('.description'));$('#desmore').text('了解更多')}else{$('#desmore').text('收起')}\">了解更多");
-        arrHtml.push("</a>");
         arrHtml.push("</div>");
         arrHtml.push("</div>");
         arrHtml.push("</div>");
         arrHtml.push("</section>");
-        return arrHtml.join("");
-    },
-
-    commentTemplate : function (res) {
-        var data = res;
-        var arrHtml = new Array();
-
-        arrHtml.push("<section class=\"comment-area content-comment-area\">");
-        arrHtml.push("<div class=\"pingfen-tab\">");
-        arrHtml.push("评论");
-        arrHtml.push("</div>");
-        arrHtml.push("<div class=\"comment-list\">");
-        if (data.AppCommentList.length > 0) {
-            arrHtml.push("<ul class=\"comment-list-inner\">");
-            arrHtml.push(me.getCommentHtml(data.AppCommentList));
-            arrHtml.push("</ul>");
-        }
-        else {
-            arrHtml.push("<span class=\"no-msg\">暂无评论</span>");
-        }
-        arrHtml.push("</div>");
-        arrHtml.push("</section>");
-        arrHtml.push("</div>");
-        arrHtml.push("</div>");
-        return arrHtml.join("");
-    },
-
-    getCommentHtml : function (data) {
-
-        // var panle = $("#" + content.currentObj.getPanleId());
-        var arrHtml = new Array();
-
-        for (var i = 0; i < data.length; i++) {
-
-            // if (panle.find("#myId" + data[i].Id).length == 0) {
-                arrHtml.push("<li id=\"myId" + data[i].Id + "\" class=\"comment-item template\">");
-                arrHtml.push("<div class=\"comment-name-version\">");
-                arrHtml.push("<span class=\"comment-name\">");
-                arrHtml.push(data[i].UserName);// arrHtml.push(subString.autoAddEllipsis(data[i].UserName, 12, true));
-                arrHtml.push("</span>");
-                arrHtml.push("<span class=\"comment-version\">");
-                arrHtml.push("&nbsp;");
-                arrHtml.push("<span class=\"score-star\">");
-                arrHtml.push("<span style=\"width: " + data[i].Score + "%;\">");
-                arrHtml.push("</span>");
-                arrHtml.push("</span>");
-                arrHtml.push("</span>");
-                arrHtml.push("<span class=\"comment-time\">");
-                arrHtml.push(data[i].CommentCreateTime);
-                arrHtml.push("</span>");
-                arrHtml.push("</div>");
-                arrHtml.push("<div class=\"comment-content\">");
-                arrHtml.push(data[i].CommentContent);
-                arrHtml.push("</div> ");
-                arrHtml.push("</li>");
-            // }
-        }
         return arrHtml.join("");
     },
 
@@ -543,10 +514,10 @@ var me = {
             if (data.ret_code == 0) {
                 showLoader("验证码已通过短信发送");
                 setTimeout("hideLoader()", 2000);
-                $("#verifyCodeBtn").addClass("text_disabled");
+                $(".verifyCodeBtn").addClass("text_disabled");
                 me.countDownSeconds = 60;
                 setTimeout("me.countDown()", 1000);
-                $("#verifyCodeBtn").attr("disabled","disabled");
+                $(".verifyCodeBtn").attr("disabled","disabled");
             } else {
                 showLoader(data.ret_msg);
                 setTimeout("hideLoader()", 3000);
@@ -555,11 +526,11 @@ var me = {
     )},
 
     countDown : function() {
-        $("#verifyCodeBtn").text(me.countDownSeconds + "秒");
+        $(".verifyCodeBtn").text(me.countDownSeconds + "秒");
         me.countDownSeconds = me.countDownSeconds - 1;
         if (me.countDownSeconds <= 0) {
-            $("#verifyCodeBtn").removeClass("text_disabled").text("获取验证码");
-            $("#verifyCodeBtn").attr("disabled","");
+            $(".verifyCodeBtn").removeClass("text_disabled").text("获取验证码");
+            $(".verifyCodeBtn").attr("disabled","");
         } else {
             setTimeout("me.countDown()", 1000);
         }
@@ -603,20 +574,51 @@ var me = {
         return true;
     },
 
+    validResetPwd : function() {
+        if ($("#changePwdPhoneNumber").val()=='' || $("#changePwdPhoneNumber").val()=='手机号' || !isPhoneNumber($("#changePwdPhoneNumber").val())) {
+            showLoader("请填写手机号");
+            setTimeout("hideLoader()", 2000);
+            return false;
+        }
+        if ($("#changePwdVerifyCode").val()=='') {
+            showLoader("请填写验证码");
+            setTimeout("hideLoader()", 2000);
+            return false;
+        }
+        if ($("#newPassword").val()=='') {
+            showLoader("请填写密码");
+            setTimeout("hideLoader()", 2000);
+            return false;
+        }
+        if ($("#repeatNewPassword").val()!=$("#newPassword").val()) {
+            showLoader("两次输入的密码不一致");
+            setTimeout("hideLoader()", 2000);
+            return false;
+        }
+        return true;
+    },
+
     register : function () {
         if (me.validRegist()) {
             var phone_number = $("#registPhoneNumber").val();
             var passwd       = $("#registPassword").val();
             var verify_code  = $("#registVerifyCode").val();
-            var url = appServerUrl+"/appregister?"+callback+"&phone_number="+phone_number+"&passwd="+passwd+"&verify_code="+verify_code;
+            if (me.isChangingPassword) {
+                var url = appServerUrl+"/reset_passwd?"+callback+"&phone_number="+phone_number+"&new_passwd="+passwd+"&verify_code="+verify_code;
+            } else {
+                var url = appServerUrl+"/appregister?"+callback+"&phone_number="+phone_number+"&passwd="+passwd+"&verify_code="+verify_code;
+            }
+
             console.log(url);
 
             $.getJSON(url, function(data) {
                 if (data.ret_code == 0) {
-                    showLoader("注册成功");
-                    setTimeout("hideLoader()", 2000);
-
-                    changePage("#MainPage");
+                    if (me.isChangingPassword == false) {
+                        showLoader("注册成功");
+                    } else {
+                        showLoader("密码修改成功");
+                    }
+                    setTimeout("changePageAndHideLoader(\"#MainPage\")", 2000);
                     $("#coin").text("0");
                     $("#account").text(phone_number);
                 } else {
@@ -645,13 +647,13 @@ var me = {
                     $("#coin").text(data.coin_num);
 
                     if ($("#checkbox-1").prop("checked") == true) { 
-                        $.cookie("rmbUser", "true", { expires: 365 });
-                        $.cookie("userName", phone_number, { expires: 365 });
-                        $.cookie("passWord", passwd, { expires: 365 });
+                        localStorage.setItem("rmbUser", "true");
+                        localStorage.setItem("userName", phone_number);
+                        localStorage.setItem("passWord", passwd);
                     } else {
-                        $.cookie("rmbUser", "false", { expires: -1 }); 
-                        $.cookie("userName", '', { expires: -1 }); 
-                        $.cookie("passWord", '', { expires: -1 }); 
+                        localStorage.setItem("rmbUser", "false");
+                        localStorage.setItem("userName", '');
+                        localStorage.setItem("passWord", '');
                     }
 
                 } else {

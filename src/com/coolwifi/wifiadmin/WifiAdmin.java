@@ -170,9 +170,9 @@ public class WifiAdmin {
         if (Type == 1) // WIFICIPHER_NOPASS
         {
             Log.i(TAG, "Type =1.");
-            config.wepKeys[0] = "";
+//            config.wepKeys[0] = "";
             config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
-            config.wepTxKeyIndex = 0;
+//            config.wepTxKeyIndex = 0;
         }
         if (Type == 2) // WIFICIPHER_WEP
         {
