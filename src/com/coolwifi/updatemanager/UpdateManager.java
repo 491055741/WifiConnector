@@ -115,7 +115,7 @@ public class UpdateManager
     	    public void taskFailed() {
     	    }
     	});
-    	task.execute("http://app.milkpapa.com:8080/static/json/version.json");
+    	task.execute("http://app.milkpapa.com:8080/static/json/version.json?versioncode="+Integer.toString(getVersionCode(mContext)));
     }
 
 	private int getVersionCode(Context context)
