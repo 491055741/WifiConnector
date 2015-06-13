@@ -338,13 +338,13 @@ var me = {
             arrHtml.push(data[i].BriefSummary == "" ? "暂无介绍" : data[i].BriefSummary);
             arrHtml.push("</div></dd></dl></div>");
 
-            arrHtml.push("<div class='coin_num' >+10</div>");
+            arrHtml.push("<div class='coin_num' >+"+data[i].GiveCoin+"</div>");
             arrHtml.push("<img class='coin_icon' src='images/coins.png' />");
 
             if (isAppInstalled) {
                 arrHtml.push("<div class='ui-btn installBtn inactive' data-installed='YES' ></div>");
             } else {
-                arrHtml.push("<div class='ui-btn installBtn' data-installed='NO' data-appurl=\""+data.AppSource+"\" data-appid="+data.AppId+"></div>");
+                arrHtml.push("<div class='ui-btn installBtn' data-installed='NO' data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+"></div>");
             }
 
             arrHtml.push("</li>");
@@ -386,6 +386,7 @@ var me = {
 
     downloadApp : function (obj)
     {
+        console.log("downloadApp");
         if ($(obj).data("installed") == 'YES') {
             showLoader("您已经安装了这个软件");
             setTimeout("hideLoader()", 2000);
@@ -403,6 +404,8 @@ var me = {
             $.getJSON(url, function(data) {
                 console.log(data);
             });
+        } else {
+            console.log("window.android undefined. url:" + $(obj).data("appurl"));
         }
     },
 

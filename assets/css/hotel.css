@@ -19,7 +19,7 @@ a { text-decoration:none;}
 .text_disabled {color:gray;}
 
 .app-list .coin_icon {position: absolute; width: 20px; top:30px; right: 75px;}
-.app-list .coin_num  {position: absolute; width: 20px; top:30px; right: 100px; color: #FF8800;}
+.app-list .coin_num  {position: absolute; width: 20px; top:30px; right: 110px; color: #FF8800;}
 .app-list .installBtn {position: absolute; width: 20px; height: 20px; top:10px; right: 10px; background: url(../images/download.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center;}
 .app-list .installBtn.inactive {background: url(../images/download_disabled.png) no-repeat; background-size:22px,22px;background-position: center;}
 
