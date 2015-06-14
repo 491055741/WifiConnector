@@ -375,7 +375,7 @@ var me = {
         // var obj = eval("("+data+")");
         var html = me.appDetailTemplate(data.detail_info);
 
-        $("#appDetail").append(html);
+        $(".appDetail").append(html);
 
         $(".content-BaiYingFreeDownload").fastClick(function() {
            me.downloadApp(this);
@@ -460,7 +460,7 @@ var me = {
         if (isAppInstalled) {
             arrHtml.push("data-installed='YES' >已安装</a>");
         } else {
-            arrHtml.push("data-installed='NO' >下载</a>");
+            arrHtml.push("data-installed='NO' >安装</a>");
         }
         arrHtml.push("</div>");
 

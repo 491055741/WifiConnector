@@ -23,7 +23,7 @@ div.allwidth a {background-color:#1e92ff;border:1px solid #1e92ff;color:#FFF; }
 
 .down-area {margin-top:12px;height:45px;}
 /*详情页顶部应用信息按钮*/
-.content-btn-con { /*margin-bottom: 10px; position: absolute; top: 5px; right: 0; */width:50%;z-index: 7;display:inline-block; }
+.content-btn-con { /*margin-bottom: 10px; position: absolute; top: 5px; right: 0; */width:100%;z-index: 7;display:inline-block; }
 .content-BaiYingFreeDownload { width: 75%; height: 28px;float: none; display: block; text-align: center; line-height: 28px;  border-radius: 4px; background-size: 96px 32px; color: #A3A5A9;margin:auto; border:1px solid #A3A5A9; font-size:16px;}
 /*除详情页顶部应用信息按钮*/
 .btn-con {float: right;margin-bottom: 10px;position: absolute;top: 5px;right: 0;z-index: 7;}

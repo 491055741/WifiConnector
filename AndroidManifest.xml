@@ -50,14 +50,19 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             >
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
+	    <activity android:name="com.coolwifi.main.SplashActivity"  
+	              android:theme="@android:style/Theme.NoTitleBar.Fullscreen"  
+	              android:noHistory="true"  
+	              android:configChanges="orientation|keyboardHidden"  
+	              android:label="@string/app_name">  
+	        <intent-filter>  
+	            <action android:name="android.intent.action.MAIN" />  
+	            <category android:name="android.intent.category.LAUNCHER" />  
+	        </intent-filter>  
+	    </activity> 
+        
         <!-- 个推SDK配置开始 -->
         <!-- 配置的第三方参数属性 -->
         <meta-data

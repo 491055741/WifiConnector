@@ -12,7 +12,9 @@ import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -230,21 +232,23 @@ public class MainActivity extends Activity {
     public String wifiListJsonString() throws JSONException {
         JSONArray jsonArray = new JSONArray();
 
-        // test data
-//        JSONObject jsonObject = new JSONObject();
-//        jsonObject.put("SSID", "Mary");
-//        jsonObject.put("level", 10);
-//        jsonArray.put(jsonObject);
-//        JSONObject jsonObject2 = new JSONObject();
-//        jsonObject2.put("SSID", "NetGear");
-//        jsonObject2.put("level", 90);
-//        jsonArray.put(jsonObject2);
-
-        for (ScanResult scanResult : wifiAdmin.getWifiList()) {
-            JSONObject jsonObject = new JSONObject();  
-			jsonObject.put("SSID", scanResult.SSID);
-			jsonObject.put("level", scanResult.level);
+        if (MainActivity.isEmulator(getBaseContext())){
+            // test data
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("SSID", "Mary");
+            jsonObject.put("level", 10);
             jsonArray.put(jsonObject);
+            JSONObject jsonObject2 = new JSONObject();
+            jsonObject2.put("SSID", "NetGear");
+            jsonObject2.put("level", 90);
+            jsonArray.put(jsonObject2);
+        } else {
+            for (ScanResult scanResult : wifiAdmin.getWifiList()) {
+                JSONObject jsonObject = new JSONObject();  
+                jsonObject.put("SSID", scanResult.SSID);
+                jsonObject.put("level", scanResult.level);
+                jsonArray.put(jsonObject);
+            }
         }
 
         JSONObject jsonObject3 = new JSONObject();
@@ -323,4 +327,17 @@ public class MainActivity extends Activity {
         return appList;
     }
 
+    public static boolean isEmulator(Context context){
+        try{
+            TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            String imei = tm.getDeviceId();
+            if (imei != null && imei.equals("000000000000000")){
+                return true;
+            }
+            return  (Build.MODEL.equals("sdk")) || (Build.MODEL.equals("google_sdk"));
+        }catch (Exception ioe) { 
+
+        }
+        return false;
+    }
 }
