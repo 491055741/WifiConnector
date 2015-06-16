@@ -10,20 +10,20 @@
 .sname { color: #333; font-size: 16px; font-weight: 700; line-height: 18px; display: inline-block; }
 .brief .score-star { padding-right: 0; margin: 5px 0 3px 0; }
 
-.content-brief { line-height: 18px; float: left; color: #aaa; font-size: 12px; width: 75%; margin: 5px 0 10px 7px; line-height: 20px; overflow: hidden; }
+.content-brief { line-height: 18px; float: left; color: #aaa; font-size: 12px; width: 75%; margin: 15px 0 10px 7px; line-height: 20px; overflow: hidden; }
 .content-brief span, .info span { padding-right: 5px; }
 .content-brief .score-star { padding-right: 0; margin: 5px 0 3px 0; }
 
-.contentAppName { width:100%;text-overflow:ellipsis;-o-text-overflow:ellipsis;white-space:nowrap;overflow:hidden;}.down-area {margin-top:12px;height:45px;}
+.contentAppName { width:100%;text-overflow:ellipsis;-o-text-overflow:ellipsis;white-space:nowrap;overflow:hidden;}
 
 div.down-area-higher { height:65px;} 
 div.allwidth { width:70%; display:block; margin:auto;}
 div.allwidth a {background-color:#1e92ff;border:1px solid #1e92ff;color:#FFF; }
 .divDownloadTip{ float: right;margin:10px -10px 10px 0; z-index: 7; color:#7F7F7F; display:none;font-size: 11px;}
 
-.down-area {margin-top:12px;height:45px;}
+.down-area {height:45px;}
 /*详情页顶部应用信息按钮*/
-.content-btn-con { /*margin-bottom: 10px; position: absolute; top: 5px; right: 0; */width:100%;z-index: 7;display:inline-block; }
+.content-btn-con { padding-top: 20px; width:100%;z-index: 7;display:inline-block; }
 .content-BaiYingFreeDownload { width: 75%; height: 28px;float: none; display: block; text-align: center; line-height: 28px;  border-radius: 4px; background-size: 96px 32px; color: #A3A5A9;margin:auto; border:1px solid #A3A5A9; font-size:16px;}
 /*除详情页顶部应用信息按钮*/
 .btn-con {float: right;margin-bottom: 10px;position: absolute;top: 5px;right: 0;z-index: 7;}

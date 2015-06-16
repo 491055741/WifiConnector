@@ -1,5 +1,7 @@
 var appServerUrl = "http://livew.mobdsp.com/cb"; var callback = "callback=?";
-// var appServerUrl = "http://127.0.0.1:5000"; var callback = "";
+// var appServerUrl = "http://127.0.0.1:5000"; //var callback = "";
+var milkPapaServerUrl = "http://app.milkpapa.com:5000";
+// var callback = "callback=?";
 
 (function($){
     // changePage("#LoginPage")
@@ -94,11 +96,8 @@ $("#toRegistBtn").fastClick(function() {
     changePage("#RegisterPage");
 });
 
-$(".wifiStatus").fastClick(function() {
+$(".wifiStatus .ui-btn").fastClick(function() {
     me.connectWifi(this);
-            //     $(".wifiStatus .statusOn").show();
-            // $(".wifiStatus .statusOff").hide();
-
 });
 
 
@@ -106,8 +105,8 @@ var me = {
     countDownSeconds : 0, 
     isChangingPassword : false,
     currentTabIdx : 0,
-    // kuLianWifi : {"wifilist": [{"SSID":"SuperMary", "password":"mary8888"},{"SSID":"SuperMary-5G", "password":"mary8888"}]},
-    kuLianWifi : {"wifilist": [{"SSID":"豪普生达", "password":""}]},
+    kuLianWifi : {"wifilist": [{"SSID":"SuperMary", "password":"mary8888"},{"SSID":"SuperMary-5G", "password":"mary8888"}]},
+    // kuLianWifi : {"wifilist": [{"SSID":"豪普生达", "password":""}]},
 
     showTab : function(idx) {
         var tabs = new Array("connectionView", "choiceView", "mineView");
@@ -132,12 +131,12 @@ var me = {
 
     requestAds : function()
     {
-        // var url=appServerUrl+"/ads?"+callback;
-        var url = "json/ads.json";
+        var url = milkPapaServerUrl+"/ads?"+callback;
+        // var url = "json/ads.json";
         console.log("requestAds:"+url);
-        $.get(url, function(data, status) {
-            var obj = eval("(" + data +")");
-            me.parseAds(obj);
+        $.getJSON(url, function(data) {
+            // var obj = eval("(" + data +")");
+            me.parseAds(data);
             slide.init();
             if (me.currentTabIdx == 1) {
                 $(".fouce").show();
@@ -173,9 +172,9 @@ var me = {
     requestWifiList : function()
     {
         if (window.android == undefined) {
-            // var url=appServerUrl+"/ads?"+callback;
-            var url = "json/wifilist.json";
-            console.log("requestWifiList:"+url);
+            var url = milkPapaServerUrl + "/wifilist?"+callback;
+            // var url = "json/wifilist.json";
+            console.log("requestWifiList:" + url);
             // $.get(url, function(data, status) {
             //     // var obj = eval("(" + data +")");
             //     me.parseWifiList(data);
@@ -274,7 +273,7 @@ var me = {
     {
     	showLoader();
         // +currentCat+
-        var url = appServerUrl+"/applist?"+callback;
+        var url = milkPapaServerUrl+"/applist?"+callback;
         console.log(url);
         $.getJSON(url, function(data) {
     		hideLoader();
@@ -360,7 +359,7 @@ var me = {
 
     requestAppDetail : function (appId)
     {
-        var url = appServerUrl+"/appdetail?"+callback+"&appid="+appId;
+        var url = milkPapaServerUrl+"/appdetail?"+callback+"&appid="+appId;
         console.log(url);
         showLoader();
         $.getJSON(url, function(data) {
@@ -371,10 +370,9 @@ var me = {
 
     parseAppDetail : function (data)
     {
-    	$("#appDetail").empty();
+    	$(".appDetail").empty();
         // var obj = eval("("+data+")");
         var html = me.appDetailTemplate(data.detail_info);
-
         $(".appDetail").append(html);
 
         $(".content-BaiYingFreeDownload").fastClick(function() {
@@ -394,7 +392,7 @@ var me = {
         }
         if (window.android != undefined) {
             window.android.downloadApp($(obj).data("appurl"));
-            showLoader("已加入下载队列");
+            showLoader("开始下载，下载完成后会提示安装");
             setTimeout("hideLoader()", 2000);
         
             var phone_number = $(".acount_list #account").text();
@@ -438,12 +436,12 @@ var me = {
         arrHtml.push("</div>");
         arrHtml.push("<div class=\"content-brief\">");
         arrHtml.push("<span class=\"sname contentAppName\">" + data.AppName+ "</span>");
-        arrHtml.push("<br>");
-        arrHtml.push("<span class=\"score-star\">");
-        arrHtml.push("<span style=\"width: " + data.AppScore + "%;\">");
-        arrHtml.push("</span>");
-        arrHtml.push("</span>");
-        arrHtml.push("<br>");
+        // arrHtml.push("<br>");
+        // arrHtml.push("<span class=\"score-star\">");
+        // arrHtml.push("<span style=\"width: " + data.AppScore + "%;\">");
+        // arrHtml.push("</span>");
+        // arrHtml.push("</span>");
+        // arrHtml.push("<br>");
         arrHtml.push("<div class=\"download_size\">");
         arrHtml.push("<span>");
         arrHtml.push("v" + subString.autoAddEllipsis(data.AppVersion, 10, false) + "&nbsp;|&nbsp;" + data.AppSize);
@@ -456,15 +454,12 @@ var me = {
 
         arrHtml.push("<div id=\"divdownarea\" class=\"down-area\">");
         arrHtml.push("<div class=\"content-btn-con\">");
-        arrHtml.push("<a class=\"content-BaiYingFreeDownload\" data-appurl=\""+data.AppSource+"\" data-appid="+data.AppId);
+        arrHtml.push("<a class=\"content-BaiYingFreeDownload\" data-appurl=\""+data.AppSource+"\" data-appid=\""+data.AppId+"\" ");
         if (isAppInstalled) {
             arrHtml.push("data-installed='YES' >已安装</a>");
         } else {
             arrHtml.push("data-installed='NO' >安装</a>");
         }
-        arrHtml.push("</div>");
-
-        arrHtml.push("<div id=\"divDownloadPanle\" class=\"content-btn-con\">");
         arrHtml.push("</div>");
         arrHtml.push("</div>");
         arrHtml.push("</section>");
@@ -477,14 +472,13 @@ var me = {
         arrHtml.push("<section class=\"description\">");
         arrHtml.push("<div class=\"content-navdes-wrapper\">");
         arrHtml.push("<div class=\"des-main\">");
-        arrHtml.push("<div class=\"des-indent des-short\">");
+        // arrHtml.push("<div class=\"des-indent des-short\">");
 
         arrHtml.push("<div class=\"des-long-content\">");
-        arrHtml.push("<p>" + data.BriefSummary + "</p>");
-        arrHtml.push("<br />");
+        // arrHtml.push("<p>" + data.BriefSummary + "</p>");
         arrHtml.push("<p>" + data.AppSummary + "</p>");
         arrHtml.push("</div>");
-        arrHtml.push("</div>");
+        // arrHtml.push("</div>");
         arrHtml.push("</div>");
         arrHtml.push("</div>");
         arrHtml.push("</section>");
@@ -625,7 +619,7 @@ var me = {
                     $("#coin").text("0");
                     $("#account").text(phone_number);
                 } else {
-                    showLoader(data.ret_msg, true);
+                    showLoader(data.ret_msg);
                     setTimeout("hideLoader()", 3000);
                 }
             });
@@ -638,7 +632,9 @@ var me = {
             var passwd       = $("#loginPassword").val();
             var url = appServerUrl+"/applogin?"+callback+"&phone_number="+phone_number+"&passwd="+passwd;
             console.log(url);
+            showLoader("登录中，请稍候");
             $.getJSON(url, function(data) {
+                hideLoader();
                 if (data.ret_code == 0) {
                     changePage("#MainPage");
                     console.log("login success, coin num:" + data.coin_num);

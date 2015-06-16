@@ -128,7 +128,7 @@ public class MainActivity extends Activity {
         webSettings.setAllowFileAccess(true);
         webSettings.setAppCacheEnabled(true);
         webSettings.setDatabaseEnabled(true);
-        
+        webSettings.setDatabasePath("/data/data/" + webView.getContext().getPackageName() + "/databases/");
 //        webView.setWebChromeClient(new WebChromeClient() {
 //            public boolean onConsoleMessage(ConsoleMessage cm) {
 //              Log.d("MyApplication", cm.message() + " -- From line "
@@ -274,27 +274,27 @@ public class MainActivity extends Activity {
         registerReceiver(mWifiConnectReceiver, mWifiFilter);
     }
     
-    private String getAssetsFileContent(String fileName) {
-        String res="";   
-        try{   
-          
-           //得到资源中的asset数据流  
-           InputStream in = getResources().getAssets().open(fileName);   
-          
-           int length = in.available();           
-           byte [] buffer = new byte[length];          
-          
-           in.read(buffer);              
-           in.close();  
-           res = EncodingUtils.getString(buffer, "UTF-8");       
-          
-        }catch(Exception e){   
-          
-              e.printStackTrace();           
-          
-        }
-        return res;
-    }
+//    private String getAssetsFileContent(String fileName) {
+//        String res="";   
+//        try{   
+//          
+//           //得到资源中的asset数据流  
+//           InputStream in = getResources().getAssets().open(fileName);   
+//          
+//           int length = in.available();           
+//           byte [] buffer = new byte[length];          
+//          
+//           in.read(buffer);              
+//           in.close();  
+//           res = EncodingUtils.getString(buffer, "UTF-8");       
+//          
+//        }catch(Exception e){   
+//          
+//              e.printStackTrace();           
+//          
+//        }
+//        return res;
+//    }
 
     BroadcastReceiver connectionReceiver = new BroadcastReceiver() {
         @Override
