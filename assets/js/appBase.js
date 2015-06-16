@@ -165,7 +165,7 @@ function changePage(pageName)
 function showLoader(txt) {  
     var onlyTxt = true;
     if (txt === undefined) {
-        txt = "加载中...";
+        txt = "请稍候...";
         onlyTxt = false;
     }
     $.mobile.loading('show', {  

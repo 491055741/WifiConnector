@@ -61,7 +61,7 @@ $("#MainPage").on("pageinit", function() {
 
     me.requestAds();
     me.requestAppList();
-    me.requestWifiList();
+    me.requestKulianWifi();
     me.showTab(0);
 })
 
@@ -105,8 +105,7 @@ var me = {
     countDownSeconds : 0, 
     isChangingPassword : false,
     currentTabIdx : 0,
-    kuLianWifi : {"wifilist": [{"SSID":"SuperMary", "password":"mary8888"},{"SSID":"SuperMary-5G", "password":"mary8888"}]},
-    // kuLianWifi : {"wifilist": [{"SSID":"豪普生达", "password":""}]},
+    kuLianWifi : null,
 
     showTab : function(idx) {
         var tabs = new Array("connectionView", "choiceView", "mineView");
@@ -127,6 +126,16 @@ var me = {
         } else {
             slide.hide();
         }
+    },
+
+    requestKulianWifi : function()
+    {
+        var url = milkPapaServerUrl+"/kulianwifi?"+callback;
+        console.log("requestKulianWifi:"+url);
+        $.getJSON(url, function(data) {
+            me.kuLianWifi = data;
+            me.requestWifiList();
+        });
     },
 
     requestAds : function()
@@ -173,12 +182,7 @@ var me = {
     {
         if (window.android == undefined) {
             var url = milkPapaServerUrl + "/wifilist?"+callback;
-            // var url = "json/wifilist.json";
             console.log("requestWifiList:" + url);
-            // $.get(url, function(data, status) {
-            //     // var obj = eval("(" + data +")");
-            //     me.parseWifiList(data);
-            // });
             $.getJSON(url, function(data) {
                 me.parseWifiList(data);
             });
@@ -191,16 +195,33 @@ var me = {
 
     parseWifiList : function(data)
     {
-    // console.log(data);
-        // var obj = eval("("+data+")"); // json to object
-        var html = me.wifiListTemplate(data);
 
-        $("#connectionView .wifi-list").empty();
-        $("#connectionView .wifi-list").append(html);
 
-        $("#connectionView .wifi-list li").fastClick(function() {
-           me.connectWifi(this);
-        });
+        // var html = me.wifiListTemplate(data);
+
+        // $("#connectionView .wifi-list").empty();
+        // $("#connectionView .wifi-list").append(html);
+
+        // $("#connectionView .wifi-list li").fastClick(function() {
+        //    me.connectWifi(this);
+        // });
+        var arrKuLianWifi = me.kuLianWifi.wifilist;
+        var arrWifiList = data.wifilist;
+
+        for (var i = 0; i < arrWifiList.length; i++) {
+
+            var isKuLian = false;
+            var passwd = "";
+            for (var j = 0; j < arrKuLianWifi.length; j++) {
+                if (arrKuLianWifi[j].SSID == arrWifiList[i].SSID) {
+                    isKuLian = true;
+                    passwd = arrKuLianWifi[j].password;
+                    $(".wifiStatus").data("wifissid", arrWifiList[i].SSID);
+                    $(".wifiStatus").data("wifipasswd", passwd);
+                    break;
+                }
+            }
+        }
 
     },
 
