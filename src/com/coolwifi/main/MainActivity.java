@@ -20,6 +20,8 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.CookieManager;
+import android.webkit.WebChromeClient;
+import android.webkit.ConsoleMessage;
 //import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -119,12 +121,22 @@ public class MainActivity extends Activity {
 //        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
 
 //        webSettings.setUserAgentString(getUserAgent());
+        webSettings.setDomStorageEnabled(true);
+        webSettings.setAppCacheMaxSize(1024*1024*8);
+        String appCachePath = getApplicationContext().getCacheDir().getAbsolutePath();
+        webSettings.setAppCachePath(appCachePath);
         webSettings.setAllowFileAccess(true);
         webSettings.setAppCacheEnabled(true);
-        webSettings.setDomStorageEnabled(true);
         webSettings.setDatabaseEnabled(true);
         
-        
+//        webView.setWebChromeClient(new WebChromeClient() {
+//            public boolean onConsoleMessage(ConsoleMessage cm) {
+//              Log.d("MyApplication", cm.message() + " -- From line "
+//                                   + cm.lineNumber() + " of "
+//                                   + cm.sourceId() );
+//              return true;
+//            }
+//          });
 //        String html = getAssetsFileContent("appBase.html");
 //        webView.loadDataWithBaseURL("file:///android_asset/", html, "text/html", "UTF-8", null);
 //      webView.loadUrl("http://app.milkpapa.com:8080/?_="+(int)(Math.random()*10000));
