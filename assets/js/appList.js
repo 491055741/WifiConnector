@@ -295,7 +295,7 @@ var me = {
     	showLoader();
         // +currentCat+
         var url = milkPapaServerUrl+"/applist?"+callback;
-        console.log(url);
+        console.log("requestAppList:" + url);
         $.getJSON(url, function(data) {
     		hideLoader();
     		me.parseAppList(data);
@@ -413,7 +413,7 @@ var me = {
         }
         if (window.android != undefined) {
             window.android.downloadApp($(obj).data("appurl"));
-            showLoader("开始下载，下载完成后会提示安装");
+            showLoader("开始下载，完成安装前请不要退出本应用");
             setTimeout("hideLoader()", 2000);
         
             var phone_number = $(".acount_list #account").text();

@@ -5,9 +5,7 @@
     android:versionName="1.0"
     >
 
-    <uses-sdk
-        android:minSdkVersion="14"
-        android:targetSdkVersion="16" />
+    <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="15" />
 
 	<uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"></uses-permission>
 	
@@ -22,6 +20,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.RESTART_PACKAGES" />
 
     <!-- <uses-permission android:name="getui.permission.GetuiService.第三方包名" /> -->
     <uses-permission android:name="getui.permission.GetuiService.com.xiaohong.wificoolconnect" />
@@ -46,13 +45,13 @@
         android:label="WiFi酷连"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.coolwifi.main.MainActivity"
+            android:name="com.xiaohong.wificoolconnect.main.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             >
         </activity>
 
-	    <activity android:name="com.coolwifi.main.SplashActivity"  
+	    <activity android:name="com.xiaohong.wificoolconnect.main.SplashActivity"  
 	              android:theme="@android:style/Theme.NoTitleBar.Fullscreen"  
 	              android:noHistory="true"  
 	              android:configChanges="orientation|keyboardHidden"  
@@ -62,7 +61,17 @@
 	            <category android:name="android.intent.category.LAUNCHER" />  
 	        </intent-filter>  
 	    </activity> 
-        
+
+	    <receiver android:name=".main.AppInstallReceiver"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" /> 
+                <action android:name="android.intent.action.PACKAGE_REPLACED" /> 
+                <action android:name="android.intent.action.PACKAGE_REMOVED" /> 
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+	    
         <!-- 个推SDK配置开始 -->
         <!-- 配置的第三方参数属性 -->
         <meta-data
@@ -79,6 +88,7 @@
             android:value="" />
 
         <!-- 配置第三方Receiver -->
+<!-- 
         <receiver
             android:name="com.getui.demo.PushDemoReceiver"
             android:exported="false" >
@@ -86,7 +96,7 @@
                 <action android:name="com.igexin.sdk.action.etVyv7RHJ28BqN3KKCtKJ6" />
             </intent-filter>
         </receiver>
-
+ -->
         <!-- 配置SDK核心服务 -->
         <service
             android:name="com.igexin.sdk.PushService"

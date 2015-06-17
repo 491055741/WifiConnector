@@ -1,4 +1,4 @@
-package com.coolwifi.main;
+package com.xiaohong.wificoolconnect.main;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -26,6 +26,8 @@ import android.webkit.ConsoleMessage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.WebSettings;
+import android.widget.Toast;
+
 import com.igexin.sdk.PushManager;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -45,7 +47,9 @@ import java.util.Iterator;
 import java.util.List;
  
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+
 
 public class MainActivity extends Activity {
 	private static final String TAG = "[WifiAdmin]";
@@ -86,6 +90,25 @@ public class MainActivity extends Activity {
 	    }
     };
 	
+
+
+    BroadcastReceiver mConnectionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            webView.loadUrl("javascript: wifiStatusChanged()");
+//            ConnectivityManager connectMgr = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+//            NetworkInfo wifiNetInfo = connectMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+//            if (!wifiNetInfo.isConnected()) {
+//                Log.i(TAG, "unconnect");
+//                // unconnect network
+//
+//            }else {
+//                // connect network
+//                
+//            }
+        }
+    };
+
 	@Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -101,12 +124,12 @@ public class MainActivity extends Activity {
 	@SuppressLint("SetJavaScriptEnabled") private void init() throws JSONException{
 
 		registerWIFI();
+		registerConnection();
+//		registerAppInstall();		
+
 		PushManager.getInstance().initialize(this.getApplicationContext());
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-		registerReceiver(connectionReceiver, intentFilter); 
-		
-        wifiAdmin = new WifiAdmin(getBaseContext()); 
+
+		wifiAdmin = new WifiAdmin(getBaseContext()); 
         updateManager = new UpdateManager(MainActivity.this);
         boolean open = wifiAdmin.openWifi();
         Log.i(TAG, "wifi open:" + open);
@@ -268,12 +291,6 @@ public class MainActivity extends Activity {
     	return jsonObject3.toString();
     }
     
-    private void registerWIFI() {
-        IntentFilter mWifiFilter = new IntentFilter();
-        mWifiFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        registerReceiver(mWifiConnectReceiver, mWifiFilter);
-    }
-    
 //    private String getAssetsFileContent(String fileName) {
 //        String res="";   
 //        try{   
@@ -295,23 +312,24 @@ public class MainActivity extends Activity {
 //        }
 //        return res;
 //    }
+    private void registerWIFI() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        registerReceiver(mWifiConnectReceiver, intentFilter);
+    }
 
-    BroadcastReceiver connectionReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            webView.loadUrl("javascript: wifiStatusChanged()");
-//            ConnectivityManager connectMgr = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-//            NetworkInfo wifiNetInfo = connectMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-//            if (!wifiNetInfo.isConnected()) {
-//                Log.i(TAG, "unconnect");
-//                // unconnect network
-//
-//            }else {
-//                // connect network
-//                
-//            }
-        }
-    };
+    private void registerConnection() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(mConnectionReceiver, intentFilter); 
+    }
+
+//    private void registerAppInstall() {
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
+//        intentFilter.addAction(Intent.ACTION_PACKAGE_REPLACED);
+//        registerReceiver(mAppInstallReceiver, intentFilter); 
+//    }
 
 //    @JavascriptInterface
     public boolean isAppInstalled(String appName, int versionCode) {

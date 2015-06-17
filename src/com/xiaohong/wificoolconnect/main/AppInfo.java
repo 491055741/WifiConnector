@@ -1,4 +1,4 @@
-package com.coolwifi.main;
+package com.xiaohong.wificoolconnect.main;
 
 import android.content.pm.ProviderInfo;
 import android.graphics.drawable.Drawable;

@@ -1,4 +1,4 @@
-package com.coolwifi.main;
+package com.xiaohong.wificoolconnect.main;
 
 import com.xiaohong.wificoolconnect.R;
 
