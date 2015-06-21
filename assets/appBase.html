@@ -12,13 +12,14 @@
     <link rel="stylesheet" href="css/list.css" />
     <link rel="stylesheet" href="css/comment.css" />
     <link rel="stylesheet" href="css/content.css" />
-    <link rel="stylesheet" href="css/circle.css" />
+    <link rel="stylesheet" href="js/nprogress/nprogress.css" />
     <script src="js/jquery-1.9.0.min.js"></script>
     <script src="js/iscroll-lite.js"></script>
     <script src="js/jquery.mobile/jquery.mobile-1.4.5.min.js"></script>
     <script src="js/jquery.cookie.js"></script>
     <script src="js/google.fastbutton.js"></script>
     <script src="js/jquery.google.fastbutton.js"></script>
+    <script src="js/nprogress/nprogress.js"></script>
 </head>
 
 <body>
@@ -87,23 +88,6 @@
                 <a class="statusOn ui-btn" style="display:none;">WiFi已连接</a>
             </div>
             </center>
-            <!-- <div class="wifi-list"></div> -->
-<!--             <center><svg id="circleLoading" viewBox="0 0 120 120" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-            <g id="circle" class="g-circles g-circles--v1">
-                <circle id="12" transform="translate(35, 16.698730) rotate(-30) translate(-35, -16.698730) " cx="35" cy="16.6987298" r="10"></circle>
-                <circle id="11" transform="translate(16.698730, 35) rotate(-60) translate(-16.698730, -35) " cx="16.6987298" cy="35" r="10"></circle>
-                <circle id="10" transform="translate(10, 60) rotate(-90) translate(-10, -60) " cx="10" cy="60" r="10"></circle>
-                <circle id="9" transform="translate(16.698730, 85) rotate(-120) translate(-16.698730, -85) " cx="16.6987298" cy="85" r="10"></circle>
-                <circle id="8" transform="translate(35, 103.301270) rotate(-150) translate(-35, -103.301270) " cx="35" cy="103.30127" r="10"></circle>
-                <circle id="7" cx="60" cy="110" r="10"></circle>
-                <circle id="6" transform="translate(85, 103.301270) rotate(-30) translate(-85, -103.301270) " cx="85" cy="103.30127" r="10"></circle>
-                <circle id="5" transform="translate(103.301270, 85) rotate(-60) translate(-103.301270, -85) " cx="103.30127" cy="85" r="10"></circle>
-                <circle id="4" transform="translate(110, 60) rotate(-90) translate(-110, -60) " cx="110" cy="60" r="10"></circle>
-                <circle id="3" transform="translate(103.301270, 35) rotate(-120) translate(-103.301270, -35) " cx="103.30127" cy="35" r="10"></circle>
-                <circle id="2" transform="translate(85, 16.698730) rotate(-150) translate(-85, -16.698730) " cx="85" cy="16.6987298" r="10"></circle>
-                <circle id="1" cx="60" cy="10" r="10"></circle>
-            </g></svg></center>
- -->
         </div>
 
         <div id="choiceView">
@@ -147,8 +131,8 @@
         </div>
     </div>
 
-    <div data-role="footer" data-id="mainFooter" data-position="fixed" data-tap-toggle="false">
-        <div data-role="navbar">
+    <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+        <div data-role="navbar" id="mainFooter" >
             <ul class="apple-navbar-ui comboSprite">
                 <li><a href="#" id="connectionBtn" data-icon="wifi" class="ui-btn-icon-top ui-btn-active">连接</a></li>
                 <li><a href="#" id="excellentBtn" data-icon="choice" class="ui-btn-icon-top">精选</a></li>

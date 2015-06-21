@@ -4,14 +4,35 @@ var milkPapaServerUrl = "http://app.milkpapa.com:5000";
 // var callback = "callback=?";
 
 (function($){
-    // changePage("#LoginPage")
+    NProgress.configure({ parent: '#mainFooter' });
+    // $("#b-0").click(function() { NProgress.start(); });
+    // $("#b-40").click(function() { NProgress.set(0.4); });
+    // $("#b-inc").click(function() { NProgress.inc(); });
+    // $("#b-100").click(function() { NProgress.done(); });
 })(jQuery);
 
 // js-Android interface
 var refreshWifiList = function () {
     me.requestWifiList();
 }
-
+// js-Android interface
+var updateDownloadProgress = function (progress) {
+    NProgress.set(progress/100);
+    $(".spinner").hide();
+}
+// js-Android interface
+var finishDownloadProgress = function () {
+    NProgress.done();
+}
+// js-Android interface
+var appInstallFinished = function (appId) {
+    var phone_number = $(".acount_list #account").text();
+    var url = appServerUrl+"/download_report?"+callback+"&appid="+appId+"&phone_number="+phone_number;
+    console.log("Report app install:"+url);
+    $.getJSON(url, function(data) {
+        // console.log(data);
+    });
+}
 // js-Android interface
 var wifiStatusChanged = function () {
     console.log("wifiStatusChanged.");
@@ -33,15 +54,19 @@ var wifiStatusChanged = function () {
     }
 }
 
-$("#LoginPage").on("pageshow", function () {
-    console.log("login page show");
-});
-
 $("#LoginPage").on("pageinit", function () {
     console.log("login page init");
     $("#loginUsername").attr("value", localStorage.getItem("userName"));
     $("#loginPassword").attr("value", localStorage.getItem("passWord"));
     $("#checkbox-1").prop("checked",  localStorage.getItem("rmbUser")).checkboxradio("refresh");
+});
+
+$("#LoginPage").on("pageshow", function () {
+    console.log("login page show");
+    if ($("#loginUsername").val()!='' && $("#loginUsername").val()!='手机号' && isPhoneNumber($("#loginUsername").val())
+        && $("#loginPassword").val()!='') {
+        me.login();
+    }
 });
 
 $("#RegisterPage").on("pageshow", function () {
@@ -50,6 +75,8 @@ $("#RegisterPage").on("pageshow", function () {
 
 $("#MainPage").on("pageshow", function () {
     console.log("main page show");
+    // setTimeout(function() { NProgress.start(); $(".spinner").hide(); }, 1000);
+    // setTimeout(function() { NProgress.done(); $('.fade').removeClass('out'); }, 3000);
 });
 
 $("#MainPage").on("pageinit", function() {
@@ -195,8 +222,6 @@ var me = {
 
     parseWifiList : function(data)
     {
-
-
         // var html = me.wifiListTemplate(data);
 
         // $("#connectionView .wifi-list").empty();
@@ -247,10 +272,10 @@ var me = {
             }
 
             var level = Math.abs(data[i].level);
-            if (level > 90) { level = 1;
-            } else if (level > 70) { level = 2;
-            } else if (level > 50) { level = 3;
-            } else {                 level = 4; }
+            if (level > 90) { level = 1;}
+            else if (level > 70) { level = 2; }
+            else if (level > 50) { level = 3; }
+            else { level = 4; }
             arrHtml.push("<li data-wifissid='"+data[i].SSID+"' data-wifipasswd='"+passwd+"' class=\"index-item list-index\" >"); // style=\"display:none;\"
             arrHtml.push("<div class=\"index-item-main\">");
             arrHtml.push("<dl class=\"clearfix\">");
@@ -364,7 +389,7 @@ var me = {
             if (isAppInstalled) {
                 arrHtml.push("<div class='ui-btn installBtn inactive' data-installed='YES' ></div>");
             } else {
-                arrHtml.push("<div class='ui-btn installBtn' data-installed='NO' data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+"></div>");
+                arrHtml.push("<div class='ui-btn installBtn' data-installed='NO' data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-appname=\""+data[i].AppName+"\"></div>");
             }
 
             arrHtml.push("</li>");
@@ -412,17 +437,9 @@ var me = {
             return;
         }
         if (window.android != undefined) {
-            window.android.downloadApp($(obj).data("appurl"));
+            window.android.downloadApp($(obj).data("appid"), $(obj).data("appname"), $(obj).data("appurl"));
             showLoader("开始下载，完成安装前请不要退出本应用");
             setTimeout("hideLoader()", 2000);
-        
-            var phone_number = $(".acount_list #account").text();
-            var appId = $(obj).data("addid");
-            var url = appServerUrl+"/download_report?"+callback+"&appid="+appId+"&phone_number="+phone_number;
-            console.log(url);
-            $.getJSON(url, function(data) {
-                console.log(data);
-            });
         } else {
             console.log("window.android undefined. url:" + $(obj).data("appurl"));
         }
@@ -475,7 +492,7 @@ var me = {
 
         arrHtml.push("<div id=\"divdownarea\" class=\"down-area\">");
         arrHtml.push("<div class=\"content-btn-con\">");
-        arrHtml.push("<a class=\"content-BaiYingFreeDownload\" data-appurl=\""+data.AppSource+"\" data-appid=\""+data.AppId+"\" ");
+        arrHtml.push("<a class=\"content-BaiYingFreeDownload\" data-appurl=\""+data.AppSource+"\" data-appid=\""+data.AppId+"\" data-appname=\""+data.AppName+"\" ");
         if (isAppInstalled) {
             arrHtml.push("data-installed='YES' >已安装</a>");
         } else {

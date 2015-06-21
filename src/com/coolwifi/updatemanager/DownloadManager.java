@@ -9,6 +9,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 //import com.coolwifi.updatemanager.DownloadManager.DownloadFileThread;
 
@@ -19,12 +21,13 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 public class DownloadManager
 {
     private static final int DOWNLOAD = 1;
     private static final int DOWNLOAD_FINISH = 2;
-
+    private Timer mTimer;
     private Context mContext;
     private Handler mHandler;
     private String mSavePath;
@@ -42,27 +45,92 @@ public class DownloadManager
         DownloadFileThread thread = new DownloadFileThread(url, fileName);
         mDownloadList.add(thread);
         thread.start();
+        startTimer();
     }
 
+    public void installApk(String fileName)
+    {
+        File apkfile = new File(mSavePath, fileName);
+        if (!apkfile.exists())
+        {
+            return;
+        }
+        // 通过Intent安装APK文件
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setDataAndType(Uri.parse("file://" + apkfile.toString()), "application/vnd.android.package-archive");
+        mContext.startActivity(i);
+    }
+
+    private void startTimer()
+    {
+        if (mTimer == null) {
+            mTimer = new Timer();   
+            // 定义计划任务，根据参数的不同可以完成以下种类的工作：在固定时间执行某任务，在固定时间开始重复执行某任务，重复时间间隔可控，在延迟多久后执行某任务，在延迟多久后重复执行某任务，重复时间间隔可控   
+            mTimer.schedule(new TimerTask() {   
+
+               @Override
+               public void run() {
+
+                   if (mDownloadList.size() == 0) {
+                       mTimer.cancel();
+                       mTimer = null;
+                       return;
+                   }
+
+                   DownloadFileThread thread = null;
+                   int maxProgress = 0;
+                   String fileName = null;
+                   for (int i = 0; i < mDownloadList.size(); i++) {  
+                       DownloadFileThread t = mDownloadList.get(i);
+                       if (t.progress > maxProgress) {
+                           maxProgress = t.progress;
+                           fileName = t.fileName;
+                           thread = t;
+                       }
+                   }
+                   Message msg = new Message();
+                   if (maxProgress == 100) {
+                       msg.what = DOWNLOAD_FINISH;
+                       mDownloadList.remove(thread);
+                   } else {
+                       msg.what = DOWNLOAD;                
+                   }
+                   msg.obj = fileName;
+                   msg.arg1 = maxProgress;
+                   mHandler.sendMessage(msg);
+               }   
+
+           }, 1000, 1000);  
+        }
+    }
+    
     public void cancelDownload(String taskName)
+    {
+        DownloadFileThread thread = getThread(taskName);
+        if (thread != null) {
+            thread.cancelDownload = true;
+        }
+    }
+
+    private DownloadFileThread getThread(String taskName)
     {
         for (int i = 0; i < mDownloadList.size(); i++)  
         {  
             DownloadFileThread thread = mDownloadList.get(i);  
             if (thread.taskName.equals(taskName)) {
-                thread.cancelDownload = true;
-                break;
+                return thread;
             }
         }
+        return null;
     }
     
     private class DownloadFileThread extends Thread
     {
         private URL url;
-        private String fileName;
+        public String fileName;
         boolean cancelDownload;
         public String taskName;
-
+        public int progress;
         public DownloadFileThread(String url, String fileName) throws MalformedURLException {
             this.url = new URL(url);
             this.taskName = url;
@@ -104,23 +172,13 @@ public class DownloadManager
                     {
                         int numread = is.read(buf);
                         count += numread;
-                        // 计算进度条位置
-                        // 更新进度
-                        Message msg = new Message();
-                        msg.what = DOWNLOAD;
-                        msg.arg1 = (int) (((float) count / length) * 100);
-                        mHandler.sendMessage(msg);
-                        if (numread <= 0)
-                        {
-                            // 下载完成
-                            Message msg2 = new Message();
-                            msg2.what = DOWNLOAD_FINISH;
-                            msg2.obj = fileName;
-                            mHandler.sendMessage(msg2);
 
+                        if (numread <= 0) { // done
+                            progress = 100;
                             break;
+                        } else {
+                            progress = (int) (((float) count / length) * 100);                            
                         }
-                        // 写入文件
                         fos.write(buf, 0, numread);
                     } while (!cancelDownload);// 点击取消就停止下载.
                     fos.close();
@@ -133,21 +191,7 @@ public class DownloadManager
             {
                 e.printStackTrace();
             }
-            mDownloadList.remove(this);
         }
         
     };
-
-    public void installApk(String fileName)
-    {
-        File apkfile = new File(mSavePath, fileName);
-        if (!apkfile.exists())
-        {
-            return;
-        }
-        // 通过Intent安装APK文件
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setDataAndType(Uri.parse("file://" + apkfile.toString()), "application/vnd.android.package-archive");
-        mContext.startActivity(i);
-    }
 }

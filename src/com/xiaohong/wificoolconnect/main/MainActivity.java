@@ -45,6 +45,7 @@ import com.coolwifi.wifiadmin.*;
 import com.xiaohong.wificoolconnect.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
  
@@ -55,42 +56,46 @@ import android.os.Bundle;
 
 
 public class MainActivity extends Activity {
-	private static final String TAG = "[WifiAdmin]";
+	private static final String TAG = "WifiConnector";
+    private static final int DOWNLOAD = 1;
+    private static final int DOWNLOAD_FINISH = 2;
+
 	private WebView webView;
-//	private WifiManager wifiManager;
-	private UpdateManager updateManager;
-    private DownloadManager downloadManager;
+	private UpdateManager mUpdateManager;
+    private DownloadManager mDownloadManager;
 	private WifiAdmin wifiAdmin;
-//	private AppInstallReceiver mAppInstallReceiver;
+	private HashMap<String, String> mDownloadAppInfoHashMap;
+	
 	private BroadcastReceiver mAppInstallReceiver = new BroadcastReceiver() {
 	    @Override
 	    public void onReceive(Context context, Intent intent) {
 
 	        String packageName = null;
-	        if (intent.getAction().equals(Intent.ACTION_PACKAGE_ADDED)) {
-	            packageName = intent.getData().getSchemeSpecificPart();
-	        } else if (intent.getAction().equals(Intent.ACTION_PACKAGE_REPLACED)) {
+	        if (intent.getAction().equals(Intent.ACTION_PACKAGE_ADDED)
+	            || intent.getAction().equals(Intent.ACTION_PACKAGE_REPLACED)) {
 	            packageName = intent.getData().getSchemeSpecificPart();
 	        }
-//	        if (intent.getAction().equals(Intent.ACTION_PACKAGE_REMOVED)) {
-//	            String packageName = intent.getData().getSchemeSpecificPart();
-//	            Toast.makeText(context, "卸载成功"+packageName, Toast.LENGTH_LONG).show();
-//	        }
+//	        if (intent.getAction().equals(Intent.ACTION_PACKAGE_REMOVED)) {}
 
 	        ApplicationInfo applicationInfo = null;
 	        PackageManager packageManager = null;
 	        try {
 	            packageManager = context.getPackageManager();
 	            applicationInfo = packageManager.getApplicationInfo(packageName, 0);
-	        } catch (PackageManager.NameNotFoundException e) {
-	            applicationInfo = null;
-	        }
-	        String applicationName = (String) packageManager.getApplicationLabel(applicationInfo);
-	        Toast.makeText(context, "安装成功: "+applicationName, Toast.LENGTH_LONG).show();
-	        // todo ： 通知server安装成功
-	    }
+    	        String applicationName = (String) packageManager.getApplicationLabel(applicationInfo);
+    	        String appId = mDownloadAppInfoHashMap.get(applicationName); 
+    	        if (appId != null) {
+    	            Toast.makeText(context, "安装成功: "+applicationName, Toast.LENGTH_LONG).show();	            
+    	            webView.loadUrl("javascript: appInstallFinished("+appId+")" );
+    	            mDownloadAppInfoHashMap.remove(applicationName);
+    	        }
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
 	};
-    private BroadcastReceiver mWifiConnectReceiver = new BroadcastReceiver() {
+
+	private BroadcastReceiver mWifiConnectReceiver = new BroadcastReceiver() {
 		@Override
     	public void onReceive(Context context, Intent intent) {
 	        Log.d(TAG, "Wifi onReceive action = " + intent.getAction());
@@ -122,8 +127,6 @@ public class MainActivity extends Activity {
 	    }
     };
 	
-
-
     BroadcastReceiver mConnectionReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -147,18 +150,16 @@ public class MainActivity extends Activity {
         {
             switch (msg.what)
             {
-//            case DOWNLOAD:
-//                if (mProgress != null) {
-//                    mProgress.setProgress(msg.arg1);                    
-//                }
-//                break;
-//            case DOWNLOAD_FINISH:
-//                if (mDownloadDialog != null) {
-//                    mDownloadDialog.dismiss();
-//                    mDownloadDialog = null;
-//                }
-//                mDownloadManager.installApk( msg.obj.toString());
-//                break;
+            case DOWNLOAD:
+//                Log.i(TAG, "download progress:"+msg.arg1);
+                webView.loadUrl("javascript: updateDownloadProgress("+msg.arg1+")" );
+                break;
+            case DOWNLOAD_FINISH:
+                Log.i(TAG, "download finished.");
+                webView.loadUrl("javascript: finishDownloadProgress()");
+                String fileName = msg.obj.toString();
+                mDownloadManager.installApk(fileName);
+                break;
             default:
                 break;
             }
@@ -188,13 +189,15 @@ public class MainActivity extends Activity {
 
 		registerWIFI();
 		registerConnection();
-		registerAppInstall();		
+		registerAppInstall();
 
 		PushManager.getInstance().initialize(this.getApplicationContext());
 
-		wifiAdmin = new WifiAdmin(getBaseContext()); 
-        updateManager = new UpdateManager(MainActivity.this);
-        downloadManager = new DownloadManager(MainActivity.this, mDownloadHandler);
+		wifiAdmin = new WifiAdmin(getBaseContext());
+        mUpdateManager = new UpdateManager(MainActivity.this);
+        mDownloadManager = new DownloadManager(MainActivity.this, mDownloadHandler);
+        mDownloadAppInfoHashMap = new HashMap<String, String>();
+
         boolean open = wifiAdmin.openWifi();
         Log.i(TAG, "wifi open:" + open);
         wifiAdmin.startScan();
@@ -259,7 +262,7 @@ public class MainActivity extends Activity {
         webView.addJavascriptInterface(this, "android");
         setContentView(webView);
 
-        updateManager.checkUpdate();
+        mUpdateManager.checkUpdate();
     }
     
     @Override
@@ -291,16 +294,17 @@ public class MainActivity extends Activity {
     }
     
 //    @JavascriptInterface
-    public void downloadApp(String appUrl) {
+    public void downloadApp(String appId, String appName, String appUrl) {
     	Log.d(TAG, "download app");
+    	mDownloadAppInfoHashMap.put(appName, appId);
     	try {
-			downloadManager.downloadApk(appUrl, "_"+(int)(Math.random()*100000)+".apk");
+			mDownloadManager.downloadApk(appUrl, "_"+(int)(Math.random()*100000)+".apk");
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
-    
+
 //    @JavascriptInterface
     public void connectWifi(String ssid, String passwd) {
     	Log.d(TAG, "Try to connect wifi");
