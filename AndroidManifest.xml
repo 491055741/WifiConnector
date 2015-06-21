@@ -61,7 +61,7 @@
 	            <category android:name="android.intent.category.LAUNCHER" />  
 	        </intent-filter>  
 	    </activity> 
-
+<!-- 
 	    <receiver android:name=".main.AppInstallReceiver"
             android:label="@string/app_name">
             <intent-filter>
@@ -71,7 +71,7 @@
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
-	    
+	  -->   
         <!-- 个推SDK配置开始 -->
         <!-- 配置的第三方参数属性 -->
         <meta-data

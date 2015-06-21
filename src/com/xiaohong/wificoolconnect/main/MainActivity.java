@@ -14,6 +14,8 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -46,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
  
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -56,8 +59,37 @@ public class MainActivity extends Activity {
 	private WebView webView;
 //	private WifiManager wifiManager;
 	private UpdateManager updateManager;
+    private DownloadManager downloadManager;
 	private WifiAdmin wifiAdmin;
+//	private AppInstallReceiver mAppInstallReceiver;
+	private BroadcastReceiver mAppInstallReceiver = new BroadcastReceiver() {
+	    @Override
+	    public void onReceive(Context context, Intent intent) {
 
+	        String packageName = null;
+	        if (intent.getAction().equals(Intent.ACTION_PACKAGE_ADDED)) {
+	            packageName = intent.getData().getSchemeSpecificPart();
+	        } else if (intent.getAction().equals(Intent.ACTION_PACKAGE_REPLACED)) {
+	            packageName = intent.getData().getSchemeSpecificPart();
+	        }
+//	        if (intent.getAction().equals(Intent.ACTION_PACKAGE_REMOVED)) {
+//	            String packageName = intent.getData().getSchemeSpecificPart();
+//	            Toast.makeText(context, "卸载成功"+packageName, Toast.LENGTH_LONG).show();
+//	        }
+
+	        ApplicationInfo applicationInfo = null;
+	        PackageManager packageManager = null;
+	        try {
+	            packageManager = context.getPackageManager();
+	            applicationInfo = packageManager.getApplicationInfo(packageName, 0);
+	        } catch (PackageManager.NameNotFoundException e) {
+	            applicationInfo = null;
+	        }
+	        String applicationName = (String) packageManager.getApplicationLabel(applicationInfo);
+	        Toast.makeText(context, "安装成功: "+applicationName, Toast.LENGTH_LONG).show();
+	        // todo ： 通知server安装成功
+	    }
+	};
     private BroadcastReceiver mWifiConnectReceiver = new BroadcastReceiver() {
 		@Override
     	public void onReceive(Context context, Intent intent) {
@@ -109,6 +141,29 @@ public class MainActivity extends Activity {
         }
     };
 
+    private Handler mDownloadHandler = new Handler()
+    {
+        public void handleMessage(Message msg)
+        {
+            switch (msg.what)
+            {
+//            case DOWNLOAD:
+//                if (mProgress != null) {
+//                    mProgress.setProgress(msg.arg1);                    
+//                }
+//                break;
+//            case DOWNLOAD_FINISH:
+//                if (mDownloadDialog != null) {
+//                    mDownloadDialog.dismiss();
+//                    mDownloadDialog = null;
+//                }
+//                mDownloadManager.installApk( msg.obj.toString());
+//                break;
+            default:
+                break;
+            }
+        };
+    };
 	@Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -121,16 +176,25 @@ public class MainActivity extends Activity {
 		}
     }
 
+	@Override
+	protected void onDestroy() {
+	          // TODO Auto-generated method stub
+	          super.onDestroy();
+	          //当Activity销毁的时候取消注册BroadcastReceiver
+	          unregisterReceiver(mAppInstallReceiver);
+	}
+
 	@SuppressLint("SetJavaScriptEnabled") private void init() throws JSONException{
 
 		registerWIFI();
 		registerConnection();
-//		registerAppInstall();		
+		registerAppInstall();		
 
 		PushManager.getInstance().initialize(this.getApplicationContext());
 
 		wifiAdmin = new WifiAdmin(getBaseContext()); 
         updateManager = new UpdateManager(MainActivity.this);
+        downloadManager = new DownloadManager(MainActivity.this, mDownloadHandler);
         boolean open = wifiAdmin.openWifi();
         Log.i(TAG, "wifi open:" + open);
         wifiAdmin.startScan();
@@ -230,7 +294,7 @@ public class MainActivity extends Activity {
     public void downloadApp(String appUrl) {
     	Log.d(TAG, "download app");
     	try {
-			updateManager.downloadApk(appUrl, "_"+(int)(Math.random()*100000)+".apk");
+			downloadManager.downloadApk(appUrl, "_"+(int)(Math.random()*100000)+".apk");
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -324,12 +388,13 @@ public class MainActivity extends Activity {
         registerReceiver(mConnectionReceiver, intentFilter); 
     }
 
-//    private void registerAppInstall() {
-//        IntentFilter intentFilter = new IntentFilter();
-//        intentFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
-//        intentFilter.addAction(Intent.ACTION_PACKAGE_REPLACED);
-//        registerReceiver(mAppInstallReceiver, intentFilter); 
-//    }
+    private void registerAppInstall() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_PACKAGE_ADDED);
+        filter.addAction(Intent.ACTION_PACKAGE_REPLACED);
+        filter.addDataScheme("package");
+        registerReceiver(mAppInstallReceiver, filter);
+    }
 
 //    @JavascriptInterface
     public boolean isAppInstalled(String appName, int versionCode) {

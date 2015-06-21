@@ -37,24 +37,18 @@ import android.widget.ProgressBar;
 
 public class UpdateManager
 {
-    /* 下载中 */
     private static final int DOWNLOAD = 1;
-    /* 下载结束 */
     private static final int DOWNLOAD_FINISH = 2;
     
     private static String TAG = "UpdateManager";
-    /* 保存解析的XML信息 */
-    HashMap<String, String> mHashMap;
-    /* 下载保存路径 */
-    private String mSavePath;
-    /* 是否取消更新 */
-    private boolean cancelUpdate = false;
+    HashMap<String, String> mHashMap; // update info
 
     private Context mContext;
     /* 更新进度条 */
     private ProgressBar mProgress;
     private Dialog mDownloadDialog;
-
+    private DownloadManager mDownloadManager;
+    
     private Handler mHandler = new Handler()
     {
         public void handleMessage(Message msg)
@@ -67,7 +61,11 @@ public class UpdateManager
             	}
                 break;
             case DOWNLOAD_FINISH:
-                installApk( msg.obj.toString());
+                if (mDownloadDialog != null) {
+                    mDownloadDialog.dismiss();
+                    mDownloadDialog = null;
+                }
+                mDownloadManager.installApk( msg.obj.toString());
                 break;
             default:
                 break;
@@ -78,6 +76,7 @@ public class UpdateManager
     public UpdateManager(Context context)
     {
         this.mContext = context;
+        mDownloadManager = new DownloadManager(context, mHandler);
     }
 
     public void checkUpdate() throws NotFoundException, JSONException
@@ -121,12 +120,10 @@ public class UpdateManager
 	private int getVersionCode(Context context)
 	{
 	    int versionCode = 0;
-	    try
-	    {
+	    try {
 	        // 获取软件版本号，对应AndroidManifest.xml下android:versionCode
 	        versionCode = context.getPackageManager().getPackageInfo("com.xiaohong.wificoolconnect", 0).versionCode;
-	    } catch (NameNotFoundException e)
-	    {
+	    } catch (NameNotFoundException e) {
 	        e.printStackTrace();
 	    }
 	    return versionCode;
@@ -171,7 +168,6 @@ public class UpdateManager
 
     private void showDownloadDialog() throws MalformedURLException
     {
-        // 构造软件下载对话框
         AlertDialog.Builder builder = new Builder(mContext);
         builder.setTitle(R.string.soft_updating);
         // 给下载对话框增加进度条
@@ -186,109 +182,12 @@ public class UpdateManager
             public void onClick(DialogInterface dialog, int which)
             {
                 dialog.dismiss();
-                cancelUpdate = true;
+                mDownloadManager.cancelDownload(mHashMap.get("url"));
             }
         });
         mDownloadDialog = builder.create();
         mDownloadDialog.show();
-        downloadApk(mHashMap.get("url"), mHashMap.get("name"));
+        mDownloadManager.downloadApk(mHashMap.get("url"), mHashMap.get("name"));
     }
 
-    public void downloadApk(String url, String fileName) throws MalformedURLException
-    {
-    	new DownloadFileThread(url, fileName).start();
-    }
-
-    private class DownloadFileThread extends Thread
-    {
-    	private URL url;
-    	private String fileName;
-    	public DownloadFileThread(String url, String fileName) throws MalformedURLException {
-    		this.url = new URL(url);
-    		this.fileName = fileName;
-    	}
-        @Override
-        public void run()
-        {
-            try
-            {
-                // 判断SD卡是否存在，并且是否具有读写权限
-                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
-                {
-                    // 获得存储卡的路径
-                    String sdpath = Environment.getExternalStorageDirectory() + "/";
-                    mSavePath = sdpath + "download";
-                    // 创建连接
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    conn.connect();
-                    // 获取文件大小
-                    int length = conn.getContentLength();
-                    // 创建输入流
-                    InputStream is = conn.getInputStream();
-
-                    File file = new File(mSavePath);
-                    // 判断文件目录是否存在
-                    if (!file.exists())
-                    {
-                        file.mkdir();
-                    }
-                    File apkFile = new File(mSavePath, fileName);
-                    FileOutputStream fos = new FileOutputStream(apkFile);
-                    int count = 0;
-                    // 缓存
-                    byte buf[] = new byte[1024];
-                    // 写入到文件中
-                    do
-                    {
-                        int numread = is.read(buf);
-                        count += numread;
-                        // 计算进度条位置
-                        // 更新进度
-                        Message msg = new Message();
-                        msg.what = DOWNLOAD;
-                        msg.arg1 = (int) (((float) count / length) * 100);
-                        mHandler.sendMessage(msg);
-                        if (numread <= 0)
-                        {
-                            // 下载完成
-                            Message msg2 = new Message();
-                            msg2.what = DOWNLOAD_FINISH;
-                            msg2.obj = fileName;
-                            mHandler.sendMessage(msg2);
-
-                            break;
-                        }
-                        // 写入文件
-                        fos.write(buf, 0, numread);
-                    } while (!cancelUpdate);// 点击取消就停止下载.
-                    fos.close();
-                    is.close();
-                }
-            } catch (MalformedURLException e)
-            {
-                e.printStackTrace();
-            } catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            // 取消下载对话框显示
-            if (mDownloadDialog != null) {
-                mDownloadDialog.dismiss();
-                mDownloadDialog = null;
-            }
-        }
-    };
-
-    private void installApk(String fileName)
-    {
-        File apkfile = new File(mSavePath, fileName);
-        if (!apkfile.exists())
-        {
-            return;
-        }
-        // 通过Intent安装APK文件
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setDataAndType(Uri.parse("file://" + apkfile.toString()), "application/vnd.android.package-archive");
-        mContext.startActivity(i);
-    }
 }
