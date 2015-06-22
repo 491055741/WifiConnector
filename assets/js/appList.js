@@ -1,10 +1,16 @@
 var appServerUrl = "http://livew.mobdsp.com/cb"; var callback = "callback=?";
 // var appServerUrl = "http://127.0.0.1:5000"; //var callback = "";
 var milkPapaServerUrl = "http://app.milkpapa.com:5000";
-// var callback = "callback=?";
+var isAutoLogin = true;
 
 (function($){
     NProgress.configure({ parent: '#mainFooter' });
+    $.ajaxSetup({
+        error: function (x, e) {
+            showLoader("服务器错误，请稍后再试");
+            setTimeout("hideLoader()", 3000);
+        }
+    });
 })(jQuery);
 
 // js-Android interface
@@ -59,7 +65,7 @@ $("#LoginPage").on("pageinit", function () {
 
 $("#LoginPage").on("pageshow", function () {
     console.log("login page show");
-    if ($("#loginUsername").val()!='' && $("#loginUsername").val()!='手机号' && isPhoneNumber($("#loginUsername").val())
+    if (isAutoLogin && $("#loginUsername").val()!='' && $("#loginUsername").val()!='手机号' && isPhoneNumber($("#loginUsername").val())
         && $("#loginPassword").val()!='') {
         me.login();
     }
@@ -88,6 +94,7 @@ $("#MainPage").on("pageinit", function() {
 })
 
 $("#logoutBtn").fastClick(function() {
+    isAutoLogin = false;
     changePage("#LoginPage");
 });
 
@@ -97,6 +104,7 @@ $("#registBtn").fastClick(function() {
 
 $("#loginBtn").fastClick( function() {
     me.login();
+    isAutoLogin = true;
 });
 
 $("input").bind("focus", function() { 
@@ -111,6 +119,13 @@ $(".verifyCodeBtn").fastClick(function() {
 $(".changePwdBtn").fastClick(function() {
     me.isChangingPassword = true;
     changePage("#RegisterPage");
+});
+
+$(".feedbackBtn").fastClick(function() {
+    console.log("feedback");
+    if (window.android != undefined) {
+        window.android.feedback("donotcrazy@163.com");
+    }
 });
 
 $("#toRegistBtn").fastClick(function() {
@@ -683,6 +698,7 @@ var me = {
             var url = appServerUrl+"/applogin?"+callback+"&phone_number="+phone_number+"&passwd="+passwd;
             console.log(url);
             showLoader("登录中，请稍候");
+
             $.getJSON(url, function(data) {
                 hideLoader();
                 if (data.ret_code == 0) {

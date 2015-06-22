@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
+import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -416,11 +417,25 @@ public class MainActivity extends Activity {
         ArrayList<AppInfo> list = getAllAppList();
         for (Iterator<AppInfo> iterator = list.iterator(); iterator.hasNext();) {
             AppInfo appInfo = (AppInfo) iterator.next();
-            if (appName == appInfo.getAppname()) { // todo: 
+            if (appName.equals(appInfo.getAppname())) { 
                 return true;
             }
         }
         return false;
+    }
+
+    //  @JavascriptInterface
+    public void feedback(String email) {
+        //Email
+        Intent intent = new Intent(Intent.ACTION_SEND); 
+        String[] tos = {email}; 
+//        String[] ccs = {"you@yahoo.com"}; 
+        intent.putExtra(Intent.EXTRA_EMAIL, tos); 
+//        intent.putExtra(Intent.EXTRA_CC, ccs);
+//         intent.putExtra(Intent.EXTRA_TEXT, "The email body text"); 
+        intent.putExtra(Intent.EXTRA_SUBJECT, "问题反馈"); 
+        intent.setType("message/rfc822"); 
+        startActivity(Intent.createChooser(intent, "选择邮件客户端"));
     }
 
     private ArrayList<AppInfo> getAllAppList() {
