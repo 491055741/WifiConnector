@@ -42,6 +42,8 @@ import org.json.JSONObject;
 
 import com.coolwifi.updatemanager.*;
 import com.coolwifi.wifiadmin.*;
+import com.umeng.analytics.AnalyticsConfig;
+import com.umeng.analytics.MobclickAgent;
 import com.xiaohong.wificoolconnect.R;
 
 import java.util.ArrayList;
@@ -187,6 +189,7 @@ public class MainActivity extends Activity {
 
 	@SuppressLint("SetJavaScriptEnabled") private void init() throws JSONException{
 
+	    AnalyticsConfig.setChannel("channel");
 		registerWIFI();
 		registerConnection();
 		registerAppInstall();
@@ -232,7 +235,6 @@ public class MainActivity extends Activity {
 //      webView.loadUrl("http://app.milkpapa.com:8080/?_="+(int)(Math.random()*10000));
       webView.loadUrl("file:///android_asset/appBase.html");
         CookieManager.getInstance().setAcceptCookie(true);
-            //覆盖WebView默认使用第三方或系统默认浏览器打开网页的行为，使网页用WebView打开
         webView.setWebViewClient(new WebViewClient(){
             @Override
 	        public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -265,6 +267,15 @@ public class MainActivity extends Activity {
         mUpdateManager.checkUpdate();
     }
     
+	public void onResume() {
+	    super.onResume();
+	    MobclickAgent.onResume(this);
+    }
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
+	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

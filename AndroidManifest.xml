@@ -186,6 +186,9 @@
 
         <!-- 个推SDK配置结束 -->    
         
+        <!-- 友盟  -->
+        <meta-data android:value="55877b8067e58e1674004760" android:name="UMENG_APPKEY"></meta-data>
+
     </application>
 
 </manifest>

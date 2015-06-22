@@ -5,10 +5,6 @@ var milkPapaServerUrl = "http://app.milkpapa.com:5000";
 
 (function($){
     NProgress.configure({ parent: '#mainFooter' });
-    // $("#b-0").click(function() { NProgress.start(); });
-    // $("#b-40").click(function() { NProgress.set(0.4); });
-    // $("#b-inc").click(function() { NProgress.inc(); });
-    // $("#b-100").click(function() { NProgress.done(); });
 })(jQuery);
 
 // js-Android interface
@@ -75,8 +71,7 @@ $("#RegisterPage").on("pageshow", function () {
 
 $("#MainPage").on("pageshow", function () {
     console.log("main page show");
-    // setTimeout(function() { NProgress.start(); $(".spinner").hide(); }, 1000);
-    // setTimeout(function() { NProgress.done(); $('.fade').removeClass('out'); }, 3000);
+    // me.showMessage();
 });
 
 $("#MainPage").on("pageinit", function() {
@@ -344,6 +339,7 @@ var me = {
         });
         $(".app-list .installBtn").fastClick(function() {
            me.downloadApp(this);
+           $(this).addClass("inactive");
         });
     },
 
@@ -534,6 +530,22 @@ var me = {
             }
         );
         return objURL;
+    },
+
+    showMessage : function () {
+        $("#twitter li:not(:first)").css("display","none");
+        var B = $("#twitter li:last");
+        var C = $("#twitter li:first");
+        setInterval(function() {
+            if (B.is(":visible")) {
+                C.fadeIn(500).addClass("in");
+                B.hide()
+            } else {
+                $("#twitter li:visible").addClass("in");
+                $("#twitter li.in").next().fadeIn(500);
+                $("li.in").hide().removeClass("in");
+            }
+        },3000); //每3秒切换一条
     },
 
     requestVerifyCode : function() {

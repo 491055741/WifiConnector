@@ -1,5 +1,6 @@
 package com.xiaohong.wificoolconnect.main;
 
+import com.umeng.analytics.MobclickAgent;
 import com.xiaohong.wificoolconnect.R;
 
 import android.app.Activity;
@@ -31,5 +32,14 @@ public class SplashActivity extends Activity {
     // much easier to handle key events   
     @Override  
     public void onBackPressed() {  
-    }  
+    }
+    
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
 }  
