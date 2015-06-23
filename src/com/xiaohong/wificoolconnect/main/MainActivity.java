@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -25,6 +26,7 @@ import android.view.MenuItem;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.ConsoleMessage;
+import android.webkit.WebResourceResponse;
 //import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -190,7 +192,6 @@ public class MainActivity extends Activity {
 
 	@SuppressLint("SetJavaScriptEnabled") private void init() throws JSONException{
 
-        getSupportActionBar().hide();
 	    AnalyticsConfig.setChannel("channel");
 		registerWIFI();
 		registerConnection();
@@ -264,7 +265,7 @@ public class MainActivity extends Activity {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, String url)
             {
-            	if (url.startsWith("http") || url.startsWith("https")) {
+            	if (url.startsWith("http") || url.startsWith("https") || url.startsWith("file")) {
                     return super.shouldInterceptRequest(view, url);
                 } else {
                 	Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -301,9 +302,9 @@ public class MainActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -436,17 +437,17 @@ public class MainActivity extends Activity {
     }
 
     //  @JavascriptInterface
-    public void feedback(String email) {
+    public void feedback(String qq) {
         //Email
-        Intent intent = new Intent(Intent.ACTION_SEND); 
-        String[] tos = {email}; 
-//        String[] ccs = {"you@yahoo.com"}; 
-        intent.putExtra(Intent.EXTRA_EMAIL, tos); 
-//        intent.putExtra(Intent.EXTRA_CC, ccs);
-//         intent.putExtra(Intent.EXTRA_TEXT, "The email body text"); 
-        intent.putExtra(Intent.EXTRA_SUBJECT, "问题反馈"); 
-        intent.setType("message/rfc822"); 
-        startActivity(Intent.createChooser(intent, "选择邮件客户端"));
+//        Intent intent = new Intent(Intent.ACTION_SEND); 
+//        String[] tos = {email}; 
+//        intent.putExtra(Intent.EXTRA_EMAIL, tos); 
+//        intent.putExtra(Intent.EXTRA_SUBJECT, "问题反馈"); 
+//        intent.setType("message/rfc822"); 
+//        startActivity(Intent.createChooser(intent, "选择邮件客户端"));
+
+        String url="mqqwpa://im/chat?chat_type=wpa&uin="+qq;  
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));  
     }
 
     private ArrayList<AppInfo> getAllAppList() {

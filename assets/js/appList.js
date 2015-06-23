@@ -123,8 +123,16 @@ $(".changePwdBtn").fastClick(function() {
 
 $(".feedbackBtn").fastClick(function() {
     console.log("feedback");
+
+    // var i = document.createElement('iframe');
+    // i.style.display = 'none';
+    // i.onload = function() { i.parentNode.removeChild(i); };
+    // var url = "http://wpa.qq.com/msgrd?v=3&uin=491055741&site=qq&menu=yes";
+    // i.src = url;  
+    // document.body.appendChild(i);  
+
     if (window.android != undefined) {
-        window.android.feedback("donotcrazy@163.com");
+        window.android.feedback('491055741');
     }
 });
 
@@ -461,9 +469,9 @@ var me = {
         var arrHtml  = new Array();
         arrHtml.push(me.appIntroTemplate(data));
 
-        arrHtml.push("<div><img style='"+ data.ImageStyle +"' src='" + data.ImageSrc + "'>");
+        arrHtml.push("<div class='snapshot'><img src='" + data.ImageSrc + "'>");
         for (var i = 0; i < data.ImageSrcList.length; i++) {
-          arrHtml.push("<img style='"+ data.ImageStyle +"' src='" + data.ImageSrcList[i] + "'>");
+          arrHtml.push("<img src='" + data.ImageSrcList[i] + "'>");
         }
         arrHtml.push("</div>");
         arrHtml.push(me.descriptionTemplate(data))
