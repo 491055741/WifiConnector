@@ -190,6 +190,7 @@ public class MainActivity extends Activity {
 
 	@SuppressLint("SetJavaScriptEnabled") private void init() throws JSONException{
 
+        getSupportActionBar().hide();
 	    AnalyticsConfig.setChannel("channel");
 		registerWIFI();
 		registerConnection();
@@ -238,29 +239,39 @@ public class MainActivity extends Activity {
         CookieManager.getInstance().setAcceptCookie(true);
         webView.setWebViewClient(new WebViewClient(){
             @Override
-	        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-	            // TODO Auto-generated method stub
-	               //返回值是true的时候控制去WebView打开，为false调用系统浏览器或第三方浏览器
-	             view.loadUrl(url);
+	        public boolean shouldOverrideUrlLoading(WebView view, String url)
+            {
+                //返回值是true的时候控制去WebView打开，为false调用系统浏览器或第三方浏览器
+	            view.loadUrl(url);
 	            return true;
 	        }
 
 	       	@Override
-	    	public void onPageFinished(WebView view, String url) 
-	    	 {
+	    	public void onPageFinished(WebView view, String url)
+	       	{
 	    	        super.onPageFinished(view, url);
 	    	        String jsonStr = null;
 					try {
 						jsonStr = wifiListJsonString();
 					} catch (JSONException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
                     Log.d("tag", jsonStr);
 	    	        webView.loadUrl("javascript: refreshWifiList()" );
 	                webView.loadUrl("javascript: wifiStatusChanged()" );
-	    	 }
+	    	}
 
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, String url)
+            {
+            	if (url.startsWith("http") || url.startsWith("https")) {
+                    return super.shouldInterceptRequest(view, url);
+                } else {
+                	Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                	startActivity(in);
+                	return null;
+                }
+            }
         });
         webView.addJavascriptInterface(this, "android");
         setContentView(webView);
