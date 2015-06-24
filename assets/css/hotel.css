@@ -33,7 +33,7 @@ a { text-decoration:none;}
 .appDetail .down-area {width: 30%; height: 100% ;float: right; }
 .appDetail .snapshot img {width: 92px; margin: 0 0 0 21px; }
 
-.avatar_bg img {width: 100%; margin-bottom: 20px; }
+.avatar_bg img {width: 100%; }
 .acount_list {padding: 10px; }
 .account_item {font-size: 16px; }
 .acount_list img {width: 25px; height: 25px; float: left; }

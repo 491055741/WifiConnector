@@ -43,7 +43,7 @@ var wifiStatusChanged = function () {
             var url="http://sucrq.tuancity.com/v1.1/?surl=http://ht.yeahwifi.com/guide/succeed/?sid=yeahwifi_222&tk=123456&uid=yeahwifi_222";
             console.log(url);
             $.get(url, function(data, status) {
-                console.log("access ok.");
+                console.log("access internet success!");
             });
             $(".wifiStatus .statusOn").show();
             $(".wifiStatus .statusOff").hide();
@@ -236,6 +236,7 @@ var me = {
             var obj = eval("(" + jsonStr +")");
             me.parseWifiList(obj);
         }
+        wifiStatusChanged();
     },
 
     parseWifiList : function(data)

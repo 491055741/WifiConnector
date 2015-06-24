@@ -53,10 +53,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
  
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 
 
@@ -64,7 +67,7 @@ public class MainActivity extends Activity {
 	private static final String TAG = "WifiConnector";
     private static final int DOWNLOAD = 1;
     private static final int DOWNLOAD_FINISH = 2;
-
+    private static Boolean isExit = false;
 	private WebView webView;
 	private UpdateManager mUpdateManager;
     private DownloadManager mDownloadManager;
@@ -258,21 +261,9 @@ public class MainActivity extends Activity {
 						e.printStackTrace();
 					}
                     Log.d("tag", jsonStr);
-	    	        webView.loadUrl("javascript: refreshWifiList()" );
-	                webView.loadUrl("javascript: wifiStatusChanged()" );
+//	    	        webView.loadUrl("javascript: refreshWifiList()" );
+//	                webView.loadUrl("javascript: wifiStatusChanged()" );
 	    	}
-
-            @Override
-            public WebResourceResponse shouldInterceptRequest(WebView view, String url)
-            {
-            	if (url.startsWith("http") || url.startsWith("https") || url.startsWith("file")) {
-                    return super.shouldInterceptRequest(view, url);
-                } else {
-                	Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                	startActivity(in);
-                	return null;
-                }
-            }
         });
         webView.addJavascriptInterface(this, "android");
         setContentView(webView);
@@ -309,14 +300,37 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    public boolean onKeyDown(int keyCoder,KeyEvent event){
-        if(webView.canGoBack() && keyCoder == KeyEvent.KEYCODE_BACK){
-              webView.goBack();   //goBack()表示返回webView的上一页面
-                 return true;
-           }
+    public boolean onKeyDown(int keyCoder,KeyEvent event) {
+        if (keyCoder != KeyEvent.KEYCODE_BACK) {
+            return false;
+        }
+        if (webView.canGoBack()) {
+            webView.goBack();   //goBack()表示返回webView的上一页面
+            return true;
+        } else {
+            exitBy2Click();
+        }
         return false;
     }
-    
+
+    private void exitBy2Click() {
+        Timer tExit = null;
+        if (isExit == false) {
+            isExit = true; // 准备退出
+            Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            tExit = new Timer();
+            tExit.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    isExit = false; // 取消退出
+                }
+            }, 2000); // 如果2秒钟内没有按下返回键，则启动定时器取消掉刚才执行的任务
+        } else {
+            finish();
+            System.exit(0);
+        }
+    }
+
 //    @JavascriptInterface
     public void downloadApp(String appId, String appName, String appUrl) {
     	Log.d(TAG, "download app");
@@ -438,16 +452,23 @@ public class MainActivity extends Activity {
 
     //  @JavascriptInterface
     public void feedback(String qq) {
-        //Email
-//        Intent intent = new Intent(Intent.ACTION_SEND); 
-//        String[] tos = {email}; 
-//        intent.putExtra(Intent.EXTRA_EMAIL, tos); 
-//        intent.putExtra(Intent.EXTRA_SUBJECT, "问题反馈"); 
-//        intent.setType("message/rfc822"); 
-//        startActivity(Intent.createChooser(intent, "选择邮件客户端"));
 
-        String url="mqqwpa://im/chat?chat_type=wpa&uin="+qq;  
-        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));  
+        String packageName = "com.tencent.mobileqq";
+        if (MainActivity.isApkInstalled(getBaseContext(), packageName)) {
+            String url = "mqqwpa://im/chat?chat_type=wpa&uin="+qq;  
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));  
+        } else {
+            Toast.makeText(getBaseContext(), "请先安装QQ", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private static final boolean isApkInstalled(Context context, String packageName) {
+        try {
+            context.getPackageManager().getApplicationInfo(packageName, PackageManager.GET_UNINSTALLED_PACKAGES);
+            return true;
+        } catch (NameNotFoundException e) {
+            return false;
+        }
     }
 
     private ArrayList<AppInfo> getAllAppList() {
