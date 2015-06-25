@@ -141,10 +141,9 @@ $("#toRegistBtn").fastClick(function() {
     changePage("#RegisterPage");
 });
 
-$(".wifiStatus .ui-btn").fastClick(function() {
+$(".wifiStatus .statusOff.ui-btn").fastClick(function() {
     me.connectWifi(this);
 });
-
 
 var me = {
     countDownSeconds : 0, 
