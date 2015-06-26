@@ -9,6 +9,13 @@ a { text-decoration:none;}
 #toRegistBtn {width: 35%; float:left; margin-top:10px; }
 .verifyCodeBtn {width: 70%; float: right; margin-top: 20px; }
 #LoginPage .changePwdBtn {float: right; padding-top: 20px; }
+.licenseLink p {font-size: 13px; color: gray; }
+.licenseLink a {font-size: 13px; color: #38c; }
+.licenseWrapper {padding-top: 10px;color:#2e2e2e;}
+.licenseWrapper section {margin: 15px; font-size:14px;}
+.licenseWrapper h1 {color:#2e2e2e; font-size:24px; text-align: center; font-weight:100;}
+.licenseWrapper h2 {font-size:16px; margin: 30px 0 20px; font-weight:100;}
+.licenseWrapper p {color:#2e2e2e;}
 
 #connectionView .message_grid img {width: 18px; height: 18px; margin-left: 10px; }
 

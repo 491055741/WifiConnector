@@ -91,7 +91,7 @@ $("#MainPage").on("pageinit", function() {
     me.requestAppList();
     me.requestKulianWifi();
     me.showTab(0);
-})
+});
 
 $("#logoutBtn").fastClick(function() {
     isAutoLogin = false;
@@ -150,6 +150,7 @@ var me = {
     isChangingPassword : false,
     currentTabIdx : 0,
     kuLianWifi : null,
+    appList : null,
 
     showTab : function(idx) {
         var tabs = new Array("connectionView", "choiceView", "mineView");
@@ -337,17 +338,18 @@ var me = {
     {
     	showLoader();
         // +currentCat+
-        var url = milkPapaServerUrl+"/applist?"+callback;
+        var url = appServerUrl+"/applist?"+callback;
         console.log("requestAppList:" + url);
         $.getJSON(url, function(data) {
     		hideLoader();
+            me.appList = data;
     		me.parseAppList(data);
     	});
     },
 
     parseAppList : function(data)
     {
-    // console.log(data);
+        // console.log(data);
     	// var obj = eval("("+data+")"); // json to object
     	var html = me.appListTemplate(data);
 
@@ -368,8 +370,7 @@ var me = {
 
     appListTemplate : function(res) {
 
-        var data = res.applist;
-
+        var data = res.chosenapplist;
         var arrHtml = new Array();
 
         for (var i = 0; i < data.length; i++) {
@@ -417,14 +418,25 @@ var me = {
         return arrHtml.join("");
     },
 
+    getAppInfoById : function (appId) {
+        var choosenAppList = me.appList.chosenapplist;
+        for (var i = 0; i < choosenAppList.length; i++) {
+            if (choosenAppList[i].AppId == appId) {
+                return choosenAppList[i];
+            }
+        }
+        return null;
+    },
+
     clickOnApp : function (obj)
     {
-        me.requestAppDetail($(obj).data("appid"));
+        var appId = $(obj).data("appid");
+        me.requestAppDetail(appId);
     },
 
     requestAppDetail : function (appId)
     {
-        var url = milkPapaServerUrl+"/appdetail?"+callback+"&appid="+appId;
+        var url = appServerUrl+"/appdetail?"+callback+"&appid="+appId;
         console.log(url);
         showLoader();
         $.getJSON(url, function(data) {
@@ -455,8 +467,21 @@ var me = {
             setTimeout("hideLoader()", 2000);
             return;
         }
+
         if (window.android != undefined) {
-            window.android.downloadApp($(obj).data("appid"), $(obj).data("appname"), $(obj).data("appurl"));
+            var appId = $(obj).data("appid");
+            var appInfo = me.getAppInfoById(appId);
+            if (appInfo != null) {
+                var mac = window.android.getMacAddress();
+                var url= appInfo.Clickurl.replace("[M_MAC]", mac);
+                var imei = window.android.getIMEI();
+                url = url.replace("[M_IMEI]", imei);
+                $.getJSON(url, function(data) {
+                    console.log("report click:"+url);
+                });
+            }
+
+            window.android.downloadApp(appId, $(obj).data("appname"), $(obj).data("appurl"));
             showLoader("开始下载，完成安装前请不要退出本应用");
             setTimeout("hideLoader()", 2000);
         } else {

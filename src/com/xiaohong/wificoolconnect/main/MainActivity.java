@@ -13,6 +13,7 @@ import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -498,4 +499,25 @@ public class MainActivity extends Activity {
         }
         return false;
     }
+
+    public String getMacAddress()
+    {
+        Context context = getBaseContext();
+        WifiManager wifi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE); 
+        WifiInfo info = wifi.getConnectionInfo();
+        String macAddress = info.getMacAddress(); //获取mac地址
+//        int ipAddress = info.getIpAddress();  //获取ip地址    
+//        String ip = intToIp(ipAddress); 
+        return macAddress;
+    }
+
+    public String getIMEI()
+    {
+        String imei = ((TelephonyManager) getSystemService(TELEPHONY_SERVICE)).getDeviceId();
+        return imei;
+    }
+//    public String intToIp(int i)
+//    {       
+//        return ((i >> 24) & 0xFF) + "." + ((i >> 16) & 0xFF) + "." +((i >> 8 ) & 0xFF) + "." + ( i & 0xFF) ;     
+//    }    
 }
