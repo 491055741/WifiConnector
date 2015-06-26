@@ -436,7 +436,7 @@ var me = {
 
     requestAppDetail : function (appId)
     {
-        var url = appServerUrl+"/appdetail?"+callback+"&appid="+appId;
+        var url = appServerUrl+"/appdetail?"+callback+"&apptype=1&appid="+appId;
         console.log(url);
         showLoader();
         $.getJSON(url, function(data) {
