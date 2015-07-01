@@ -181,6 +181,14 @@ function hideLoader() {
     $.mobile.loading('hide');  
 }
 
+function setTitle(title) {
+    console.log("setTitle："+title);
+    // if (window.android != undefined) {
+    //     window.android.setPageTitle(title);
+    // }
+    $(document).attr("title",title);
+}
+
 function changePageAndHideLoader(pageName) {
     if (isAndroid()) {
         $.mobile.changePage($(pageName), {transition: "none"});

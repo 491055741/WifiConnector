@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <string name="app_name">WiFi酷连</string>
     <string name="hello_world">Hello world!</string>
@@ -11,4 +11,5 @@
     <string name="soft_update_later">稍后更新</string>
     <string name="soft_updating">正在更新</string>
     <string name="soft_update_cancel">取消</string>
+    <string name="back">返回</string>
 </resources>

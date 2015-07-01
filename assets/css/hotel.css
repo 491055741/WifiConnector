@@ -9,6 +9,7 @@ a { text-decoration:none;}
 #toRegistBtn {width: 35%; float:left; margin-top:10px; }
 .verifyCodeBtn {width: 70%; float: right; margin-top: 20px; }
 #LoginPage .changePwdBtn {float: right; padding-top: 20px; }
+#LoginPage .licenseLink {margin-top: 120px; }
 .licenseLink p {font-size: 13px; color: gray; }
 .licenseLink a {font-size: 13px; color: #38c; }
 .licenseWrapper {padding-top: 10px;color:#2e2e2e;}

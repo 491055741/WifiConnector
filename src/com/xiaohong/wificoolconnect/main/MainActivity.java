@@ -1,6 +1,7 @@
 package com.xiaohong.wificoolconnect.main;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -24,6 +25,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.ConsoleMessage;
@@ -32,10 +35,17 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.WebSettings;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.igexin.sdk.PushManager;
+
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.util.List;
 
@@ -48,12 +58,13 @@ import com.coolwifi.updatemanager.*;
 import com.coolwifi.wifiadmin.*;
 import com.umeng.analytics.AnalyticsConfig;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.fb.FeedbackAgent;
 import com.xiaohong.wificoolconnect.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+//import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
  
@@ -61,7 +72,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.Bundle;
+//import android.os.Bundle;
 
 
 public class MainActivity extends Activity {
@@ -74,6 +85,8 @@ public class MainActivity extends Activity {
     private DownloadManager mDownloadManager;
 	private WifiAdmin wifiAdmin;
 	private HashMap<String, String> mDownloadAppInfoHashMap;
+	private ActionBar mActionbar;
+	private FeedbackAgent feedbackAgent;
 	
 	private BroadcastReceiver mAppInstallReceiver = new BroadcastReceiver() {
 	    @Override
@@ -188,19 +201,20 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onDestroy() {
-	          // TODO Auto-generated method stub
-	          super.onDestroy();
-	          //当Activity销毁的时候取消注册BroadcastReceiver
-	          unregisterReceiver(mAppInstallReceiver);
+	    super.onDestroy();
+        unregisterReceiver(mAppInstallReceiver);
 	}
 
 	@SuppressLint("SetJavaScriptEnabled") private void init() throws JSONException{
 
+	    initCustomActionBar();
 	    AnalyticsConfig.setChannel("channel");
-		registerWIFI();
+
+	    registerWIFI();
 		registerConnection();
 		registerAppInstall();
-
+        feedbackAgent = new FeedbackAgent(this);
+		feedbackAgent.sync();
 		PushManager.getInstance().initialize(this.getApplicationContext());
 
 		wifiAdmin = new WifiAdmin(getBaseContext());
@@ -218,9 +232,6 @@ public class MainActivity extends Activity {
         webSettings.setJavaScriptEnabled(true);
         webSettings.setBuiltInZoomControls(false);
         webSettings.setSupportZoom(false);
-//        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-
-//        webSettings.setUserAgentString(getUserAgent());
         webSettings.setDomStorageEnabled(true);
         webSettings.setAppCacheMaxSize(1024*1024*8);
         String appCachePath = getApplicationContext().getCacheDir().getAbsolutePath();
@@ -229,49 +240,57 @@ public class MainActivity extends Activity {
         webSettings.setAppCacheEnabled(true);
         webSettings.setDatabaseEnabled(true);
         webSettings.setDatabasePath("/data/data/" + webView.getContext().getPackageName() + "/databases/");
-//        webView.setWebChromeClient(new WebChromeClient() {
-//            public boolean onConsoleMessage(ConsoleMessage cm) {
-//              Log.d("MyApplication", cm.message() + " -- From line "
-//                                   + cm.lineNumber() + " of "
-//                                   + cm.sourceId() );
-//              return true;
-//            }
-//          });
-//        String html = getAssetsFileContent("appBase.html");
-//        webView.loadDataWithBaseURL("file:///android_asset/", html, "text/html", "UTF-8", null);
-//      webView.loadUrl("http://app.milkpapa.com:8080/?_="+(int)(Math.random()*10000));
-      webView.loadUrl("file:///android_asset/appBase.html");
-        CookieManager.getInstance().setAcceptCookie(true);
-        webView.setWebViewClient(new WebViewClient(){
-            @Override
-	        public boolean shouldOverrideUrlLoading(WebView view, String url)
-            {
-                //返回值是true的时候控制去WebView打开，为false调用系统浏览器或第三方浏览器
-	            view.loadUrl(url);
-	            return true;
-	        }
+        webView.setWebChromeClient(new WebChromeClient() {
+            public boolean onConsoleMessage(ConsoleMessage cm) {
+              Log.d("MyApplication", cm.message() + " -- From line "
+                                   + cm.lineNumber() + " of "
+                                   + cm.sourceId() );
+              return true;
+            }
+            @Override 
+            public void onReceivedTitle(WebView view, String title) { 
 
-	       	@Override
-	    	public void onPageFinished(WebView view, String url)
-	       	{
-	    	        super.onPageFinished(view, url);
-	    	        String jsonStr = null;
-					try {
-						jsonStr = wifiListJsonString();
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-                    Log.d("tag", jsonStr);
-//	    	        webView.loadUrl("javascript: refreshWifiList()" );
-//	                webView.loadUrl("javascript: wifiStatusChanged()" );
-	    	}
+                TextView titleView = (TextView)mActionbar.getCustomView().findViewById(R.id.title_text);
+                titleView.setText(title);
+
+                Button backBtn = (Button)mActionbar.getCustomView().findViewById(R.id.back_btn);
+                if (view.canGoBack()) {
+                    backBtn.setVisibility(View.VISIBLE);
+                } else {
+                    backBtn.setVisibility(View.INVISIBLE);
+                }
+                super.onReceivedTitle(view, title);
+            }
         });
+
+        webView.loadUrl("file:///android_asset/appBase.html");
+        CookieManager.getInstance().setAcceptCookie(true);
         webView.addJavascriptInterface(this, "android");
         setContentView(webView);
 
         mUpdateManager.checkUpdate();
     }
     
+	private boolean initCustomActionBar() {
+
+	    if (mActionbar == null) {
+	        mActionbar = getActionBar();
+	        if (mActionbar == null) {
+	            return false;
+	        }
+	    }
+	    mActionbar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+	    mActionbar.setDisplayShowCustomEnabled(true);
+        mActionbar.setCustomView(R.layout.top_back_center_bar);
+	    mActionbar.getCustomView().findViewById(R.id.back_btn).setOnClickListener(new OnClickListener() {
+	        @Override
+	        public void onClick(View v) {
+                webView.goBack();
+	        }
+	    });
+	    return true;
+	}
+
 	public void onResume() {
 	    super.onResume();
 	    MobclickAgent.onResume(this);
@@ -452,8 +471,13 @@ public class MainActivity extends Activity {
     }
 
     //  @JavascriptInterface
-    public void feedback(String qq) {
+    public void feedback() {
+        feedbackAgent.startFeedbackActivity();
+        return;
+    }
 
+    //  @JavascriptInterface
+    public void openQQ(String qq) {
         String packageName = "com.tencent.mobileqq";
         if (MainActivity.isApkInstalled(getBaseContext(), packageName)) {
             String url = "mqqwpa://im/chat?chat_type=wpa&uin="+qq;  
@@ -462,7 +486,7 @@ public class MainActivity extends Activity {
             Toast.makeText(getBaseContext(), "请先安装QQ", Toast.LENGTH_LONG).show();
         }
     }
-
+    
     private static final boolean isApkInstalled(Context context, String packageName) {
         try {
             context.getPackageManager().getApplicationInfo(packageName, PackageManager.GET_UNINSTALLED_PACKAGES);
@@ -506,8 +530,6 @@ public class MainActivity extends Activity {
         WifiManager wifi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE); 
         WifiInfo info = wifi.getConnectionInfo();
         String macAddress = info.getMacAddress(); //获取mac地址
-//        int ipAddress = info.getIpAddress();  //获取ip地址    
-//        String ip = intToIp(ipAddress); 
         return macAddress;
     }
 
@@ -516,8 +538,5 @@ public class MainActivity extends Activity {
         String imei = ((TelephonyManager) getSystemService(TELEPHONY_SERVICE)).getDeviceId();
         return imei;
     }
-//    public String intToIp(int i)
-//    {       
-//        return ((i >> 24) & 0xFF) + "." + ((i >> 16) & 0xFF) + "." +((i >> 8 ) & 0xFF) + "." + ( i & 0xFF) ;     
-//    }    
+
 }

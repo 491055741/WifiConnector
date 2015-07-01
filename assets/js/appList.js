@@ -2,10 +2,11 @@ var appServerUrl = "http://livew.mobdsp.com/cb"; var callback = "callback=?";
 // var appServerUrl = "http://127.0.0.1:5000"; //var callback = "";
 var milkPapaServerUrl = "http://app.milkpapa.com:5000";
 var isAutoLogin = true;
-
+var testNetworkUrl = "http://app.milkpapa.com:5000/version";
 (function($){
     NProgress.configure({ parent: '#mainFooter' });
     $.ajaxSetup({
+        timeout : 10000,
         error: function (x, e) {
             showLoader("服务器错误，请稍后再试");
             setTimeout("hideLoader()", 3000);
@@ -40,13 +41,12 @@ var wifiStatusChanged = function () {
     console.log("wifiStatusChanged.");
     if (window.android != undefined) {
         if (window.android.isWifiAvailable()) {
-            var url="http://sucrq.tuancity.com/v1.1/?surl=http://ht.yeahwifi.com/guide/succeed/?sid=yeahwifi_222&tk=123456&uid=yeahwifi_222";
-            console.log(url);
-            $.get(url, function(data, status) {
-                console.log("access internet success!");
-            });
-            $(".wifiStatus .statusOn").show();
-            $(".wifiStatus .statusOff").hide();
+            // var url="http://sucrq.tuancity.com/v1.1/?surl=http://ht.yeahwifi.com/guide/succeed/?sid=yeahwifi_222&tk=123456&uid=yeahwifi_222";
+            // console.log(url);
+            // $.get(url, function(data, status) {
+            //     console.log("access internet success!");
+            // });
+            me.checkNetwork();
         } else {
             $(".wifiStatus .statusOff").show();
             $(".wifiStatus .statusOn").hide();
@@ -73,11 +73,11 @@ $("#LoginPage").on("pageshow", function () {
 
 $("#RegisterPage").on("pageshow", function () {
     console.log("register page show");
-});
-
-$("#MainPage").on("pageshow", function () {
-    console.log("main page show");
-    // me.showMessage();
+    if (me.isChangingPassword) {
+        setTitle("修改密码");
+    } else {
+        setTitle("注册");
+    }
 });
 
 $("#MainPage").on("pageinit", function() {
@@ -90,7 +90,12 @@ $("#MainPage").on("pageinit", function() {
     me.requestAds();
     me.requestAppList();
     me.requestKulianWifi();
-    me.showTab(0);
+});
+
+$("#MainPage").on("pageshow", function () {
+    console.log("main page show");
+    me.showTab(me.currentTabIdx);
+    // me.checkNetwork();
 });
 
 $("#logoutBtn").fastClick(function() {
@@ -121,18 +126,17 @@ $(".changePwdBtn").fastClick(function() {
     changePage("#RegisterPage");
 });
 
+$(".qqBtn").fastClick(function() {
+    console.log("QQ");
+    if (window.android != undefined) {
+        window.android.openQQ('123456789');
+    }
+});
+
 $(".feedbackBtn").fastClick(function() {
     console.log("feedback");
-
-    // var i = document.createElement('iframe');
-    // i.style.display = 'none';
-    // i.onload = function() { i.parentNode.removeChild(i); };
-    // var url = "http://wpa.qq.com/msgrd?v=3&uin=491055741&site=qq&menu=yes";
-    // i.src = url;  
-    // document.body.appendChild(i);  
-
     if (window.android != undefined) {
-        window.android.feedback('491055741');
+        window.android.feedback();
     }
 });
 
@@ -152,13 +156,50 @@ var me = {
     kuLianWifi : null,
     appList : null,
 
+    checkNetwork : function() {
+        console.log("checkNetwork: "+testNetworkUrl);
+        $.ajax({
+            type: "GET",
+            url: testNetworkUrl,
+            dataType : "jsonp",
+            jsonp: "callback",//服务端用于接收callback调用的function名的参数
+            jsonpCallback:"success_jsonpCallback",//callback的function名称
+            success : function(data) {
+                        console.log("checkNetwork success.");
+                        $(".wifiStatus .statusOn").show();
+                        $(".wifiStatus .statusOff").hide();
+                      },
+            error : function() {
+                        console.log("checkNetwork fail.");
+                        $(".wifiStatus .statusOn").hide();
+                        $(".wifiStatus .statusOff").show();
+                        me.authentication();
+                      }
+        });
+    },
+
+    authentication : function() {
+        console.log("authentication.");
+        // post the form
+        $.ajax({
+            type: "POST",
+            url: "http://10.10.10.1/portaltt/logon.cgi",
+            data: $("#loginform").serialize(),
+            cache : false,
+            success : function(data) {
+                        setTimeout(me.checkNetwork(), 1500);
+                      },
+            error : function() {
+                    console.log("post authentication form fail.");
+            }
+        });
+    },
+
     showTab : function(idx) {
         var tabs = new Array("connectionView", "choiceView", "mineView");
-        var titles = new Array("连接", "精选", "我的");
         for (var i = 0; i < tabs.length; i++) {
             if (i == idx) {
                 $("#" + tabs[i]).show();
-                $("#appListTitle").text(titles[i]);
                 $("#" + tabs[i] + "Btn").addClass("ui-btn-active");
             } else {
                 $("#" + tabs[i]).hide();
@@ -171,6 +212,8 @@ var me = {
         } else {
             slide.hide();
         }
+        var titles = new Array("连接", "精选", "我的");
+        setTitle(titles[idx]);
     },
 
     requestKulianWifi : function()
@@ -400,7 +443,7 @@ var me = {
             arrHtml.push("</dd>");
             arrHtml.push("<dd>");
             arrHtml.push("<div class=\"xiaobian-comment\">");
-            arrHtml.push(data[i].BriefSummary == "" ? "暂无介绍" : data[i].BriefSummary);
+            arrHtml.push(data[i].BriefSummary == "" ? "暂无介绍" : subString.autoAddEllipsis(data[i].BriefSummary, 22, true));
             arrHtml.push("</div></dd></dl></div>");
 
             arrHtml.push("<div class='coin_num' >+"+data[i].GiveCoin+"</div>");

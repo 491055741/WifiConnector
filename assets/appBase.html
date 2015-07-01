@@ -41,6 +41,10 @@
         <a class="ui-btn" href="" id="toRegistBtn">注册</a>
         <a class="ui-btn" href="" id="loginBtn">登录</a>
         <div class="changePwdBtn">忘记密码？</div>
+        <center><div class="licenseLink">
+            <p>点击上面按钮“登录”即表示您同意</p>
+            <a href="license.html">《用户协议》</a>
+        </div></center>
     </div>
 </div>
 
@@ -80,7 +84,7 @@
     </div>
 </div>
 
-<div data-role="page" id="MainPage" data-title="Wifi酷连">
+<div data-role="page" id="MainPage">
 
     <div role="main" class="ui-content">
 
@@ -143,8 +147,8 @@
                     <dd><div class="account_item" id="coin" >coin</div></dd>
                     <dt><img src="images/key.png"><div>修改密码</div></dt>
                     <dd><div class="account_item changePwdBtn">****</div></dd>
-                    <dt><img src="images/contact.png"><div>联系我们</div></dt>
-                    <dd><div class="account_item feedbackBtn">QQ:123456789</div></dd>
+                    <dt><img src="images/contact.png"><div>我要吐槽</div></dt>
+                    <dd><div class="account_item feedbackBtn">◕‿◕</div></dd>
                 </dl>
                 <div style="margin-top:20px;">
                     <center><a href="" id="logoutBtn" class="ui-btn">退出登录</a></center>
@@ -164,11 +168,18 @@
     </div>
 </div>
 
-<div data-role="page" id="AppDetailPage" data-title="应用商店">
+<div data-role="page" id="AppDetailPage" data-title="应用详情">
     <div role="main" class="ui-content">
         <div class="appDetail"></div>
     </div>
 </div>
+
+<iFrame style="display:none">
+    <form name="loginform" id="loginform" action="./logon.cgi" method="post"> 
+        <input type="hidden" name="PtUser" id="username" value="gaopeng"> 
+        <input type="hidden" name="PtPwd" id="password" value="gaopeng"> 
+    </form>
+</iFrame>
 
 <script src="js/appBase.js"></script>
 <script src="js/appList.js"></script>
