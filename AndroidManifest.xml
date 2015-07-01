@@ -45,13 +45,13 @@
         android:label="WiFi酷连"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.xiaohong.wificoolconnect.main.MainActivity"
+            android:name="com.coolwifi.main.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             >
         </activity>
 
-	    <activity android:name="com.xiaohong.wificoolconnect.main.SplashActivity"  
+	    <activity android:name="com.coolwifi.main.SplashActivity"  
 	              android:theme="@android:style/Theme.NoTitleBar.Fullscreen"  
 	              android:noHistory="true"  
 	              android:configChanges="orientation|keyboardHidden"  

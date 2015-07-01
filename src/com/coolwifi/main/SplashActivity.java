@@ -1,4 +1,4 @@
-package com.xiaohong.wificoolconnect.main;
+package com.coolwifi.main;
 
 import com.umeng.analytics.MobclickAgent;
 import com.xiaohong.wificoolconnect.R;

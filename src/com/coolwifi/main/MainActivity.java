@@ -1,16 +1,13 @@
-package com.xiaohong.wificoolconnect.main;
+package com.coolwifi.main;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
@@ -30,49 +27,32 @@ import android.view.View.OnClickListener;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.ConsoleMessage;
-import android.webkit.WebResourceResponse;
-//import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.webkit.WebSettings;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.igexin.sdk.PushManager;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.util.List;
-
-import org.apache.http.util.EncodingUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import com.coolwifi.updatemanager.*;
 import com.coolwifi.wifiadmin.*;
 import com.umeng.analytics.AnalyticsConfig;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.FeedbackAgent;
 import com.xiaohong.wificoolconnect.R;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-//import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
- 
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-//import android.os.Bundle;
 
 
 public class MainActivity extends Activity {
