@@ -12,14 +12,14 @@
     <link rel="stylesheet" href="css/list.css" />
     <link rel="stylesheet" href="css/comment.css" />
     <link rel="stylesheet" href="css/content.css" />
-    <link rel="stylesheet" href="js/nprogress/nprogress.css" />
+    <link rel="stylesheet" href="css/progress.css" />
     <script src="js/jquery-1.9.0.min.js"></script>
     <script src="js/iscroll-lite.js"></script>
     <script src="js/jquery.mobile/jquery.mobile-1.4.5.min.js"></script>
     <script src="js/jquery.cookie.js"></script>
     <script src="js/google.fastbutton.js"></script>
     <script src="js/jquery.google.fastbutton.js"></script>
-    <script src="js/nprogress/nprogress.js"></script>
+    
 </head>
 
 <body>
@@ -159,6 +159,13 @@
 
     <div data-role="footer" data-position="fixed" data-tap-toggle="false">
         <div data-role="navbar" id="mainFooter" >
+
+            <div class="wrapper" id="counter_wrapper">
+              <div class="load-bar">
+                <div class="load-bar-inner" data-loading="0"> <span id="counter"></span> </div>
+              </div>
+            </div>
+
             <ul class="apple-navbar-ui comboSprite">
                 <li><a href="#" id="connectionBtn" data-icon="wifi" class="ui-btn-icon-top ui-btn-active">连接</a></li>
                 <li><a href="#" id="excellentBtn" data-icon="choice" class="ui-btn-icon-top">精选</a></li>
