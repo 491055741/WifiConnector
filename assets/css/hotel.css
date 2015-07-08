@@ -39,7 +39,8 @@ a { text-decoration:none;}
 .appDetail .icon-brief .icon img {width: 100%;}
 .appDetail .content-brief {width: 70%; }
 .appDetail .down-area {width: 30%; height: 100% ;float: right; }
-.appDetail .snapshot img {width: 92px; margin: 0 0 0 21px; }
+.appDetail .swiper-wrapper {float: top;}
+.appDetail .des-long-content {position: absolute; top: 530px; }
 
 .avatar_bg img {width: 100%; }
 .acount_list {padding: 10px; }

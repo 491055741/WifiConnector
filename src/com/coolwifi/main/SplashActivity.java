@@ -14,8 +14,9 @@ public class SplashActivity extends Activity {
         @Override
         public void handleMessage(Message msg) {
             Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.setClass(getApplication(), MainActivity.class);  
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);  
+//            intent.setClass(getApplication(), MainActivity.class);  
+            intent.setClass(getApplication(), IntroActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             // overridePendingTransition must be called AFTER finish() or startActivity, or it won't work.   
             // overridePendingTransition(R.anim.activity_in, R.anim.splash_out);  

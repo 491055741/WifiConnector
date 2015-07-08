@@ -232,13 +232,7 @@ public class MainActivity extends Activity {
 
                 TextView titleView = (TextView)mActionbar.getCustomView().findViewById(R.id.title_text);
                 titleView.setText(title);
-
-                Button backBtn = (Button)mActionbar.getCustomView().findViewById(R.id.back_btn);
-                if (view.canGoBack()) {
-                    backBtn.setVisibility(View.VISIBLE);
-                } else {
-                    backBtn.setVisibility(View.INVISIBLE);
-                }
+                webView.loadUrl("javascript: configBackBtn()" );
                 super.onReceivedTitle(view, title);
             }
         });
@@ -250,7 +244,16 @@ public class MainActivity extends Activity {
 
         mUpdateManager.checkUpdate();
     }
-    
+	//  @JavascriptInterface
+	public void showBackBtn(boolean isShow) {
+        Button backBtn = (Button)mActionbar.getCustomView().findViewById(R.id.back_btn);
+        if (isShow) {
+            backBtn.setVisibility(View.VISIBLE);
+        } else {
+            backBtn.setVisibility(View.INVISIBLE);
+        }
+	}
+	
 	private boolean initCustomActionBar() {
 
 	    if (mActionbar == null) {
