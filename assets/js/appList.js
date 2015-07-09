@@ -40,6 +40,7 @@ var appInstallFinished = function (appId) {
         // console.log(data);
     });
 }
+
 // js-Android interface
 var configBackBtn = function () {
     var css= $("#MainPage").css("display");
@@ -79,6 +80,7 @@ $("#LoginPage").on("pageinit", function () {
 
 $("#LoginPage").on("pageshow", function () {
     console.log("login page show");
+    configBackBtn();
     if (isAutoLogin && $("#loginUsername").val()!='' && $("#loginUsername").val()!='手机号' && isPhoneNumber($("#loginUsername").val())
         && $("#loginPassword").val()!='') {
         me.login();
@@ -87,6 +89,7 @@ $("#LoginPage").on("pageshow", function () {
 
 $("#RegisterPage").on("pageshow", function () {
     console.log("register page show");
+    configBackBtn();
     if (me.isChangingPassword) {
         setTitle("修改密码");
     } else {
@@ -108,6 +111,7 @@ $("#MainPage").on("pageinit", function() {
 
 $("#MainPage").on("pageshow", function () {
     console.log("main page show");
+    configBackBtn();
     me.showTab(me.currentTabIdx);
 
     finishDownloadProgress();
@@ -116,6 +120,7 @@ $("#MainPage").on("pageshow", function () {
 
 $("#AppDetailPage").on("pageshow", function () {
     // setTimeout(, 1000);
+    configBackBtn();
     var gallery = $('.swiper-container').swiper({
         slidesPerView:'auto',
         watchActiveIndex: true,

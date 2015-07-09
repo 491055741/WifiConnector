@@ -254,7 +254,7 @@ public class MainActivity extends Activity {
 
                 TextView titleView = (TextView)mActionbar.getCustomView().findViewById(R.id.title_text);
                 titleView.setText(title);
-                webView.loadUrl("javascript: configBackBtn()" );
+//                webView.loadUrl("javascript: configBackBtn()" );
                 super.onReceivedTitle(view, title);
             }
         });
