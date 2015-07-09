@@ -1,6 +1,6 @@
 .intro { background: #fbfbfb; padding: 5px 14px 0; } 
 .icon-brief { overflow: hidden; position: relative; }
-.icon { float: left; display: inline-block; border-radius: 5px; position: relative; top: 5px; display: block; width: 54px; height: 54px; background: url(/images/default-icon.png) no-repeat 0 0; background-size: 100% 100%; }
+.icon { float: left; display: inline-block; border-radius: 5px; position: relative; top: 5px; display: block; width: 54px; height: 54px; background: url(../images/default.png) no-repeat 0 0; background-size: 100% 100%; }
 .icon img { width: 54px; height: 54px; border-radius: 5px; }
 .btn-con .btn-normal { float: none; color: #666; margin-top: 15px; display: block; width: 68px; line-height: 14px; height: 14px; text-indent: 10px; background: url(/images/icon5.png) 0 2px no-repeat; background-size: 11px 10px; -webkit-background-size: 11px 10px; font-size: 13px; margin-left: 18px; }
 .btn-high { float: none; line-height: 32px; text-indent: 2em; color: #fff; display: block; width: 96px; height: 32px; background: url(/images/icon6.png); background-color: #ff961e; border-radius: 4px; background-size: 96px 32px; }
@@ -219,7 +219,7 @@ li.slideritem { display: inline-block; }
 .relook .mod-bd li, .reinstall .mod-bd li { float: left; padding: 8px 0 8px 0; width: 48%; border-bottom: 1px dotted #b2b2b2; border-right: 1px dotted #b2b2b2; }
 .relook .mod-bd li:nth-child(odd), .reinstall .mod-bd li:nth-child(odd) { padding-left: 0; }
 .relook .mod-bd li:nth-child(even), .reinstall .mod-bd li:nth-child(even) { padding: 8px 2px 8px 8px; border-right: none; }
-.relook .mod-bd img, .reinstall .mod-bd img { float: left; margin: 5px 0 0 2px; width: 48px; height: 48px; background: url("/images/default-icon.png") no-repeat scroll center center rgba(0, 0, 0, 0); }
+.relook .mod-bd img, .reinstall .mod-bd img { float: left; margin: 5px 0 0 2px; width: 48px; height: 48px; background: url(../images/default.png) no-repeat scroll center center rgba(0, 0, 0, 0); }
 .reinstall .mod-bd li:nth-child(even) img { margin: 5px 0 0 5px; }
 
 .reinstall-fixed { position:fixed;bottom:0;left:0;z-index:999; width:100%;}
@@ -235,7 +235,7 @@ li.slideritem { display: inline-block; }
 .reinstall-fixed .mod-bd li { float: left; padding: 8px 0 8px 0; width: 48%; border-bottom: 1px dotted #b2b2b2; border-right: 1px dotted #b2b2b2; }
 .reinstall-fixed .mod-bd li:nth-child(odd) { padding-left: 0; }
 .reinstall-fixed .mod-bd li:nth-child(even) { padding: 8px 2px 8px 8px; border-right: none; }
-.reinstall-fixed .mod-bd img { float: left; margin: 5px 0 0 2px; width: 48px; height: 48px; background: url("/images/default-icon.png") no-repeat scroll center center rgba(0, 0, 0, 0); }
+.reinstall-fixed .mod-bd img { float: left; margin: 5px 0 0 2px; width: 48px; height: 48px; background: url(../images/default.png) no-repeat scroll center center rgba(0, 0, 0, 0); }
 .reinstall-fixed .mod-bd li:nth-child(even) img { margin: 5px 0 0 5px; }
 .reinstall-fixed .user_alsolist li{ display:inline; float:left; height:100px; margin:10px auto; width:25%;}
 

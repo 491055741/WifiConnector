@@ -42,7 +42,7 @@ span.rank_no_3 { background-color:#ffac2f;}
 .app-list .list_from_box .index-item-main { padding: 16px 0; padding-right: 65px; }
 .app-list .sub-topic-list .index-item-main { padding: 6px 0; }
 .app-list .item .item-main .item-icon, .app-list .index-item .index-item-main .item-icon { float: left; margin-left: 7px; margin-top: 15px; }
-.app-list .item .item-main .item-icon img, .app-list .index-item .index-item-main .item-icon img { width: 55px; height: 55px; background: url("/images/default-icon.png") no-repeat scroll center center rgba(0, 0, 0, 0);border-radius:3px; }
+.app-list .item .item-main .item-icon img, .app-list .index-item .index-item-main .item-icon img { width: 55px; height: 55px; background: url(../images/default.png) no-repeat scroll center center rgba(0, 0, 0, 0);border-radius:3px; }
 .app-list .item .item-main .item-title, .app-list .index-item .index-item-main .item-title { font-size: 16px; color: #45484d; padding-top: 8px; padding-bottom: 1px; }
 .app-list .item .item-main .item-title h3, .app-list .index-item .index-item-main .item-title h3 { width: 80%; text-overflow: ellipsis; overflow: hidden; }
 .app-list .item .item-main .item-title h3.sname-incompatible, .app-list .index-item .index-item-main .item-title h3.sname-incompatible { width: 44%; }

@@ -146,6 +146,28 @@ public class MainActivity extends Activity {
         }
     };
 
+    private Handler mWebviewHandler = new Handler()
+    {  
+        public void handleMessage(Message msg) {// 定义一个Handler，用于处理webview线程与UI间通讯  
+            if (!Thread.currentThread().isInterrupted()){
+                switch (msg.what) {  
+                case 0:
+                    boolean isShow = (msg.arg1 == 1);
+                    Button backBtn = (Button)mActionbar.getCustomView().findViewById(R.id.back_btn);
+                    if (isShow) {
+                        backBtn.setVisibility(View.VISIBLE);
+                    } else {
+                        backBtn.setVisibility(View.INVISIBLE);
+                    }
+                    break;  
+                case 1:  
+                    break;  
+                }  
+            }  
+            super.handleMessage(msg);  
+        }  
+    }; 
+    
     private Handler mDownloadHandler = new Handler()
     {
         public void handleMessage(Message msg)
@@ -246,14 +268,13 @@ public class MainActivity extends Activity {
     }
 	//  @JavascriptInterface
 	public void showBackBtn(boolean isShow) {
-        Button backBtn = (Button)mActionbar.getCustomView().findViewById(R.id.back_btn);
-        if (isShow) {
-            backBtn.setVisibility(View.VISIBLE);
-        } else {
-            backBtn.setVisibility(View.INVISIBLE);
-        }
+	    Log.d(TAG, "Show back button: "+isShow);
+        Message msg = new Message();
+        msg.what = 0;
+        msg.arg1 = isShow ? 1 : 0;
+        mWebviewHandler.sendMessage(msg);
 	}
-	
+
 	private boolean initCustomActionBar() {
 
 	    if (mActionbar == null) {
@@ -265,9 +286,11 @@ public class MainActivity extends Activity {
 	    mActionbar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 	    mActionbar.setDisplayShowCustomEnabled(true);
         mActionbar.setCustomView(R.layout.top_back_center_bar);
-	    mActionbar.getCustomView().findViewById(R.id.back_btn).setOnClickListener(new OnClickListener() {
+        Button backBtn = (Button)mActionbar.getCustomView().findViewById(R.id.back_btn);
+	    backBtn.setOnClickListener(new OnClickListener() {
 	        @Override
 	        public void onClick(View v) {
+	            Log.d(TAG, "Click back btn.");
                 webView.goBack();
 	        }
 	    });
