@@ -153,7 +153,7 @@ public class UpdateManager
             }
         });
         // 稍后更新
-        if (mHashMap.get("force") == null || mHashMap.get("force") == "NO") {
+        if (mHashMap.get("force") == null || mHashMap.get("force").equals("NO")) {
             builder.setNegativeButton(R.string.soft_update_later, new OnClickListener()
             {
                 @Override

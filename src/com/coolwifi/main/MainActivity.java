@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
@@ -138,7 +139,6 @@ public class MainActivity extends Activity {
 //            if (!wifiNetInfo.isConnected()) {
 //                Log.i(TAG, "unconnect");
 //                // unconnect network
-//
 //            }else {
 //                // connect network
 //                
@@ -287,11 +287,16 @@ public class MainActivity extends Activity {
 	    mActionbar.setDisplayShowCustomEnabled(true);
         mActionbar.setCustomView(R.layout.top_back_center_bar);
         Button backBtn = (Button)mActionbar.getCustomView().findViewById(R.id.back_btn);
+        backBtn.setVisibility(View.INVISIBLE);
 	    backBtn.setOnClickListener(new OnClickListener() {
 	        @Override
 	        public void onClick(View v) {
 	            Log.d(TAG, "Click back btn.");
-                webView.goBack();
+	            if (webView.canGoBack()) {
+	                webView.goBack();
+	            } else {
+	                Log.d(TAG, "webview.canGoBack() == false");
+	            }
 	        }
 	    });
 	    return true;
