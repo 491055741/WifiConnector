@@ -2,7 +2,8 @@ var appServerUrl = "http://livew.mobdsp.com/cb"; var callback = "callback=?";
 // var appServerUrl = "http://127.0.0.1:5000"; var callback = "callback=?";
 var milkPapaServerUrl = "http://app.milkpapa.com:5000";
 var isAutoLogin = true;
-var testNetworkUrl = "http://app.milkpapa.com:5000/version";
+var checkNetworkInterval = 1500; // ms
+var checkNetworkUrl = "http://app.milkpapa.com:5000/version";
 
 (function($){
     $.ajaxSetup({
@@ -13,11 +14,6 @@ var testNetworkUrl = "http://app.milkpapa.com:5000/version";
         }
     });
 })(jQuery);
-
-// js-Android interface
-var refreshWifiList = function () {
-    me.requestWifiList();
-}
 // js-Android interface
 var updateDownloadProgress = function (progress) {
     $('.load-bar').show();
@@ -38,11 +34,21 @@ var appInstallFinished = function (appId) {
     console.log("Report app install:"+url);
     $.getJSON(url, function(data) {
         // console.log(data);
+        if (data.ret_code == 0) {
+            showLoader('您现在有 '+data.coin_num+' 个金币了');
+        } else {
+            showLoader(data.ret_msg);
+        }
+        setTimeout("hideLoader()", 3000);
     });
 }
 // js-Android interface
 var wifiStatusChanged = function () {
     console.log("wifiStatusChanged.");
+    if ($(".acount_list #account").text() == '') {
+        console.log('wifi status changed but not login yet.');
+        return;
+    }
     if (window.android != undefined) {
         if (window.android.isWifiAvailable()) {
             // var url="http://sucrq.tuancity.com/v1.1/?surl=http://ht.yeahwifi.com/guide/succeed/?sid=yeahwifi_222&tk=123456&uid=yeahwifi_222";
@@ -202,10 +208,10 @@ var me = {
     },
 
     checkNetwork : function() {
-        console.log("checkNetwork: "+testNetworkUrl);
+        console.log("checkNetwork: "+checkNetworkUrl);
         $.ajax({
             type: "GET",
-            url: testNetworkUrl,
+            url: checkNetworkUrl,
             dataType : "jsonp",
             jsonp: "callback",//服务端用于接收callback调用的function名的参数
             jsonpCallback:"success_jsonpCallback",//callback的function名称
@@ -225,6 +231,11 @@ var me = {
 
     authentication : function() {
         console.log("authentication.");
+        if (checkNetworkInterval > 10000) {
+            checkNetworkInterval = 1500;
+            console.log("authentication timeout.");
+            return;
+        }
         // post the form
         $.ajax({
             type: "POST",
@@ -232,12 +243,14 @@ var me = {
             data: $("#loginform").serialize(),
             cache : false,
             success : function(data) {
-                        setTimeout(me.checkNetwork(), 1500);
+                        setTimeout(me.checkNetwork(), checkNetworkInterval);
                       },
             error : function() {
                     console.log("post authentication form fail.");
+                    setTimeout(me.authentication(), checkNetworkInterval);
             }
         });
+        checkNetworkInterval = checkNetworkInterval + 1000;
     },
 
     showTab : function(idx) {
@@ -347,6 +360,7 @@ var me = {
                 if (arrKuLianWifi[j].SSID == arrWifiList[i].SSID) {
                     isKuLian = true;
                     passwd = arrKuLianWifi[j].password;
+                    $(".statusOn.ui-btn").text(arrWifiList[i].SSID);
                     $(".wifiStatus").data("wifissid", arrWifiList[i].SSID);
                     $(".wifiStatus").data("wifipasswd", passwd);
                     break;
