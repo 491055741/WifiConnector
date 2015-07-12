@@ -21,10 +21,10 @@ a { text-decoration:none;}
 #connectionView .message_grid img {width: 18px; height: 18px; margin-left: 10px; }
 
 .connection_bg {height: 230px; background: url(../images/night.png) no-repeat; background-size: contain;}
-.wifiStatus img {margin-top: 20px; width: 150px; height: 100px; }
-.wifiStatus .ui-btn {margin-top: 50px; width: 40%; height: 20px;}
-.wifiStatus .ui-btn.statusOff {background-color: #FF8800;  text-shadow:0 0 0; color: white; }
-.wifiStatus .ui-btn.statusOn {background-color: #008800; text-shadow:0 0 0; color: white; }
+.wifiStatus img {margin-top: 60px; width: 250px; height: 250px; }
+.wifiStatus div {margin-top: 20px; width: 40%; height: 20px;}
+.wifiStatus div.statusOff {color: #38c;  text-shadow:0 0 0; border-width:0;}
+.wifiStatus div.statusOn {color: #38c; text-shadow:0 0 0; border-width:0;}
 
 .text_disabled {color:gray;}
 
@@ -56,12 +56,12 @@ a { text-decoration:none;}
 .ui-footer .ui-navbar .ui-btn.ui-btn-active {background-color: #f6f6f6; font-size: 14px; color: #38c; text-shadow:0 0 0 ;}
 
 
-.ui-icon-choice:after {background: url(../images/tab_choice.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center;}
-.ui-icon-mine:after {background: url(../images/tab_mine.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center;}
-.ui-icon-wifi:after {background: url(../images/tab_wifi.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center;}
-.ui-btn-active.ui-icon-choice:after {background: url(../images/tab_choice_active.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center;}
-.ui-btn-active.ui-icon-mine:after {background: url(../images/tab_mine_active.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center;}
-.ui-btn-active.ui-icon-wifi:after {background: url(../images/tab_wifi_active.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center;}
+.ui-icon-choice:after {background: url(../images/tab_choice.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }
+.ui-icon-mine:after {background: url(../images/tab_mine.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }
+.ui-icon-wifi:after {background: url(../images/tab_wifi.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }
+.ui-btn-active.ui-icon-choice:after {background: url(../images/tab_choice_active.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }
+.ui-btn-active.ui-icon-mine:after {background: url(../images/tab_mine_active.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }
+.ui-btn-active.ui-icon-wifi:after {background: url(../images/tab_wifi_active.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }
 
 .comboSprite li a {border-left-width:0; border-right-width:0; }
 
