@@ -52,9 +52,16 @@ a { text-decoration:none;}
 #mineView dd div, #mineView dd a { font-size: 18px; color: #999; width: 100%;}
 #logoutBtn {background-color: #FF8800; text-shadow: 0 0 0; color: white; }
 
+.exchange_list {padding: 10px; }
+.exchange_item {font-size: 16px; }
+.exchange_list dt {float: left; height: 30px; padding-top: 10px; }
+.exchange_list dd {right: 10px; text-align: right; height: 30px; padding-top: 10px; border-bottom: 1px #d4d5d6 solid; }
+.exchange_list dt div { font-size: 18px; color: #45484d; float: right; padding-left: 5px; }
+.exchange_list dd div, .exchange_list dd a { font-size: 18px; color: #999; width: 100%;}
+
+
 .ui-footer .ui-navbar .ui-btn {font-size: 14px; color: gray; }
 .ui-footer .ui-navbar .ui-btn.ui-btn-active {background-color: #f6f6f6; font-size: 14px; color: #38c; text-shadow:0 0 0 ;}
-
 
 .ui-icon-choice:after {background: url(../images/tab_choice.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }
 .ui-icon-mine:after {background: url(../images/tab_mine.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }

@@ -122,6 +122,9 @@ $("#MainPage").on("pagebeforeshow", function () {
 $("#AppDetailPage").on("pagebeforeshow", function () {
     // setTimeout(, 1000);
     me.showBackBtn(true);
+});
+
+$("#AppDetailPage").on("pageshow", function () {
     var gallery = $('.swiper-container').swiper({
         slidesPerView:'auto',
         watchActiveIndex: true,
@@ -150,6 +153,10 @@ $("#registBtn").fastClick(function() {
 $("#loginBtn").fastClick( function() {
     me.login();
     isAutoLogin = true;
+});
+
+$("#coin").fastClick( function() {
+    changePage("#ExchangePage");
 });
 
 $("input").bind("focus", function() { 
