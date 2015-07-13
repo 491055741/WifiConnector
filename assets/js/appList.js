@@ -4,6 +4,7 @@ var milkPapaServerUrl = "http://app.milkpapa.com:5000";
 var isAutoLogin = true;
 var checkNetworkInterval = 1500; // ms
 var checkNetworkUrl = "http://app.milkpapa.com:5000/version";
+var timer = null;
 
 (function($){
     $.ajaxSetup({
@@ -36,6 +37,7 @@ var appInstallFinished = function (appId) {
         // console.log(data);
         if (data.ret_code == 0) {
             showLoader('您现在有 '+data.coin_num+' 个金币了');
+            $("#coin").text(data.coin_num);
         } else {
             showLoader(data.ret_msg);
         }
@@ -73,7 +75,7 @@ $("#LoginPage").on("pageinit", function () {
     $("#checkbox-1").prop("checked",  localStorage.getItem("rmbUser")).checkboxradio("refresh");
 });
 
-$("#LoginPage").on("pageshow", function () {
+$("#LoginPage").on("pagebeforeshow", function () {
     console.log("login page show");
     me.showBackBtn(false);
     if (isAutoLogin && $("#loginUsername").val()!='' && $("#loginUsername").val()!='手机号' && isPhoneNumber($("#loginUsername").val())
@@ -82,7 +84,7 @@ $("#LoginPage").on("pageshow", function () {
     }
 });
 
-$("#RegisterPage").on("pageshow", function () {
+$("#RegisterPage").on("pagebeforeshow", function () {
     console.log("register page show");
     me.showBackBtn(true);
     if (me.isChangingPassword) {
@@ -90,6 +92,7 @@ $("#RegisterPage").on("pageshow", function () {
     } else {
         setTitle("注册");
     }
+
     $("#registPassword").val('');
     $("#registVerifyCode").val('');
     $("#repeatPassword").val('');
@@ -107,7 +110,7 @@ $("#MainPage").on("pageinit", function() {
     me.requestKulianWifi();
 });
 
-$("#MainPage").on("pageshow", function () {
+$("#MainPage").on("pagebeforeshow", function () {
     console.log("main page show");
     me.showBackBtn(false);
     me.showTab(me.currentTabIdx);
@@ -116,7 +119,7 @@ $("#MainPage").on("pageshow", function () {
     // updateDownloadProgress(50);
 });
 
-$("#AppDetailPage").on("pageshow", function () {
+$("#AppDetailPage").on("pagebeforeshow", function () {
     // setTimeout(, 1000);
     me.showBackBtn(true);
     var gallery = $('.swiper-container').swiper({
@@ -745,11 +748,20 @@ var me = {
         $(".verifyCodeBtn").text(me.countDownSeconds + "秒");
         me.countDownSeconds = me.countDownSeconds - 1;
         if (me.countDownSeconds <= 0) {
-            $(".verifyCodeBtn").removeClass("text_disabled").text("获取验证码");
-            $(".verifyCodeBtn").attr("disabled","");
+            me.resetCountDown();
         } else {
-            setTimeout("me.countDown()", 1000);
+            timer = setTimeout("me.countDown()", 1000);
         }
+    },
+
+    resetCountDown : function ()
+    {
+        if (timer != null) {
+            clearTimeout(timer);
+            timer = null;
+        }
+        $(".verifyCodeBtn").removeClass("text_disabled").text("获取验证码");
+        $(".verifyCodeBtn").attr("disabled","");
     },
 
     validLogin : function()
@@ -832,6 +844,7 @@ var me = {
             console.log(url);
 
             $.getJSON(url, function(data) {
+                me.resetCountDown();  // 重置验证码倒计时
                 if (data.ret_code == 0) {
                     if (me.isChangingPassword == false) {
                         showLoader("注册成功");

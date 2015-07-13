@@ -52,7 +52,7 @@ a { text-decoration:none;}
 #mineView dd div, #mineView dd a { font-size: 18px; color: #999; width: 100%;}
 #logoutBtn {background-color: #FF8800; text-shadow: 0 0 0; color: white; }
 
-.ui-footer .ui-navbar .ui-btn {font-size: 14px;}
+.ui-footer .ui-navbar .ui-btn {font-size: 14px; color: gray; }
 .ui-footer .ui-navbar .ui-btn.ui-btn-active {background-color: #f6f6f6; font-size: 14px; color: #38c; text-shadow:0 0 0 ;}
 
 
