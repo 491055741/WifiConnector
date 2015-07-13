@@ -198,6 +198,10 @@ $(".wifiStatus img").fastClick(function() {
     }
 });
 
+$(".exchange_item").fastClick(function() {
+    me.requestExchange(this);
+})
+
 var me = {
     countDownSeconds : 0, 
     isChangingPassword : false,
@@ -906,5 +910,32 @@ var me = {
                 }
             });
         }
+    },
+
+    requestExchange : function(obj)
+    {
+        var myCoin = parseInt($("#coin").text());
+        var needCoin = $(obj).data("coin");
+        if (myCoin < needCoin) {
+            showLoader("您的金币数不足");
+            setTimeout("hideLoader()", 3000);
+            return;
+        }
+        var type = $(obj).data("exchangetype");
+        var phone_number = $(".acount_list #account").text();
+        var url = appServerUrl+"/exchange?"+callback+"&phone_number="+phone_number+"&coin="+needCoin+"&exchange_type="+type;
+        console.log(url);
+        showLoader("登录中，请稍候");
+
+        $.getJSON(url, function(data) {
+            if (data.ret_code == 0) {
+                showLoader("话费兑换申请已提交，将在两个工作日内充值到您手机号码内");
+                setTimeout("hideLoader()", 3000);
+                $("#coin").text(data.coin_num);// update coin num
+            } else {
+                showLoader(data.ret_msg);
+                setTimeout("hideLoader()", 3000);
+            }
+        });
     }
 }; // end of var me

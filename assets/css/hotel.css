@@ -70,6 +70,11 @@ a { text-decoration:none;}
 .ui-btn-active.ui-icon-mine:after {background: url(../images/tab_mine_active.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }
 .ui-btn-active.ui-icon-wifi:after {background: url(../images/tab_wifi_active.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }
 
+.exchangeHeader {height: 70px; margin: 10px; box-shadow: 0 1px 1px rgba(0,0,0,0.5);}
+.exchangeHeader .coinIcon {float: left; width: 30%; padding: 10px; }
+.exchangeHeader .coin_desc {color: gray; }
+.exchangeHeader .coin_num {font-size: 30px; color: #45484d; }
+
 .comboSprite li a {border-left-width:0; border-right-width:0; }
 
 a { text-decoration: none; }
