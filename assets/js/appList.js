@@ -8,7 +8,8 @@ var timer = null;
 
 (function($){
     $.ajaxSetup({
-        timeout : 10000,
+        timeout: 10000,
+        cache: false,
         error: function (x, e) {
             showLoader("服务器错误，请稍后再试");
             setTimeout("hideLoader()", 3000);
@@ -33,15 +34,26 @@ var appInstallFinished = function (appId) {
     var phone_number = $(".acount_list #account").text();
     var url = appServerUrl+"/download_report?"+callback+"&appid="+appId+"&phone_number="+phone_number;
     console.log("Report app install:"+url);
-    $.getJSON(url, function(data) {
-        // console.log(data);
-        if (data.ret_code == 0) {
-            showLoader('您现在有 '+data.coin_num+' 个金币了');
-            $("#coin").text(data.coin_num);
-        } else {
-            showLoader(data.ret_msg);
-        }
-        setTimeout("hideLoader()", 3000);
+
+    $.ajax({
+        type: "GET",
+        url: url,
+        data: '',
+        dataType: "jsonp",
+        xhrFields: {
+            withCredentials: true
+        },
+        crossDomain: true,
+        success: function (data, textStatus) {
+            if (data.ret_code == 0) {
+                showLoader('您现在有 '+data.coin_num+' 个金币了');
+                setTimeout("hideLoader()", 3000);
+                $("#coin").text(data.coin_num);
+            } else {
+                showLoader(data.ret_msg);
+            }
+            setTimeout("hideLoader()", 3000);
+        },
     });
 }
 // js-Android interface
@@ -53,11 +65,6 @@ var wifiStatusChanged = function () {
     }
     if (window.android != undefined) {
         if (window.android.isWifiAvailable()) {
-            // var url="http://sucrq.tuancity.com/v1.1/?surl=http://ht.yeahwifi.com/guide/succeed/?sid=yeahwifi_222&tk=123456&uid=yeahwifi_222";
-            // console.log(url);
-            // $.get(url, function(data, status) {
-            //     console.log("access internet success!");
-            // });
             me.checkNetwork();
         } else {
             $(".wifiStatus .statusOff").show();
@@ -139,6 +146,11 @@ $("#AppDetailPage").on("pageshow", function () {
         }
     });
     gallerySwiper.changeSize();
+});
+
+$("#ExchangePage").on("pagebeforeshow", function () {
+    me.showBackBtn(true);
+    $(".exchangeHeader .coin_num").text($("#coin").text());
 });
 
 $("#logoutBtn").fastClick(function() {
@@ -384,7 +396,6 @@ var me = {
                 }
             }
         }
-
     },
 
     wifiListTemplate : function(res)
@@ -858,6 +869,7 @@ var me = {
                 me.resetCountDown();  // 重置验证码倒计时
                 if (data.ret_code == 0) {
                     if (me.isChangingPassword == false) {
+                        me.saveToken(data.token);
                         showLoader("注册成功");
                         $("#coin").text("0");
                     } else {
@@ -885,6 +897,7 @@ var me = {
             $.getJSON(url, function(data) {
                 hideLoader();
                 if (data.ret_code == 0) {
+                    me.saveToken(data.token);
                     changePage("#MainPage");
                     console.log("login success, coin num:" + data.coin_num);
                     if (data.coin_num == undefined) {
@@ -930,12 +943,16 @@ var me = {
         $.getJSON(url, function(data) {
             if (data.ret_code == 0) {
                 showLoader("话费兑换申请已提交，将在两个工作日内充值到您手机号码内");
-                setTimeout("hideLoader()", 3000);
                 $("#coin").text(data.coin_num);// update coin num
+                setTimeout("changePageAndHideLoader(\"#MainPage\")", 3000);
             } else {
                 showLoader(data.ret_msg);
                 setTimeout("hideLoader()", 3000);
             }
         });
+    },
+
+    saveToken : function(token) {
+        $.cookie("token", token, {expires:10});
     }
 }; // end of var me
