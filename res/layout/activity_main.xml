@@ -8,40 +8,5 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.coolwifi.main.MainActivity" >
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
-
-    <GridLayout
-        android:id="@+id/gridLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-    </GridLayout>
-
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/gridLayout1"
-        android:layout_marginLeft="18dp"
-        android:layout_marginTop="92dp"
-        android:layout_toRightOf="@+id/textView1"
-        android:src="@android:drawable/btn_star_big_on" />
-
-    <CalendarView
-        android:id="@+id/calendarView1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/imageView1" />
-
-    <AnalogClock
-        android:id="@+id/analogClock1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/imageView1"
-        android:layout_alignRight="@+id/calendarView1" />
 
 </RelativeLayout>

@@ -11,6 +11,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
@@ -25,7 +26,8 @@ public class IntroActivity extends Activity implements OnClickListener,
 	private static final int[] pics = { R.drawable.guide1, R.drawable.guide2};
 	private ImageView[] points;
 	private int currentIndex;
-
+	private ImageButton button; 
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -60,6 +62,19 @@ public class IntroActivity extends Activity implements OnClickListener,
 		viewPager.setAdapter(vpAdapter);
 		viewPager.setOnPageChangeListener(this);
 //		initPoint();
+		
+        button = (ImageButton)findViewById(R.id.intro_button);
+        button.setVisibility(View.INVISIBLE);
+        button.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.setClass(getApplication(), MainActivity.class);  
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);  
+                startActivity(intent);
+                finish();
+            }
+        });
 	}
 
 //	private void initPoint() {
@@ -106,11 +121,17 @@ public class IntroActivity extends Activity implements OnClickListener,
 		viewPager.setCurrentItem(position);
 	}
 
-	private void setCurDot(int positon) {
-//		if (positon < 0 || positon > pics.length - 1 || currentIndex == positon) {
-//			return;
-//		}
-//		points[positon].setEnabled(false);
+	private void setCurDot(int position) {
+		if (position < 0 || position > pics.length - 1) {
+			return;
+		}
+		if (position == pics.length - 1) {
+		    button.setVisibility(View.VISIBLE);
+		} else {
+		    button.setVisibility(View.INVISIBLE);
+		}
+
+		//		points[positon].setEnabled(false);
 //		points[currentIndex].setEnabled(true);
 //
 //		currentIndex = positon;

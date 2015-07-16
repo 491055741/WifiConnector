@@ -20,7 +20,7 @@ public class SplashActivity extends Activity {
 	        try {
 				int versionCode = getBaseContext().getPackageManager().getPackageInfo("com.xiaohong.wificoolconnect", 0).versionCode;
 	        	SharedPreferences preferences = getSharedPreferences("versionCode",MODE_WORLD_READABLE);
-	            int latestVersionCode = 0;//preferences.getInt("version", 0);
+	            int latestVersionCode = preferences.getInt("version", 0);
 
 	            Editor editor = preferences.edit();
                 editor.putInt("version", versionCode);
