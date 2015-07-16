@@ -156,6 +156,7 @@ function dateDiff(date1Str, date2Str)
 function changePage(pageName)
 {
     if (isAndroid()) {
+        console.log("changePage without transition on Android.");
         $.mobile.changePage($(pageName), {transition: "none"});
     } else {
         $.mobile.changePage($(pageName), {transition: "slidefade"});
