@@ -2,6 +2,7 @@ package com.coolwifi.main;
 
 import java.util.ArrayList;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
@@ -20,8 +22,7 @@ public class IntroActivity extends Activity implements OnClickListener,
 	private ViewPager viewPager;
 	private ViewPagerAdapter vpAdapter;
 	private ArrayList<View> views;
-	private static final int[] pics = { R.drawable.guide1, R.drawable.guide2,
-			R.drawable.guide3, R.drawable.guide4 };
+	private static final int[] pics = { R.drawable.guide1, R.drawable.guide2};
 	private ImageView[] points;
 	private int currentIndex;
 
@@ -29,6 +30,10 @@ public class IntroActivity extends Activity implements OnClickListener,
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_intro);
+
+		ActionBar actionBar = getActionBar(); //得<span></span>到ActionBar
+	    actionBar.hide(); //隐藏ActionBar
+		
 		initView();
 		initData();
 	}
@@ -54,24 +59,24 @@ public class IntroActivity extends Activity implements OnClickListener,
 
 		viewPager.setAdapter(vpAdapter);
 		viewPager.setOnPageChangeListener(this);
-		initPoint();
+//		initPoint();
 	}
 
-	private void initPoint() {
-		LinearLayout linearLayout = (LinearLayout) findViewById(R.id.ll);
-
-		points = new ImageView[pics.length];
-
-		for (int i = 0; i < pics.length; i++) {
-			points[i] = (ImageView) linearLayout.getChildAt(i);
-			points[i].setEnabled(true);
-			points[i].setOnClickListener(this);
-			points[i].setTag(i);
-		}
-
-		currentIndex = 0;
-		points[currentIndex].setEnabled(false);
-	}
+//	private void initPoint() {
+//		LinearLayout linearLayout = (LinearLayout) findViewById(R.id.ll);
+//
+//		points = new ImageView[pics.length];
+//
+//		for (int i = 0; i < pics.length; i++) {
+//			points[i] = (ImageView) linearLayout.getChildAt(i);
+//			points[i].setEnabled(true);
+//			points[i].setOnClickListener(this);
+//			points[i].setTag(i);
+//		}
+//
+//		currentIndex = 0;
+//		points[currentIndex].setEnabled(false);
+//	}
 
 	@Override
 	public void onPageScrollStateChanged(int arg0) {
@@ -80,16 +85,6 @@ public class IntroActivity extends Activity implements OnClickListener,
 
 	@Override
 	public void onPageScrolled(int arg0, float arg1, int arg2) {
-        if(arg0 == pics.length - 1) {
-//            openActivity(MainActivity.class);
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-//          intent.setClass(getApplication(), MainActivity.class);  
-          intent.setClass(getApplication(), MainActivity.class);
-          intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-          startActivity(intent);
-
-            finish();
-        }
 	}
 
 	@Override
@@ -112,12 +107,12 @@ public class IntroActivity extends Activity implements OnClickListener,
 	}
 
 	private void setCurDot(int positon) {
-		if (positon < 0 || positon > pics.length - 1 || currentIndex == positon) {
-			return;
-		}
-		points[positon].setEnabled(false);
-		points[currentIndex].setEnabled(true);
-
-		currentIndex = positon;
+//		if (positon < 0 || positon > pics.length - 1 || currentIndex == positon) {
+//			return;
+//		}
+//		points[positon].setEnabled(false);
+//		points[currentIndex].setEnabled(true);
+//
+//		currentIndex = positon;
 	}
 }

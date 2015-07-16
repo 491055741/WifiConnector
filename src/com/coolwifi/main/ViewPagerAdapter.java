@@ -2,9 +2,15 @@ package com.coolwifi.main;
 
 import java.util.ArrayList;
 
+import com.xiaohong.wificoolconnect.R;
+
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageView;
 /**
  * 
  * @author YeChao
@@ -13,6 +19,8 @@ import android.view.View;
 public class ViewPagerAdapter extends PagerAdapter{
 	//界面列表  
     private ArrayList<View> views;  
+    private Activity activity;
+    
     public ViewPagerAdapter(ArrayList<View> views)
     {
     	 this.views = views; 
@@ -50,8 +58,23 @@ public class ViewPagerAdapter extends PagerAdapter{
 	 */
 	@Override
 	public Object instantiateItem(View container, int position) {
-		((ViewPager) container).addView(views.get(position), 0);  
-		return views.get(position);  
+		((ViewPager) container).addView(views.get(position), 0);
+
+		if (position == views.size() - 1) {
+			ImageView button = (ImageView) container
+					.findViewById(R.id.intro_button);
+			button.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+			        Intent intent = new Intent(activity, MainActivity.class);
+			        activity.startActivity(intent);
+			        activity.finish();
+				}
+
+			});
+		}
+		return views.get(position);
 	}
 	
 }
