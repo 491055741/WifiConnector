@@ -335,7 +335,8 @@ public class MainActivity extends Activity {
         if (keyCoder != KeyEvent.KEYCODE_BACK) {
             return false;
         }
-        if (webView.canGoBack()) {
+        Button backBtn = (Button)mActionbar.getCustomView().findViewById(R.id.back_btn);
+        if (webView.canGoBack() && backBtn.getVisibility() == View.VISIBLE) {
             webView.goBack();   //goBack()表示返回webView的上一页面
             return true;
         } else {
