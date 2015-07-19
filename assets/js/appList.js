@@ -11,7 +11,7 @@ var timer = null;
         timeout: 10000,
         cache: false,
         error: function (x, e) {
-            showLoader("服务器错误，请稍后再试");
+            showLoader("网络不给力，请稍后再试");
             setTimeout("hideLoader()", 3000);
         }
     });
@@ -58,20 +58,21 @@ var appInstallFinished = function (appId) {
 }
 // js-Android interface
 var wifiStatusChanged = function () {
-    console.log("wifiStatusChanged.");
     if ($(".acount_list #account").text() == '') {
-        console.log('wifi status changed but not login yet.');
+        console.log('wifiStatusChanged: not login yet.');
         return;
     }
     if (window.android != undefined) {
         if (window.android.isWifiAvailable()) {
+            console.log("wifiStatusChanged: wifi is available.");
             me.checkNetwork();
         } else {
+            console.log("wifiStatusChanged: wifi is unavailable.");
             $(".wifiStatus .statusOff").show();
             $(".wifiStatus .statusOn").hide();
         }
     } else {
-        console.log("window.android undefined.");
+        console.log("wifiStatusChanged: window.android undefined.");
     }
 }
 
@@ -112,7 +113,7 @@ $("#MainPage").on("pageinit", function() {
     $("#excellentBtn").click(function() {me.showTab(1);});
     $("#mineBtn").click(function() {me.showTab(2);});
 
-    me.requestAppSlide();
+    me.requestAppAds();
     me.requestAppList();
     me.requestKulianWifi();
 });
@@ -267,7 +268,7 @@ var me = {
         // post the form
         $.ajax({
             type: "POST",
-            url: "http://10.10.10.1/portaltt/logon.cgi",
+            url: "http://10.10.0.1/portaltt/logon.cgi",
             data: $("#loginform").serialize(),
             success : function(data) {
                         setTimeout(me.checkNetwork(), checkNetworkInterval);
@@ -303,48 +304,51 @@ var me = {
 
     requestKulianWifi : function()
     {
-        var url = milkPapaServerUrl+"/kulianwifi?"+callback;
-        console.log("requestKulianWifi:"+url);
-        $.getJSON(url, function(data) {
+        // var url = milkPapaServerUrl+"/kulianwifi?"+callback;
+        // console.log("requestKulianWifi:"+url);
+        // $.getJSON(url, function(data) {
+            var data = {"wifilist": [ {"SSID":"@小鸿科技","password":""}]};
             me.kuLianWifi = data;
             me.requestWifiList();
-        });
+        // });
     },
 
-    requestAppSlide : function()
+    requestAppAds : function()
     {
-        var url = milkPapaServerUrl+"/appslide?"+callback;
-        console.log("requestAppSlide:"+url);
+        var url = appServerUrl+"/appad?"+callback;
+        console.log("requestAppAds:"+url);
         $.getJSON(url, function(data) {
             // var obj = eval("(" + data +")");
-            me.parseAppSlide(data);
-            slide.init();
-            $("#olSlideNum").hide();
-            if (me.currentTabIdx == 1) {
-                $(".fouce").show();
+            if (data.total_count != undefined && data.total_count > 0) {
+                me.parseAppAds(data);
+                slide.init();
+                $("#olSlideNum").hide();
+                if (me.currentTabIdx == 1) {
+                    $(".fouce").show();
+                }
             }
         });
     },
 
-    parseAppSlide : function(data)
+    parseAppAds : function(data)
     {
     // console.log(data);
         // var obj = eval("("+data+")"); // json to object
-        var html = me.appSlideTemplate(data);
+        var html = me.appAdsTemplate(data);
 
         $("#adlist").empty();
         $("#adlist").append(html);
     },
 
-    appSlideTemplate : function(data)
+    appAdsTemplate : function(data)
     {
-        var data = data.adlist;
+        var ads = data.adlist;
         var arrHtml = new Array();
 
-        for (var i = 0; i < data.length; i++) {
+        for (var i = 0; i < ads.length; i++) {
             arrHtml.push("<li>");
-            arrHtml.push("<a href=\"" + data[i].Link + "\">");
-            arrHtml.push("<img src=\"" + data[i].ImageSrc + "\" />");
+            arrHtml.push("<a href=\"" + ads[i].Link + "\">");
+            arrHtml.push("<img src=\"" + ads[i].ImageSrc + "\" />");
             arrHtml.push("</a>");
             arrHtml.push("</li>");
         }
