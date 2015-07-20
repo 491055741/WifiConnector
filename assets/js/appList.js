@@ -125,7 +125,6 @@ $("#MainPage").on("pagebeforeshow", function () {
     me.showTab(me.currentTabIdx);
 
     finishDownloadProgress();
-    // me.checkNetwork();
 });
 
 $("#AppDetailPage").on("pagebeforeshow", function () {
@@ -206,6 +205,7 @@ $("#toRegistBtn").fastClick(function() {
 });
 
 $(".wifiStatus img").fastClick(function() {
+    me.authentication();
     if ($(".wifiStatus .statusOn").css("display") == 'none') {
         me.connectWifi(this);
     }
@@ -271,21 +271,33 @@ var me = {
             return;
         }
         // post the form
-        $.ajax({
-            type: "POST",
-            url: "http://10.10.0.1/portal0701/logon.cgi",
-            data: $("#loginform").serialize(),
-            success : function(data) {
-                        $("#statusDesc").text("认证成功");
-                        setTimeout(me.checkNetwork(), checkNetworkInterval);
-                      },
-            error : function() {
-                    console.log("post authentication form fail.");
-                    $("#statusDesc").text("认证失败");
-                    setTimeout(me.authentication(), checkNetworkInterval);
-            }
-        });
-    
+        // $.ajax({
+        //     type: "POST",
+        //     crossDomain: true,
+        //     url: "http://120.193.39.109/portal0701/logon.cgi",// 10.10.0.1
+        //     data: $("#loginform").serialize(),
+        //     success : function(data) {
+        //                 $("#statusDesc").text("认证成功");
+        //                 setTimeout(me.checkNetwork(), checkNetworkInterval);
+        //               },
+        //     error : function() {
+        //             console.log("post authentication form fail.");
+        //             $("#statusDesc").text("认证失败");
+        //             setTimeout(me.authentication(), checkNetworkInterval);
+        //     }
+        // });
+
+        // test
+        if (window.android != undefined) {
+            console.log("android.httpRequst");
+            var url = "http://120.193.39.109/portal0701/logon.cgi";
+            var data = $("#loginform").serialize();
+            window.android.httpRequst(url, "POST", data);
+        }
+        // $(window.frames["iframe1"].document).find("#loginform").submit();
+        setTimeout(me.checkNetwork(), checkNetworkInterval);
+        // end
+
         checkNetworkInterval = checkNetworkInterval + 1000;
     },
 

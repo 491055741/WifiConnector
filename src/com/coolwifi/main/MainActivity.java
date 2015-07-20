@@ -39,6 +39,8 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.coolwifi.httpconnection.HttpRequest;
 import com.coolwifi.updatemanager.*;
 import com.coolwifi.wifiadmin.*;
 import com.umeng.analytics.AnalyticsConfig;
@@ -275,6 +277,12 @@ public class MainActivity extends Activity {
         mWebviewHandler.sendMessage(msg);
 	}
 
+	//  @JavascriptInterface
+    public void httpRequst(String url, String method, String data) {
+        Log.d(TAG, "httpRequst:method:["+method+"]"+url+"?"+data);
+        HttpRequest.post(url, data);
+    }
+	
 	private boolean initCustomActionBar() {
 
 	    if (mActionbar == null) {
