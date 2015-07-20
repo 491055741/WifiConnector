@@ -483,6 +483,20 @@ public class MainActivity extends Activity {
     }
 
     //  @JavascriptInterface
+	public String getVersion()
+	{
+	    String version = "1.0Build0";
+	    try {
+	        // 获取软件版本号，对应AndroidManifest.xml下android:versionCode
+	    	PackageInfo packageInfo = getBaseContext().getPackageManager().getPackageInfo("com.xiaohong.wificoolconnect", 0);	
+	        version =  packageInfo.versionName +"build"+ packageInfo.versionCode;
+	    } catch (NameNotFoundException e) {
+	        e.printStackTrace();
+	    }
+	    return version;
+	}
+    
+    //  @JavascriptInterface
     public void feedback() {
         feedbackAgent.startFeedbackActivity();
         return;
