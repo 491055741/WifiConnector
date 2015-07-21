@@ -20,7 +20,8 @@ a { text-decoration:none;}
 
 #connectionView .message_grid img {width: 18px; height: 18px; margin-left: 10px; }
 
-.logonFrame {width: 80%; height:60px;}
+/*.logonFrame {width: 80%; height:60px;}*/
+#connectionView, .portal, .portalframe {width: 100%; min-height:420px;}
 .connection_bg {height: 230px; background: url(../images/night.png) no-repeat; background-size: contain;}
 .wifiStatus img {margin-top: 60px; width: 250px; height: 250px; }
 .wifiStatus div {margin-top: 20px; width: 40%; height: 20px;}
@@ -29,6 +30,7 @@ a { text-decoration:none;}
 
 .text_disabled {color:gray;}
 
+.refresh-app-list {margin-top: 150px; }
 .app-list .coin_icon {position: absolute; width: 20px; top:30px; right: 75px;}
 .app-list .coin_num  {position: absolute; width: 20px; top:30px; right: 110px; color: #FF8800;}
 .app-list .installBtn {position: absolute; width: 20px; height: 20px; top:10px; right: 10px; background: url(../images/download.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center;}

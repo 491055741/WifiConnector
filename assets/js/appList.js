@@ -215,7 +215,11 @@ $(".wifiStatus img").fastClick(function() {
 
 $(".exchange_item").fastClick(function() {
     me.requestExchange(this);
-})
+});
+
+$(".refresh-app-list").fastClick(function() {
+    me.requestAppList();
+});
 
 var me = {
     countDownSeconds : 0, 
@@ -495,7 +499,7 @@ var me = {
     requestAppList : function()
     {
     	showLoader();
-        // +currentCat+
+        $(".refresh-app-list").show();
         var url = appServerUrl+"/applist?"+callback;
         console.log("requestAppList:" + url);
         $.getJSON(url, function(data) {
@@ -530,6 +534,10 @@ var me = {
     {
         var data = res.chosenapplist;
         var arrHtml = new Array();
+
+        if (data.length > 0) {
+            $(".refresh-app-list").hide();
+        }
 
         for (var i = 0; i < data.length; i++) {
 
