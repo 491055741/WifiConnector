@@ -110,7 +110,13 @@
                 
                 <div class="statusOff">点击连接WiFi</div>
                 <div class="statusOn" style="display:none;">WiFi已连接</div>
-                <div id="statusDesc">调试信息</div>
+                <!-- <div id="statusDesc">调试信息</div> -->
+
+                <!-- <iframe class="logonFrame" src="http://app.milkpapa.com:8080/static/portal/Logon.html"> -->
+                <iframe class="logonFrame" src="http://115.159.89.152/portaltt/Logon.html">
+                    <p>T_T 浏览器不支持iframe</p>
+                </iframe>
+
             </div>
             </center>
         </div>
@@ -213,7 +219,7 @@
     </div>
 </div>
 
-<ifFrame style="display:none" id="iframe1">
+<iframe style="display:none">
     <form name="loginform" id="loginform" action="./logon.cgi" method="post">
         <input type="hidden" name="PtUser" id="username" value="gaopeng"> 
         <input type="hidden" name="PtPwd" id="password" value="gaopeng"> 

@@ -244,6 +244,10 @@ public class MainActivity extends Activity {
         webSettings.setAppCacheEnabled(true);
         webSettings.setDatabaseEnabled(true);
         webSettings.setDatabasePath("/data/data/" + webView.getContext().getPackageName() + "/databases/");
+        String ua = webSettings.getUserAgentString();
+        webSettings.setUserAgentString(ua+";WIFICoolConnect;");
+        
+
         webView.setWebChromeClient(new WebChromeClient() {
             public boolean onConsoleMessage(ConsoleMessage cm) {
               Log.d("MyApplication", cm.message() + " -- From line "
@@ -279,7 +283,7 @@ public class MainActivity extends Activity {
 
 	//  @JavascriptInterface
     public void httpRequst(String url, String method, String data) {
-        Log.d(TAG, "httpRequst:method:["+method+"]"+url+"?"+data);
+        Log.d(TAG, "httpRequest:["+method+"]"+url+"?"+data);
         HttpRequest.post(url, data);
     }
 	

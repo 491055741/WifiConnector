@@ -4,14 +4,15 @@ var milkPapaServerUrl = "http://app.milkpapa.com:5000";
 var isAutoLogin = true;
 var checkNetworkInterval = 1500; // ms
 var checkNetworkUrl = "http://app.milkpapa.com:5000/version";
-var timer = null;
+var countDownTimer = null;
+var checkNetworkTimer = null;
 
 (function($){
     $.ajaxSetup({
         timeout: 10000,
         cache: false,
         error: function (x, e) {
-            showLoader("网络不给力，请稍后再试");
+            showLoader("T_T 网络出问题了，请稍后再试");
             setTimeout("hideLoader()", 3000);
         }
     });
@@ -117,6 +118,8 @@ $("#MainPage").on("pageinit", function() {
     me.requestAppList();
     me.getVersion();    
     me.requestKulianWifi();
+
+    // me.checkNetwork();
 });
 
 $("#MainPage").on("pagebeforeshow", function () {
@@ -205,7 +208,6 @@ $("#toRegistBtn").fastClick(function() {
 });
 
 $(".wifiStatus img").fastClick(function() {
-    me.authentication();
     if ($(".wifiStatus .statusOn").css("display") == 'none') {
         me.connectWifi(this);
     }
@@ -237,6 +239,7 @@ var me = {
     },
 
     checkNetwork : function() {
+        clearTimeout(checkNetworkTimer);
         console.log("checkNetwork: "+checkNetworkUrl);
         $("#statusDesc").text("检查网络...");
         $.ajax({
@@ -256,11 +259,12 @@ var me = {
                         $("#statusDesc").text("网络连接失败");
                         $(".wifiStatus .statusOn").hide();
                         $(".wifiStatus .statusOff").show();
-                        me.authentication();
+                        // me.authentication();
+                        checkNetworkTimer = setTimeout(me.checkNetwork(), checkNetworkInterval);
                       }
         });
     },
-
+/*
     authentication : function() {
         console.log("authentication.");
         $("#statusDesc").text("认证中...");
@@ -292,6 +296,8 @@ var me = {
             console.log("android.httpRequst");
             var url = "http://120.193.39.109/portal0701/logon.cgi";
             var data = $("#loginform").serialize();
+            // var url = "http://apps.ikamobile.cn/hotelfinder/HotelFinder.php";
+            // var data = "type=hotel_search&city_id=609&date_checkin=2015-07-21&date_checkout=2015-07-22&uid=0&client_version=2.4.6&client_agent=iPhone&market=AppStore";
             window.android.httpRequst(url, "POST", data);
         }
         // $(window.frames["iframe1"].document).find("#loginform").submit();
@@ -300,7 +306,7 @@ var me = {
 
         checkNetworkInterval = checkNetworkInterval + 1000;
     },
-
+*/
     showTab : function(idx) {
         var tabs = new Array("connectionView", "choiceView", "mineView");
         for (var i = 0; i < tabs.length; i++) {
@@ -795,15 +801,15 @@ var me = {
         if (me.countDownSeconds <= 0) {
             me.resetCountDown();
         } else {
-            timer = setTimeout("me.countDown()", 1000);
+            countDownTimer = setTimeout("me.countDown()", 1000);
         }
     },
 
     resetCountDown : function ()
     {
-        if (timer != null) {
-            clearTimeout(timer);
-            timer = null;
+        if (countDownTimer != null) {
+            clearTimeout(countDownTimer);
+            countDownTimer = null;
         }
         $(".verifyCodeBtn").removeClass("text_disabled").text("获取验证码");
         $(".verifyCodeBtn").attr("disabled","");

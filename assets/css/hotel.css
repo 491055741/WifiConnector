@@ -20,6 +20,7 @@ a { text-decoration:none;}
 
 #connectionView .message_grid img {width: 18px; height: 18px; margin-left: 10px; }
 
+.logonFrame {width: 80%; height:60px;}
 .connection_bg {height: 230px; background: url(../images/night.png) no-repeat; background-size: contain;}
 .wifiStatus img {margin-top: 60px; width: 250px; height: 250px; }
 .wifiStatus div {margin-top: 20px; width: 40%; height: 20px;}
