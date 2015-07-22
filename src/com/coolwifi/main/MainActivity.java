@@ -88,6 +88,7 @@ public class MainActivity extends Activity {
 	            packageManager = context.getPackageManager();
 	            applicationInfo = packageManager.getApplicationInfo(packageName, 0);
     	        String applicationName = (String) packageManager.getApplicationLabel(applicationInfo);
+    	        Log.d(TAG, "installed ["+ applicationName +"] pkg-name: "+applicationInfo.packageName);
     	        String appId = mDownloadAppInfoHashMap.get(applicationName); 
     	        if (appId != null) {
     	            Toast.makeText(context, "安装成功: "+applicationName, Toast.LENGTH_LONG).show();	            
