@@ -23,7 +23,7 @@ var updateDownloadProgress = function (progress) {
     $('#counter').html(progress+'%');
     $('.wrapper .load-bar-inner').width(progress+'%');
     var offset = (323+25)*progress/100 - 25;
-    console.log('counter offset:'+offset);
+    // console.log('counter offset:'+offset);
     $('.wrapper #counter').css('left', offset+'px');
 }
 // js-Android interface

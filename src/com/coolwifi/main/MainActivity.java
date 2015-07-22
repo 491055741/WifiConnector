@@ -89,7 +89,7 @@ public class MainActivity extends Activity {
 	            applicationInfo = packageManager.getApplicationInfo(packageName, 0);
     	        String applicationName = (String) packageManager.getApplicationLabel(applicationInfo);
     	        Log.d(TAG, "installed ["+ applicationName +"] pkg-name: "+applicationInfo.packageName);
-    	        String appId = mDownloadAppInfoHashMap.get(applicationName); 
+    	        String appId = mDownloadAppInfoHashMap.get(applicationInfo.packageName); 
     	        if (appId != null) {
     	            Toast.makeText(context, "安装成功: "+applicationName, Toast.LENGTH_LONG).show();	            
     	            webView.loadUrl("javascript: appInstallFinished("+appId+")" );
@@ -377,9 +377,9 @@ public class MainActivity extends Activity {
     }
 
 //    @JavascriptInterface
-    public void downloadApp(String appId, String appName, String appUrl) {
+    public void downloadApp(String appId, String pkgName, String appUrl) {
     	Log.d(TAG, "download app");
-    	mDownloadAppInfoHashMap.put(appName, appId);
+    	mDownloadAppInfoHashMap.put(pkgName, appId);
     	try {
 			mDownloadManager.downloadApk(appUrl, "_"+(int)(Math.random()*100000)+".apk");
 		} catch (MalformedURLException e) {
@@ -484,11 +484,11 @@ public class MainActivity extends Activity {
     }
 
 //    @JavascriptInterface
-    public boolean isAppInstalled(String appName, int versionCode) {
+    public boolean isAppInstalled(String pkgName, int versionCode) {
         ArrayList<AppInfo> list = getAllAppList();
         for (Iterator<AppInfo> iterator = list.iterator(); iterator.hasNext();) {
             AppInfo appInfo = (AppInfo) iterator.next();
-            if (appName.equals(appInfo.getAppname())) { 
+            if (pkgName.equals(appInfo.getPackagename())) { 
                 return true;
             }
         }
@@ -542,7 +542,7 @@ public class MainActivity extends Activity {
             PackageInfo pInfo=packageInfos.get(i);
             AppInfo appInfo= new AppInfo();
             appInfo.setAppname(pInfo.applicationInfo.loadLabel(getPackageManager()).toString());//应用程序的名称
-//            appInfo.setPackagename(pInfo.packageName);//应用程序的包
+            appInfo.setPackagename(pInfo.packageName);//应用程序的包
             appInfo.setVersionCode(pInfo.versionCode);//版本号
             appList.add(appInfo);
         }
