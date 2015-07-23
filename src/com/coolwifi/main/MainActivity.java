@@ -349,7 +349,8 @@ public class MainActivity extends Activity {
             return false;
         }
         Button backBtn = (Button)mActionbar.getCustomView().findViewById(R.id.back_btn);
-        if (webView.canGoBack() && backBtn.getVisibility() == View.VISIBLE) {
+        boolean backBtnShown = (backBtn.getVisibility() == View.VISIBLE);
+        if (webView.canGoBack() && backBtnShown) {
             webView.goBack();   //goBack()表示返回webView的上一页面
             return true;
         } else {

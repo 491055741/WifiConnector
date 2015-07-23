@@ -1,5 +1,6 @@
 var appServerUrl = "http://livew.mobdsp.com/cb"; var callback = "callback=?";
 // var appServerUrl = "http://127.0.0.1:5000"; var callback = "callback=?";
+// var localServerUrl = "http://127.0.0.1:5000"; var callback = "callback=?";
 var milkPapaServerUrl = "http://app.milkpapa.com:5000";
 var isAutoLogin = true;
 var checkNetworkInterval = 1500; // ms
@@ -541,8 +542,12 @@ var me = {
 
         for (var i = 0; i < data.length; i++) {
 
+            if (data[i].PackageName == undefined) {
+                break;
+            }
+
             var isAppInstalled = false;
-            if (window.android != undefined && window.android.isAppInstalled(data[i].AppName, 1)) {
+            if (window.android != undefined && window.android.isAppInstalled(data[i].PackageName, 1)) {
                 isAppInstalled = true;
             }
 
@@ -576,7 +581,7 @@ var me = {
             if (isAppInstalled) {
                 arrHtml.push("<div class='ui-btn installBtn inactive' data-installed='YES' ></div>");
             } else {
-                arrHtml.push("<div class='ui-btn installBtn' data-installed='NO' data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-appname=\""+data[i].AppName+"\"></div>");
+                arrHtml.push("<div class='ui-btn installBtn' data-installed='NO' data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\"></div>");
             }
 
             arrHtml.push("</li>");
@@ -649,7 +654,7 @@ var me = {
                 });
             }
 
-            window.android.downloadApp(appId, $(obj).data("appname"), $(obj).data("appurl"));
+            window.android.downloadApp(appId, $(obj).data("pkgname"), $(obj).data("appurl"));
             showLoader("开始下载，完成安装前请不要退出本应用");
             setTimeout("hideLoader()", 2000);
         } else {
@@ -678,7 +683,7 @@ var me = {
     appIntroTemplate : function (data)
     {
         var isAppInstalled = false;
-        if (window.android != undefined && window.android.isAppInstalled(data.AppName, 1)) {
+        if (window.android != undefined && window.android.isAppInstalled(data.PackageName, 1)) {
             isAppInstalled = true;
         }
 
@@ -705,11 +710,11 @@ var me = {
         arrHtml.push("</div>");
 
         arrHtml.push("</div>");
-        var gaAppName = data.AppName.replace(/\"/g, "”").replace(/'/g, "’");
+        // var gaAppName = data.AppName.replace(/\"/g, "”").replace(/'/g, "’");
 
         arrHtml.push("<div id=\"divdownarea\" class=\"down-area\">");
         arrHtml.push("<div class=\"content-btn-con\">");
-        arrHtml.push("<a class=\"content-BaiYingFreeDownload\" data-appurl=\""+data.AppSource+"\" data-appid=\""+data.AppId+"\" data-appname=\""+data.AppName+"\" ");
+        arrHtml.push("<a class=\"content-BaiYingFreeDownload\" data-appurl=\""+data.AppSource+"\" data-appid=\""+data.AppId+"\" data-pkgname=\""+data.PackageName+"\" ");
         if (isAppInstalled) {
             arrHtml.push("data-installed='YES' >已安装</a>");
         } else {
