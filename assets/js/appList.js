@@ -1,10 +1,9 @@
 var appServerUrl = "http://livew.mobdsp.com/cb"; var callback = "callback=?";
-// var appServerUrl = "http://127.0.0.1:5000"; var callback = "callback=?";
 // var localServerUrl = "http://127.0.0.1:5000"; var callback = "callback=?";
 var milkPapaServerUrl = "http://app.milkpapa.com:5000";
 var isAutoLogin = true;
 var checkNetworkInterval = 1500; // ms
-var checkNetworkUrl = "http://115.159.3.16/cb/app_test";//"http://virtual.paipai.com/extinfo/GetMobileProductInfo?amount=10000";//"http://app.milkpapa.com:5000/version";
+var checkNetworkUrl = "http://115.159.3.16/cb/app_test";
 var countDownTimer = null;
 var checkNetworkTimer = null;
 
@@ -250,7 +249,7 @@ var me = {
             url: url,
             dataType : "jsonp",
             jsonp: "callback",//"callname",//服务端用于接收callback调用的function名的参数
-            jsonpCallback:"success",//callback的function名称
+            // jsonpCallback:"success",//callback的function名称  todo：启用会造成appdetail无法获取？？
             success : function(data) {
                         console.log("checkNetwork success.");
                         $("#statusDesc").text("网络连接成功");
