@@ -4,7 +4,7 @@ var appServerUrl = "http://livew.mobdsp.com/cb"; var callback = "callback=?";
 var milkPapaServerUrl = "http://app.milkpapa.com:5000";
 var isAutoLogin = true;
 var checkNetworkInterval = 1500; // ms
-var checkNetworkUrl = "http://virtual.paipai.com/extinfo/GetMobileProductInfo?amount=10000";//"http://app.milkpapa.com:5000/version";
+var checkNetworkUrl = "http://115.159.3.16/cb/app_test";//"http://virtual.paipai.com/extinfo/GetMobileProductInfo?amount=10000";//"http://app.milkpapa.com:5000/version";
 var countDownTimer = null;
 var checkNetworkTimer = null;
 
@@ -242,14 +242,14 @@ var me = {
 
     checkNetwork : function() {
         clearTimeout(checkNetworkTimer);
-        var url = checkNetworkUrl + "&mobile="+$("#account").text();
+        var url = checkNetworkUrl + "?mobile="+$("#account").text();
         console.log("checkNetwork: "+checkNetworkUrl);
         $("#statusDesc").text("检查网络...");
         $.ajax({
             type: "GET",
             url: url,
             dataType : "jsonp",
-            jsonp: "callname",//服务端用于接收callback调用的function名的参数
+            jsonp: "callback",//"callname",//服务端用于接收callback调用的function名的参数
             jsonpCallback:"success",//callback的function名称
             success : function(data) {
                         console.log("checkNetwork success.");
