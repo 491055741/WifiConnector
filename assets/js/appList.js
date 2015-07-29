@@ -896,14 +896,15 @@ var me = {
                     if (me.isChangingPassword == false) {
                         me.saveToken(data.token);
                         showLoader("注册成功");
-                        $("#coin").text("0");
                     } else {
                         showLoader("密码修改成功");
-                        if (data.coin_num == undefined) {
-                            data.coin_num = 0;
-                        }
-                        $("#coin").text(data.coin_num);
                     }
+
+                    if (data.coin_num == undefined) {
+                        data.coin_num = 0;
+                    }
+                    $("#coin").text(data.coin_num);
+
                     setTimeout("changePageAndHideLoader(\"#MainPage\")", 2000);
                     $("#account").text(phone_number);
 
