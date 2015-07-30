@@ -1,13 +1,16 @@
 package com.coolwifi.main;
 
+import org.json.JSONException;
+
 import com.umeng.analytics.MobclickAgent;
 import com.xiaohong.wificoolconnect.R;
-
+import com.coolwifi.updatemanager.*;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Resources.NotFoundException;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -49,10 +52,18 @@ public class SplashActivity extends Activity {
 
     @Override  
     public void onCreate(Bundle icicle) {  
-        super.onCreate(icicle);  
+        super.onCreate(icicle);
         getWindow().setBackgroundDrawableResource(R.drawable.splash);  
-        mMainHandler.sendEmptyMessageDelayed(0, 1000);  
-    }  
+        mMainHandler.sendEmptyMessageDelayed(0, 1000);
+        UpdateManager updateManager = new UpdateManager(SplashActivity.this);
+        try {
+            updateManager.checkUpdate();
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
       
     // much easier to handle key events   
     @Override  

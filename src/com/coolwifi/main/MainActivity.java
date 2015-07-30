@@ -43,7 +43,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.coolwifi.httpconnection.HttpRequest;
-import com.coolwifi.updatemanager.*;
+import com.coolwifi.updatemanager.DownloadManager;
 import com.coolwifi.wifiadmin.*;
 import com.umeng.analytics.AnalyticsConfig;
 import com.umeng.analytics.MobclickAgent;
@@ -66,7 +66,6 @@ public class MainActivity extends Activity {
     private static final int DOWNLOAD_FINISH = 2;
     private static Boolean isExit = false;
 	private WebView webView;
-	private UpdateManager mUpdateManager;
     private DownloadManager mDownloadManager;
 	private WifiAdmin wifiAdmin;
 	private HashMap<String, String> mDownloadAppInfoHashMap;
@@ -226,7 +225,6 @@ public class MainActivity extends Activity {
 		PushManager.getInstance().initialize(this.getApplicationContext());
 
 		wifiAdmin = new WifiAdmin(getBaseContext());
-        mUpdateManager = new UpdateManager(MainActivity.this);
         mDownloadManager = new DownloadManager(MainActivity.this, mDownloadHandler);
         mDownloadAppInfoHashMap = new HashMap<String, String>();
 
@@ -273,8 +271,6 @@ public class MainActivity extends Activity {
         CookieManager.getInstance().setAcceptCookie(true);
         webView.addJavascriptInterface(this, "android");
         setContentView(webView);
-
-        mUpdateManager.checkUpdate();
     }
 	//  @JavascriptInterface
 	public void showBackBtn(boolean isShow) {
