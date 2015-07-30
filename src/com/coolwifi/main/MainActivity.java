@@ -3,6 +3,8 @@ package com.coolwifi.main;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningAppProcessInfo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -70,6 +72,7 @@ public class MainActivity extends Activity {
 	private HashMap<String, String> mDownloadAppInfoHashMap;
 	private ActionBar mActionbar;
 	private FeedbackAgent feedbackAgent;
+	private boolean mIsActive = true; // 是否进入后台
 	
 	private BroadcastReceiver mAppInstallReceiver = new BroadcastReceiver() {
 	    @Override
@@ -318,8 +321,13 @@ public class MainActivity extends Activity {
 	public void onResume() {
 	    super.onResume();
 	    MobclickAgent.onResume(this);
+	    if (!mIsActive) {// app从后台唤醒，进入前台
+	    	mIsActive = true;
+	    	webView.loadUrl("javascript: wifiStatusChanged()");
+	    }
     }
-    public void onPause() {
+
+	public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
     }
@@ -577,6 +585,30 @@ public class MainActivity extends Activity {
     {
         String imei = ((TelephonyManager) getSystemService(TELEPHONY_SERVICE)).getDeviceId();
         return imei;
+    }
+
+    protected void onStop() {
+    	super.onStop();
+    	if (!isAppOnForeground()) {
+    		mIsActive = false;// 记录当前已经进入后台
+    	}
+    }
+
+    private boolean isAppOnForeground()
+    {
+    	ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+    	String packageName = getApplicationContext().getPackageName();
+    
+	    List<RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
+	    if (appProcesses == null)
+	    	return false;
+	    for (RunningAppProcessInfo appProcess : appProcesses) {
+	    	// The name of the process that this object is associated with.
+	    	if (appProcess.processName.equals(packageName) && appProcess.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+	    		return true;
+	    	}
+	    }
+	    return false;
     }
 
 }
