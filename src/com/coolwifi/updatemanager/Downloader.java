@@ -70,7 +70,7 @@ public class Downloader
                 .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI)  
                 .setAllowedOverRoaming(false)
                 .setTitle(appName)
-                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, appName+".apk"));
+                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "_"+(int)(Math.random()*100000)+".apk"));//appName+".apk")
         mDownloadIds.add(Long.toString(downloadId));
         startTimer();
     }
@@ -100,15 +100,9 @@ public class Downloader
             	if (intent.getAction().equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
                     Long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
                     Log.v("tag", "download complete broadcast: id: "+downloadId);
-                    
-                    DownloadManager.Query query = new DownloadManager.Query();     
-                    query.setFilterById(downloadId);
-                    Cursor c = dowanloadmanager.query(query);
-                    if (c!=null && c.moveToFirst()) {
-                        int pathIdx = c.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME);
-                        String path = c.getString(pathIdx);
-                        installApk(path);
-                    }
+
+                    Uri downloadFileUri = dowanloadmanager.getUriForDownloadedFile(downloadId);
+                    installApk(downloadFileUri);
 
                     mDownloadIds.remove(String.valueOf(downloadId));
                     dowanloadmanager.remove(downloadId);
@@ -184,18 +178,18 @@ public class Downloader
 //              getContentResolver().unregisterContentObserver(downloadObserver);  
 //        }  
     
-    public void installApk(String path)
+    public void installApk(Uri uri)
     {
 //        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-        File apkfile = new File(path);
-        if (!apkfile.exists())
-        {
-        	Log.d("tag", "installApk: "+path+" not found!");
-            return;
-        }
+//        File apkfile = new File(path);
+//        if (!apkfile.exists())
+//        {
+//        	Log.d("tag", "installApk: "+path+" not found!");
+//            return;
+//        }
         // 通过Intent安装APK文件
         Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setDataAndType(Uri.parse("file://" + apkfile.toString()), "application/vnd.android.package-archive");
+        i.setDataAndType(uri, "application/vnd.android.package-archive");
         mContext.startActivity(i);
     }
 
