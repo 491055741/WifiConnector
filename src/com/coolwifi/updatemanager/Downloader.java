@@ -101,8 +101,13 @@ public class Downloader
                     Long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
                     Log.v("tag", "download complete broadcast: id: "+downloadId);
 
-                    Uri downloadFileUri = dowanloadmanager.getUriForDownloadedFile(downloadId);
-                    installApk(downloadFileUri);
+                    String apkFilePath = new StringBuilder(Environment
+                            .getExternalStorageDirectory().getAbsolutePath())
+                            .append(File.separator)
+                            .append(DOWNLOAD_FOLDER_NAME)
+                            .append(File.separator).append(DOWNLOAD_FILE_NAME)
+                            .toString();
+                    installApk(apkFilePath);
 
                     mDownloadIds.remove(String.valueOf(downloadId));
                     dowanloadmanager.remove(downloadId);
@@ -178,18 +183,20 @@ public class Downloader
 //              getContentResolver().unregisterContentObserver(downloadObserver);  
 //        }  
     
-    public void installApk(Uri uri)
+    public void installApk(String filePath)
     {
 //        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-//        File apkfile = new File(path);
-//        if (!apkfile.exists())
-//        {
-//        	Log.d("tag", "installApk: "+path+" not found!");
-//            return;
-//        }
+    	Log.d("tag", "installApk: "+filePath);
+    	File apkfile = new File(filePath);
+        if (!apkfile.exists())
+        {
+        	Log.d("tag", "installApk: "+filePath+" not found!");
+            return;
+        }
         // 通过Intent安装APK文件
         Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setDataAndType(uri, "application/vnd.android.package-archive");
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.setDataAndType(Uri.parse("file://" + filePath), "application/vnd.android.package-archive");
         mContext.startActivity(i);
     }
 
