@@ -65,7 +65,7 @@ public class UpdateManager
                     mDownloadDialog.dismiss();
                     mDownloadDialog = null;
                 }
-                mDownloader.installApk( msg.obj.toString());
+//                mDownloader.installApk( msg.obj.toString());
                 break;
             default:
                 break;

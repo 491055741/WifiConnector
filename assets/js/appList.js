@@ -578,7 +578,7 @@ var me = {
             if (isAppInstalled) {
                 arrHtml.push("<div class='ui-btn installBtn inactive' data-installed='YES' ></div>");
             } else {
-                arrHtml.push("<div class='ui-btn installBtn' data-installed='NO' data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\"></div>");
+                arrHtml.push("<div class='ui-btn installBtn' data-installed='NO' data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\"></div>");
             }
 
             arrHtml.push("</li>");
@@ -651,7 +651,7 @@ var me = {
                 });
             }
 
-            window.android.downloadApp(appId, $(obj).data("pkgname"), $(obj).data("appurl"));
+            window.android.downloadApp(appId, $(obj).data("appname"), $(obj).data("pkgname"), $(obj).data("appurl"));
             showLoader("开始下载，完成安装前请不要退出本应用");
             setTimeout("hideLoader()", 2000);
         } else {
@@ -711,7 +711,7 @@ var me = {
 
         arrHtml.push("<div id=\"divdownarea\" class=\"down-area\">");
         arrHtml.push("<div class=\"content-btn-con\">");
-        arrHtml.push("<a class=\"content-BaiYingFreeDownload\" data-appurl=\""+data.AppSource+"\" data-appid=\""+data.AppId+"\" data-pkgname=\""+data.PackageName+"\" ");
+        arrHtml.push("<a class=\"content-BaiYingFreeDownload\" data-appurl=\""+data.AppSource+"\" data-appname=\""+data.AppName+"\" data-appid=\""+data.AppId+"\" data-pkgname=\""+data.PackageName+"\" ");
         if (isAppInstalled) {
             arrHtml.push("data-installed='YES' >已安装</a>");
         } else {

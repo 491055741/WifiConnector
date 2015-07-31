@@ -381,11 +381,11 @@ public class MainActivity extends Activity {
     }
 
 //    @JavascriptInterface
-    public void downloadApp(String appId, String pkgName, String appUrl) {
+    public void downloadApp(String appId, String appName, String pkgName, String appUrl) {
     	Log.d(TAG, "download app");
     	mDownloadAppInfoHashMap.put(pkgName, appId);
     	try {
-    	    mDownloader.downloadApk(appUrl, "_"+(int)(Math.random()*100000)+".apk");
+    	    mDownloader.downloadApk(appUrl, appName); // "_"+(int)(Math.random()*100000)
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

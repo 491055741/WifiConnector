@@ -44,92 +44,101 @@ public class Downloader
     private Handler mHandler;
     private String mSavePath;
     private List<DownloadFileThread> mDownloadList;
-    private HashMap<String, DownloadFileInfo> mDownloadInfoHashMap;
+//    private HashMap<String, DownloadFileInfo> mDownloadInfoHashMap;
+    private ArrayList<String> mDownloadIds;
     private int maxProgress = 0;
     public Downloader(Context context, Handler handler)
     {
         mHandler = handler;
         mContext = context;
-        mDownloadList = new ArrayList<DownloadFileThread>();
+//        mDownloadList = new ArrayList<DownloadFileThread>();
   
-        mDownloadInfoHashMap = new HashMap<String, DownloadFileInfo>();
+//        mDownloadInfoHashMap = new HashMap<String, DownloadFileInfo>();
+        mDownloadIds = new ArrayList<String>();
         dowanloadmanager = (DownloadManager)mContext.getSystemService(Context.DOWNLOAD_SERVICE);  
         mContext.registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));   
         downloadObserver = new DownloadChangeObserver(null);
         mContext.getContentResolver().registerContentObserver(CONTENT_URI, true, downloadObserver);  
     }
     
-    public void downloadApk(String url, String fileName) throws MalformedURLException
+    public void downloadApk(String url, String appName) throws MalformedURLException
     {
-//        DownloadFileThread thread = new DownloadFileThread(url, fileName);
-//        mDownloadList.add(thread);
-//        thread.start();
-        startTimer();
         Uri uri = Uri.parse(url);  
-        Environment.getExternalStoragePublicDirectory(  
-                Environment.DIRECTORY_DOWNLOADS).mkdir();  
-  
-  
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).mkdir();  
+    
         long downloadId = dowanloadmanager.enqueue(new DownloadManager.Request(uri)  
-                .setAllowedNetworkTypes(  
-                        DownloadManager.Request.NETWORK_MOBILE  
-                                | DownloadManager.Request.NETWORK_WIFI)  
-                .setAllowedOverRoaming(false)  
-                .setDestinationInExternalPublicDir(  
-                        Environment.DIRECTORY_DOWNLOADS, fileName));
-        DownloadFileInfo info = new DownloadFileInfo(url, fileName); 
-        mDownloadInfoHashMap.put(Long.toString(downloadId), info);
+                .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI)  
+                .setAllowedOverRoaming(false)
+                .setTitle(appName)
+                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, appName+".apk"));
+        mDownloadIds.add(Long.toString(downloadId));
+        startTimer();
     }
     
     private DownloadManager dowanloadmanager = null;  
     private DownloadChangeObserver downloadObserver;  
-    private long lastDownloadId = 0;  
+//    private long lastDownloadId = 0;  
     public static final Uri CONTENT_URI = Uri.parse("content://downloads/my_downloads");  
 
- 
     class DownloadChangeObserver extends ContentObserver {  
-  
+
         public DownloadChangeObserver(Handler handler) {  
             super(handler);  
             // TODO Auto-generated constructor stub  
         }  
-  
+
         @Override  
         public void onChange(boolean selfChange) {  
 //              queryDownloadStatus();     
         }  
-  
-     }  
+    }
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {     
             @Override     
             public void onReceive(Context context, Intent intent) {     
                 //这里可以取得下载的id，这样就可以知道哪个文件下载完成了。适用与多个下载任务的监听    
-                Log.v("tag", "download complete broadcast: id: "+intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0));    
-//                queryDownloadStatus();     
-            }     
-        };     
-          
+            	if (intent.getAction().equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
+                    Long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+                    Log.v("tag", "download complete broadcast: id: "+downloadId);
+                    
+                    DownloadManager.Query query = new DownloadManager.Query();     
+                    query.setFilterById(downloadId);
+                    Cursor c = dowanloadmanager.query(query);
+                    if (c!=null && c.moveToFirst()) {
+                        int pathIdx = c.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME);
+                        String path = c.getString(pathIdx);
+                        installApk(path);
+                    }
+
+                    mDownloadIds.remove(String.valueOf(downloadId));
+                    dowanloadmanager.remove(downloadId);
+                    if (mDownloadIds.size() == 0) {
+	                    Message msg = new Message();
+	                    msg.what = DOWNLOAD_FINISH;
+	                    msg.arg1 = maxProgress;
+	                    mHandler.sendMessage(msg);
+                    }
+            	}
+            }
+        };
+
     private void queryDownloadStatus() {     
         DownloadManager.Query query = new DownloadManager.Query();     
-
         maxProgress = 0;
-       
         
-        for (Object key : mDownloadInfoHashMap.keySet().toArray()) {
-            String downloadIdStr = (String)key;
-            DownloadFileInfo info = mDownloadInfoHashMap.get(downloadIdStr); 
-
-            query.setFilterById(Long.parseLong(downloadIdStr));
+        for (String downloadIdStr : mDownloadIds) {
+        	Long downloadId = Long.parseLong(downloadIdStr);
+            query.setFilterById(downloadId);
             Cursor c = dowanloadmanager.query(query);
             if(c!=null&&c.moveToFirst()) {
                 int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));     
-                  
                 int reasonIdx = c.getColumnIndex(DownloadManager.COLUMN_REASON);    
                 int titleIdx = c.getColumnIndex(DownloadManager.COLUMN_TITLE);    
                 int fileSizeIdx = c.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES);        
-                int bytesDLIdx = c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR);    
-                String title = c.getString(titleIdx);    
+                int bytesDLIdx = c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR);
+                int pathIdx = c.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME);
+                String title = c.getString(titleIdx);
+                String path = c.getString(pathIdx);
                 int fileSize = c.getInt(fileSizeIdx);    
                 int bytesDL = c.getInt(bytesDLIdx);    
 
@@ -139,27 +148,22 @@ public class Downloader
                 sb.append(title).append("\n");   
                 sb.append("Downloaded ").append(bytesDL).append(" / " ).append(fileSize);    
                 int progress = (int)((float)bytesDL/(float)fileSize * 100);
-                // Display the status     
-                Log.d("tag", sb.toString());    
+                // Display the status
+                Log.d("tag", sb.toString());
                 switch(status) {     
                     case DownloadManager.STATUS_PAUSED:     
                         Log.v("tag", "STATUS_PAUSED");    
                     case DownloadManager.STATUS_PENDING:     
                         Log.v("tag", "STATUS_PENDING");    
                     case DownloadManager.STATUS_RUNNING:     
-                        //正在下载，不做任何事情    
                         Log.v("tag", "STATUS_RUNNING");    
                         break;     
                     case DownloadManager.STATUS_SUCCESSFUL:
-                        //完成    
-                        Log.v("tag", "下载完成");
-                        dowanloadmanager.remove(lastDownloadId);
-                        installApk(title);
-                        break;     
+                        Log.v("tag", "queryDownloadStatus:"+title+"下载完成");
+                        break;
                     case DownloadManager.STATUS_FAILED:     
-                        //清除已下载的内容，重新下载
                         Log.v("tag", "STATUS_FAILED");
-                        dowanloadmanager.remove(lastDownloadId);     
+//                        dowanloadmanager.remove(downloadId);     ????? 下载失败怎么办？
                     break;
                 }
                 if (progress > maxProgress) {
@@ -180,32 +184,19 @@ public class Downloader
 //              getContentResolver().unregisterContentObserver(downloadObserver);  
 //        }  
     
-    public void installApk(String fileName)
+    public void installApk(String path)
     {
-        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-        File apkfile = new File(path, fileName);
+//        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        File apkfile = new File(path);
         if (!apkfile.exists())
         {
+        	Log.d("tag", "installApk: "+path+" not found!");
             return;
         }
         // 通过Intent安装APK文件
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setDataAndType(Uri.parse("file://" + apkfile.toString()), "application/vnd.android.package-archive");
         mContext.startActivity(i);
-    }
-
-    private class DownloadFileInfo
-    {
-        private URL url;
-        public String fileName;
-        public DownloadFileInfo(String url, String fileName) {
-            try {
-                this.url = new URL(url);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-            this.fileName = fileName;
-        }
     }
 
     private void startTimer()
@@ -217,7 +208,7 @@ public class Downloader
                @Override
                public void run() {
 
-                   if (mDownloadList.size() == 0) {
+                   if (mDownloadIds.size() == 0) {
                        mTimer.cancel();
                        mTimer = null;
                        return;
@@ -227,7 +218,6 @@ public class Downloader
                    Message msg = new Message();
                    if (maxProgress == 100) {
                        msg.what = DOWNLOAD_FINISH;
-//                       mDownloadList.remove(thread);
                    } else {
                        msg.what = DOWNLOAD;
                    }
@@ -235,28 +225,6 @@ public class Downloader
                    msg.arg1 = maxProgress;
                    mHandler.sendMessage(msg);
 
-                   
-                   //                   DownloadFileThread thread = null;
-//                   int maxProgress = 0;
-//                   String fileName = null;
-//                   for (int i = 0; i < mDownloadList.size(); i++) {  
-//                       DownloadFileThread t = mDownloadList.get(i);
-//                       if (t.progress > maxProgress) {
-//                           maxProgress = t.progress;
-//                           fileName = t.fileName;
-//                           thread = t;
-//                       }
-//                   }
-//                   Message msg = new Message();
-//                   if (maxProgress == 100) {
-//                       msg.what = DOWNLOAD_FINISH;
-//                       mDownloadList.remove(thread);
-//                   } else {
-//                       msg.what = DOWNLOAD;                
-//                   }
-//                   msg.obj = fileName;
-//                   msg.arg1 = maxProgress;
-//                   mHandler.sendMessage(msg);
                }   
 
            }, 1000, 1000);  
@@ -265,10 +233,6 @@ public class Downloader
     
     public void cancelDownload(String taskName)
     {
-//        DownloadFileThread thread = getThread(taskName);
-//        if (thread != null) {
-//            thread.cancelDownload = true;
-//        }
     }
 
     private DownloadFileThread getThread(String taskName)
