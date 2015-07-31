@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
@@ -43,7 +42,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.coolwifi.httpconnection.HttpRequest;
-import com.coolwifi.updatemanager.DownloadManager;
+import com.coolwifi.updatemanager.Downloader;
 import com.coolwifi.wifiadmin.*;
 import com.umeng.analytics.AnalyticsConfig;
 import com.umeng.analytics.MobclickAgent;
@@ -66,7 +65,7 @@ public class MainActivity extends Activity {
     private static final int DOWNLOAD_FINISH = 2;
     private static Boolean isExit = false;
 	private WebView webView;
-    private DownloadManager mDownloadManager;
+    private Downloader mDownloader;
 	private WifiAdmin wifiAdmin;
 	private HashMap<String, String> mDownloadAppInfoHashMap;
 	private ActionBar mActionbar;
@@ -186,8 +185,8 @@ public class MainActivity extends Activity {
             case DOWNLOAD_FINISH:
                 Log.i(TAG, "download finished.");
                 webView.loadUrl("javascript: finishDownloadProgress()");
-                String fileName = msg.obj.toString();
-                mDownloadManager.installApk(fileName);
+//                String fileName = msg.obj.toString();
+//                mDownloader.installApk(fileName);
                 break;
             default:
                 break;
@@ -225,7 +224,7 @@ public class MainActivity extends Activity {
 		PushManager.getInstance().initialize(this.getApplicationContext());
 
 		wifiAdmin = new WifiAdmin(getBaseContext());
-        mDownloadManager = new DownloadManager(MainActivity.this, mDownloadHandler);
+		mDownloader = new Downloader(MainActivity.this, mDownloadHandler);
         mDownloadAppInfoHashMap = new HashMap<String, String>();
 
         boolean open = wifiAdmin.openWifi();
@@ -386,7 +385,7 @@ public class MainActivity extends Activity {
     	Log.d(TAG, "download app");
     	mDownloadAppInfoHashMap.put(pkgName, appId);
     	try {
-			mDownloadManager.downloadApk(appUrl, "_"+(int)(Math.random()*100000)+".apk");
+    	    mDownloader.downloadApk(appUrl, "_"+(int)(Math.random()*100000)+".apk");
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

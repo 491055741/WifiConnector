@@ -47,7 +47,7 @@ public class UpdateManager
     /* 更新进度条 */
     private ProgressBar mProgress;
     private Dialog mDownloadDialog;
-    private DownloadManager mDownloadManager;
+    private Downloader mDownloader;
     
     private Handler mHandler = new Handler()
     {
@@ -65,7 +65,7 @@ public class UpdateManager
                     mDownloadDialog.dismiss();
                     mDownloadDialog = null;
                 }
-                mDownloadManager.installApk( msg.obj.toString());
+                mDownloader.installApk( msg.obj.toString());
                 break;
             default:
                 break;
@@ -76,7 +76,7 @@ public class UpdateManager
     public UpdateManager(Context context)
     {
         this.mContext = context;
-        mDownloadManager = new DownloadManager(context, mHandler);
+        mDownloader = new Downloader(context, mHandler);
     }
 
     public void checkUpdate() throws NotFoundException, JSONException
@@ -183,12 +183,12 @@ public class UpdateManager
             public void onClick(DialogInterface dialog, int which)
             {
                 dialog.dismiss();
-                mDownloadManager.cancelDownload(mHashMap.get("url"));
+                mDownloader.cancelDownload(mHashMap.get("url"));
             }
         });
         mDownloadDialog = builder.create();
         mDownloadDialog.show();
-        mDownloadManager.downloadApk(mHashMap.get("url"), mHashMap.get("name"));
+        mDownloader.downloadApk(mHashMap.get("url"), mHashMap.get("name"));
     }
 
 }
