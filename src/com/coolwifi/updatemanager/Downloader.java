@@ -39,7 +39,7 @@ public class Downloader
         mContext.getContentResolver().registerContentObserver(CONTENT_URI, true, downloadObserver);  
     }
     
-    public void downloadApk(String url, String appName) throws MalformedURLException
+    public long downloadApk(String url, String appName) throws MalformedURLException
     {
         Uri uri = Uri.parse(url);  
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).mkdir();  
@@ -54,6 +54,7 @@ public class Downloader
         long downloadId = downloadmanager.enqueue(request);
         mDownloadIds.add(Long.toString(downloadId));
         startTimer();
+        return downloadId;
     }
     
     private DownloadManager downloadmanager = null;  
@@ -132,11 +133,13 @@ public class Downloader
         }
     }
 
-    public void cancelDownload(String url)
+    public void cancelDownload(long downloadId)
     {
-        // todo : cancel version update download
+        Log.d("tag", "cancelDownload");
+        downloadmanager.remove(downloadId);
+        mDownloadIds.remove(String.valueOf(downloadId));
     }
-    
+
     public void installApk(String filePath)
     {
         Log.d("tag", "installApk: "+filePath);

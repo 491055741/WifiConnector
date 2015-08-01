@@ -6,6 +6,7 @@ var checkNetworkInterval = 1500; // ms
 var checkNetworkUrl = "http://115.159.3.16/cb/app_test";
 var countDownTimer = null;
 var checkNetworkTimer = null;
+var connectedSSID = null;
 
 (function($){
     $.ajaxSetup({
@@ -58,14 +59,16 @@ var appInstallFinished = function (appId) {
     });
 }
 // js-Android interface
-var wifiStatusChanged = function () {
+var wifiStatusChanged = function (ssid) {
     if ($(".acount_list #account").text() == '') {
         console.log('wifiStatusChanged: not login yet.');
         return;
     }
     if (window.android != undefined) {
-        if (window.android.isWifiAvailable()) {
-            console.log("wifiStatusChanged: wifi is available.");
+        if (ssid != undefined) {
+            connectedSSID = ssid;
+            console.log("wifiStatusChanged: wifi is available, ssid:"+ssid);
+            $(".wifiStatus .statusOn").text(connectedSSID+' 已连接');
             me.checkNetwork();
         } else {
             console.log("wifiStatusChanged: wifi is unavailable.");
@@ -123,11 +126,18 @@ $("#MainPage").on("pageinit", function() {
 });
 
 $("#MainPage").on("pagebeforeshow", function () {
-    console.log("main page show");
+    console.log("main page before show");
     me.showBackBtn(false);
     me.showTab(me.currentTabIdx);
 
     finishDownloadProgress();
+});
+
+$("#MainPage").on("pageshow", function () {
+    console.log("main page show");
+    if (window.android != undefined) {
+        window.android.checkConnection();
+    }
 });
 
 $("#AppDetailPage").on("pagebeforeshow", function () {
@@ -420,7 +430,7 @@ var me = {
                 if (arrKuLianWifi[j].SSID == arrWifiList[i].SSID) {
                     isKuLian = true;
                     passwd = arrKuLianWifi[j].password;
-                    $(".wifiStatus .statusOn").text(arrWifiList[i].SSID+' 已连接');
+                    // $(".wifiStatus .statusOn").text(connectedSSID+' 已连接');// arrWifiList[i].SSID
                     $(".wifiStatus").data("wifissid", arrWifiList[i].SSID);
                     $(".wifiStatus").data("wifipasswd", passwd);
                     break;

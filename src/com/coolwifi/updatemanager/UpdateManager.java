@@ -48,7 +48,7 @@ public class UpdateManager
     private ProgressBar mProgress;
     private Dialog mDownloadDialog;
     private Downloader mDownloader;
-    
+    private long mDownloadId;
     private Handler mHandler = new Handler()
     {
         public void handleMessage(Message msg)
@@ -183,12 +183,12 @@ public class UpdateManager
             public void onClick(DialogInterface dialog, int which)
             {
                 dialog.dismiss();
-                mDownloader.cancelDownload(mHashMap.get("url"));
+                mDownloader.cancelDownload(mDownloadId);
             }
         });
         mDownloadDialog = builder.create();
         mDownloadDialog.show();
-        mDownloader.downloadApk(mHashMap.get("url"), mHashMap.get("name"));
+        mDownloadId = mDownloader.downloadApk(mHashMap.get("url"), mHashMap.get("name"));
     }
 
 }

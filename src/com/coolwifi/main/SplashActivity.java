@@ -4,7 +4,6 @@ import org.json.JSONException;
 
 import com.umeng.analytics.MobclickAgent;
 import com.xiaohong.wificoolconnect.R;
-import com.coolwifi.updatemanager.*;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -55,14 +54,6 @@ public class SplashActivity extends Activity {
         super.onCreate(icicle);
         getWindow().setBackgroundDrawableResource(R.drawable.splash);  
         mMainHandler.sendEmptyMessageDelayed(0, 1000);
-        UpdateManager updateManager = new UpdateManager(SplashActivity.this);
-        try {
-            updateManager.checkUpdate();
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
       
     // much easier to handle key events   

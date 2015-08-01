@@ -12,7 +12,7 @@ import android.util.Log;
  
 public class WifiAdmin {
  
-    private static final String TAG = "[WifiAdmin]";
+    private static final String TAG = "WifiAdmin";
     private WifiManager mWifiManager;
     private WifiInfo mWifiInfo;
     private List<ScanResult> mWifiList = null;
@@ -150,7 +150,7 @@ public class WifiAdmin {
 //  2.WIFICIPHER_WEP
 //  3.WIFICIPHER_WPA     
     public WifiConfiguration CreateWifiInfo(String SSID, String Password, int Type) {
-        Log.i(TAG, "SSID:" + SSID + ",password:" + Password);
+        Log.i(TAG, "CreateWifiInfo SSID: " + SSID + " ,password: " + Password);
         WifiConfiguration config = new WifiConfiguration();
         config.allowedAuthAlgorithms.clear();
         config.allowedGroupCiphers.clear();

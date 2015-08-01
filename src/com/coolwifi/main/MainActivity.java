@@ -41,9 +41,9 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import com.coolwifi.httpconnection.HttpRequest;
 import com.coolwifi.updatemanager.Downloader;
+import com.coolwifi.updatemanager.UpdateManager;
 import com.coolwifi.wifiadmin.*;
 import com.umeng.analytics.AnalyticsConfig;
 import com.umeng.analytics.MobclickAgent;
@@ -58,6 +58,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Resources.NotFoundException;
 
 
 public class MainActivity extends Activity {
@@ -82,7 +83,6 @@ public class MainActivity extends Activity {
 	            || intent.getAction().equals(Intent.ACTION_PACKAGE_REPLACED)) {
 	            packageName = intent.getData().getSchemeSpecificPart();
 	        }
-//	        if (intent.getAction().equals(Intent.ACTION_PACKAGE_REMOVED)) {}
 
 	        ApplicationInfo applicationInfo = null;
 	        PackageManager packageManager = null;
@@ -109,7 +109,7 @@ public class MainActivity extends Activity {
 	        Log.d(TAG, "Wifi onReceive action = " + intent.getAction());
 	        if (intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
 	            int message = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, -1);
-	            Log.d(TAG, "liusl wifi onReceive msg=" + message);
+	            Log.d(TAG, "wifi onReceive msg=" + message);
 	            switch (message) {
 		            case WifiManager.WIFI_STATE_DISABLED:
 		                Log.d(TAG, "WIFI_STATE_DISABLED");
@@ -138,66 +138,72 @@ public class MainActivity extends Activity {
     BroadcastReceiver mConnectionReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            webView.loadUrl("javascript: wifiStatusChanged()");
-//            ConnectivityManager connectMgr = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-//            NetworkInfo wifiNetInfo = connectMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-//            if (!wifiNetInfo.isConnected()) {
-//                Log.i(TAG, "unconnect");
-//                // unconnect network
-//            }else {
-//                // connect network
-//                
-//            }
+            checkConnection();
         }
     };
-
+    //  @JavascriptInterface
+    public void checkConnection() {
+        ConnectivityManager conMan = (ConnectivityManager)(getBaseContext()).getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (State.CONNECTED != conMan.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()) {
+            Log.i(TAG, "unconnect");
+            webView.loadUrl("javascript: wifiStatusChanged()");
+        } else {
+           Log.i(TAG, "connected");
+            WifiManager wifiManager = (WifiManager)getSystemService(WIFI_SERVICE);  
+            WifiInfo wifiInfo = wifiManager.getConnectionInfo();  
+//            Log.d("wifiInfo", wifiInfo.toString());  
+            Log.d("SSID",wifiInfo.getSSID());
+            webView.loadUrl("javascript: wifiStatusChanged("+wifiInfo.getSSID()+")");
+        }
+    }
+    
     private Handler mWebviewHandler = new Handler()
     {  
         public void handleMessage(Message msg) {// 定义一个Handler，用于处理webview线程与UI间通讯  
             if (!Thread.currentThread().isInterrupted()){
                 switch (msg.what) {  
-                case 0:
-                    boolean isShow = (msg.arg1 == 1);
-                    Button backBtn = (Button)mActionbar.getCustomView().findViewById(R.id.back_btn);
-                    if (isShow) {
-                        backBtn.setVisibility(View.VISIBLE);
-                    } else {
-                        backBtn.setVisibility(View.INVISIBLE);
-                    }
-                    break;  
-                case 1:  
-                    break;  
-                }  
-            }  
+                    case 0:
+                        boolean isShow = (msg.arg1 == 1);
+                        Button backBtn = (Button)mActionbar.getCustomView().findViewById(R.id.back_btn);
+                        if (isShow) {
+                            backBtn.setVisibility(View.VISIBLE);
+                        } else {
+                            backBtn.setVisibility(View.INVISIBLE);
+                        }
+                        break;  
+                    case 1:
+                        break;  
+                }
+            }
             super.handleMessage(msg);  
-        }  
+        }
     }; 
-    
+
     private Handler mDownloadHandler = new Handler()
     {
         public void handleMessage(Message msg)
         {
             switch (msg.what)
             {
-            case DOWNLOAD:
-//                Log.i(TAG, "download progress:"+msg.arg1);
-                webView.loadUrl("javascript: updateDownloadProgress("+msg.arg1+")" );
-                break;
-            case DOWNLOAD_FINISH:
-                Log.i(TAG, "download finished.");
-                webView.loadUrl("javascript: finishDownloadProgress()");
-//                String fileName = msg.obj.toString();
-//                mDownloader.installApk(fileName);
-                break;
-            default:
-                break;
+                case DOWNLOAD:
+    //                Log.i(TAG, "download progress:"+msg.arg1);
+                    webView.loadUrl("javascript: updateDownloadProgress("+msg.arg1+")" );
+                    break;
+                case DOWNLOAD_FINISH:
+                    Log.i(TAG, "download finished.");
+                    webView.loadUrl("javascript: finishDownloadProgress()");
+    //                String fileName = msg.obj.toString();
+    //                mDownloader.installApk(fileName);
+                    break;
+                default:
+                    break;
             }
         };
     };
 	@Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-//        setContentView(R.layout.activity_main);             
+//        setContentView(R.layout.activity_main);
         try {
 			init();
 		} catch (JSONException e) {
@@ -214,7 +220,6 @@ public class MainActivity extends Activity {
 
 	@SuppressLint("SetJavaScriptEnabled") private void init() throws JSONException{
 
-	    
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
         Log.d("tag", "download path: "+path);
         
@@ -222,6 +227,15 @@ public class MainActivity extends Activity {
         String mSavePath = sdpath + "download";
         Log.d("tag", "mSavePath path: "+mSavePath);
 	    
+        UpdateManager updateManager = new UpdateManager(MainActivity.this);
+        try {
+            updateManager.checkUpdate();
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        
 	    initCustomActionBar();
 	    AnalyticsConfig.setChannel("channel");
 
@@ -256,7 +270,6 @@ public class MainActivity extends Activity {
         webSettings.setDatabasePath("/data/data/" + webView.getContext().getPackageName() + "/databases/");
         String ua = webSettings.getUserAgentString();
         webSettings.setUserAgentString(ua+";WIFICoolConnect;");
-        
 
         webView.setWebChromeClient(new WebChromeClient() {
             public boolean onConsoleMessage(ConsoleMessage cm) {
@@ -270,7 +283,6 @@ public class MainActivity extends Activity {
 
                 TextView titleView = (TextView)mActionbar.getCustomView().findViewById(R.id.title_text);
                 titleView.setText(title);
-//                webView.loadUrl("javascript: configBackBtn()" );
                 super.onReceivedTitle(view, title);
             }
         });
@@ -327,7 +339,7 @@ public class MainActivity extends Activity {
 	    MobclickAgent.onResume(this);
 	    if (!mIsActive) {// app从后台唤醒，进入前台
 	    	mIsActive = true;
-	    	webView.loadUrl("javascript: wifiStatusChanged()");
+	    	checkConnection();
 	    }
     }
 
@@ -375,7 +387,7 @@ public class MainActivity extends Activity {
         Timer tExit = null;
         if (isExit == false) {
             isExit = true; // 准备退出
-            Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "再按一次退出WIFI酷连", Toast.LENGTH_SHORT).show();
             tExit = new Timer();
             tExit.schedule(new TimerTask() {
                 @Override
@@ -416,10 +428,8 @@ public class MainActivity extends Activity {
     
 //    @JavascriptInterface
     public boolean isWifiAvailable() {
-        ConnectivityManager conMan = (ConnectivityManager)(getBaseContext())
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-        State wifi = conMan.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
-                .getState();
+        ConnectivityManager conMan = (ConnectivityManager)(getBaseContext()).getSystemService(Context.CONNECTIVITY_SERVICE);
+        State wifi = conMan.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState();
         if (State.CONNECTED == wifi) {
             return true;
         } else {
@@ -454,28 +464,7 @@ public class MainActivity extends Activity {
         jsonObject3.put("wifilist", jsonArray);
     	return jsonObject3.toString();
     }
-    
-//    private String getAssetsFileContent(String fileName) {
-//        String res="";   
-//        try{   
-//          
-//           //得到资源中的asset数据流  
-//           InputStream in = getResources().getAssets().open(fileName);   
-//          
-//           int length = in.available();           
-//           byte [] buffer = new byte[length];          
-//          
-//           in.read(buffer);              
-//           in.close();  
-//           res = EncodingUtils.getString(buffer, "UTF-8");       
-//          
-//        }catch(Exception e){   
-//          
-//              e.printStackTrace();           
-//          
-//        }
-//        return res;
-//    }
+
     private void registerWIFI() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
@@ -538,7 +527,7 @@ public class MainActivity extends Activity {
             Toast.makeText(getBaseContext(), "请先安装QQ", Toast.LENGTH_LONG).show();
         }
     }
-    
+
     private static final boolean isApkInstalled(Context context, String packageName) {
         try {
             context.getPackageManager().getApplicationInfo(packageName, PackageManager.GET_UNINSTALLED_PACKAGES);
@@ -576,7 +565,7 @@ public class MainActivity extends Activity {
         return false;
     }
 
-    public String getMacAddress()
+    public String getMacAddress()// todo: use WifiAdmin instead
     {
         Context context = getBaseContext();
         WifiManager wifi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE); 
