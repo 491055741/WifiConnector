@@ -17,6 +17,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
@@ -213,6 +214,14 @@ public class MainActivity extends Activity {
 
 	@SuppressLint("SetJavaScriptEnabled") private void init() throws JSONException{
 
+	    
+        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        Log.d("tag", "download path: "+path);
+        
+        String sdpath = Environment.getExternalStorageDirectory() + "/";
+        String mSavePath = sdpath + "download";
+        Log.d("tag", "mSavePath path: "+mSavePath);
+	    
 	    initCustomActionBar();
 	    AnalyticsConfig.setChannel("channel");
 
