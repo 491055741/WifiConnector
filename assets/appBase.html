@@ -21,6 +21,7 @@
     <script src="js/jquery.cookie.js"></script>
     <script src="js/google.fastbutton.js"></script>
     <script src="js/jquery.google.fastbutton.js"></script>
+    <script src="js/crypto-js.js"></script>
     <title>登录</title>
 </head>
 
@@ -145,24 +146,44 @@
         </div>
 
         <div id="mineView">
-            <div class="avatar_bg">
-                <image src="images/dubai.jpg" />
-            </div>
+<!--             <div class="avatar_bg">
+                <image src="images/me-head-bg.png" />
+                <span>我的</span>
+            </div> -->
 
             <div class="account-wrapper">
                 <dl class="acount_list">
-                    <dt><img src="images/account.png"><div>账  号</div></dt>
-                    <dd><div class="account_item" id="account">account</div></dd>
-                    <dt><img src="images/coins.png"><div>金  币</div></dt>
-                    <dd><div class="account_item" id="coin" >coin</div></dd>
-                    <dt><img src="images/key.png"><div>修改密码</div></dt>
-                    <dd><div class="account_item changePwdBtn">****</div></dd>
-                    <dt><img src="images/contact.png"><div>问题反馈</div></dt>
-                    <dd><div class="account_item feedbackBtn">◕‿◕</div></dd>
-                    <dt><img src="images/version.png"><div>版本</div></dt>
-                    <dd><div class="account_item" id="version">1.0</div></dd>
+                    <dt><img src="images/account.png"></dt>
+                    <dd><span class="nick_name" id="nick_name">小小向日葵</span></dd>
+                    <dd><span>账  号:</span><div class="account_item account_w" id="account">account</div></dd>
                 </dl>
-                <div style="margin-top:20px;">
+
+                <dl class="account_coin">
+                    <dt><img src="images/coin.png"></dt>
+                    <dd><div>&nbsp;当前可兑换金币</div><div class="account_item" id="coin" >coin</div></dd>
+                </dl>
+
+                <dl class="account_passModify">
+                    <dt><img src="images/key.png"></dt>
+                    <dd><div class="account_item changePwdBtn">修改密码<i class="icon-arrow"></i></div></dd>
+                </dl>
+
+                <dl class="account_feedback">
+                    <dt><img src="images/contact.png"></dt>
+                    <dd><div class="account_item feedbackBtn">问题反馈<i class="icon-arrow"></i></div></dd>
+                </dl>
+
+<!--                 <dl class="account_help">
+                    <dt><img src="images/help.png"></dt>
+                    <dd><div class="account_item" id="version">帮助<i class="icon-arrow"></i></div></dd>
+                </dl>
+ -->
+                <dl class="account_version">
+                    <dt><img src="images/version.png"></dt>
+                    <dd><div class="account_item">版本<div id="version">1.0</div></div></dd>
+                </dl>
+
+                <div class="account_exit" style="margin-top:20px;">
                     <center><a href="" id="logoutBtn" class="ui-btn">退出登录</a></center>
                 </div>
             </div>

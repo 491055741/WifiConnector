@@ -931,6 +931,7 @@ var me = {
         if (me.validLogin()) {
             var phone_number = $("#loginUsername").val();
             var passwd       = $("#loginPassword").val();
+            var passwdMD5    = CryptoJS.MD5(passwd, { asString: true });
             var url = appServerUrl+"/applogin?"+callback+"&phone_number="+phone_number+"&passwd="+passwd;
             console.log(url);
             showLoader("登录中，请稍候");
