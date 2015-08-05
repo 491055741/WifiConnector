@@ -121,9 +121,9 @@ $("#RegisterPage").on("pagebeforeshow", function () {
 $("#MainPage").on("pageinit", function() {
     console.log("main page init");
     // use fastClick will cause pop to home page when tap the tab on PC.
-    $("#connectionBtn").click(function() {me.showTab(0);});
-    $("#excellentBtn").click(function() {me.showTab(1);});
-    $("#mineBtn").click(function() {me.showTab(2);});
+    $("#connectionBtn").click(function(e) {me.showTab(0);e.stopPropagation();});
+    $("#excellentBtn").click(function(e) {me.showTab(1);e.stopPropagation();});
+    $("#mineBtn").click(function(e) {me.showTab(2);e.stopPropagation();});
 
     me.requestAppAds();
     me.requestAppList();
@@ -447,6 +447,9 @@ var me = {
                     $(".wifiStatus").data("wifipasswd", passwd);
                     break;
                 }
+            }
+            if (isKuLian) {
+                break;
             }
         }
     },
