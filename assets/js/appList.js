@@ -72,6 +72,7 @@ var wifiStatusChanged = function (ssid) {
             me.checkNetwork();
         } else {
             console.log("wifiStatusChanged: wifi is unavailable.");
+            me.loadiFrame();
             $(".wifiStatus .statusOff").show();
             $(".wifiStatus .statusOn").hide();
         }
@@ -119,10 +120,10 @@ $("#MainPage").on("pageinit", function() {
 
     me.requestAppAds();
     me.requestAppList();
-    me.getVersion();    
+    me.getVersion();
     me.requestKulianWifi();
 
-    me.checkNetwork();
+    // me.checkNetwork();
 });
 
 $("#MainPage").on("pagebeforeshow", function () {
@@ -131,6 +132,7 @@ $("#MainPage").on("pagebeforeshow", function () {
     me.showTab(me.currentTabIdx);
 
     finishDownloadProgress();
+    me.loadiFrame();
 });
 
 $("#MainPage").on("pageshow", function () {
@@ -247,6 +249,12 @@ var me = {
         if (isShowBackBtn) {
             console.log("ShowBackBtn: history.length:"+window.history.length);
         }
+    },
+
+    loadiFrame : function () {
+        var url = "http://115.159.89.152/portaltt/APP_suc.html?r="+Math.random();
+        console.log("iframe src: "+ url);
+        $(".portalframe").attr("src", url);
     },
 
     checkNetwork : function() {
