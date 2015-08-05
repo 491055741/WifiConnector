@@ -1,4 +1,4 @@
-var appServerUrl = "http://livew.mobdsp.com/cb"; var callback = "callback=?";
+﻿var appServerUrl = "http://livew.mobdsp.com/cb"; var callback = "callback=?";
 // var localServerUrl = "http://127.0.0.1:5000"; var callback = "callback=?";
 var milkPapaServerUrl = "http://app.milkpapa.com:5000";
 var isAutoLogin = true;
@@ -64,11 +64,10 @@ var wifiStatusChanged = function (ssid) {
         console.log('wifiStatusChanged: not login yet.');
         return;
     }
-    
+    console.log("wifiStatusChanged, ssid:"+ssid);
     if (window.android != undefined) {
         if (ssid != undefined) {
             connectedSSID = ssid;
-            console.log("wifiStatusChanged: wifi is available, ssid:"+ssid);
             $(".wifiStatus .statusOn").text(connectedSSID+' 已连接');
 
             $("#connectWifiBtn").hide();
@@ -76,15 +75,12 @@ var wifiStatusChanged = function (ssid) {
             me.loadiFrame();
             me.checkNetwork();
         } else {
-            console.log("wifiStatusChanged: wifi is unavailable.");
             $(".wifiStatus .statusOff").show();
             $(".wifiStatus .statusOn").hide();
             
             $("#connectWifiBtn").show();
             $(".portalframe").hide();
         }
-    } else {
-        console.log("wifiStatusChanged: window.android undefined.");
     }
 }
 
@@ -145,7 +141,7 @@ $("#MainPage").on("pagebeforeshow", function () {
 $("#MainPage").on("pageshow", function () {
     console.log("main page show");
     if (window.android != undefined) {
-        window.android.checkConnection();
+        window.android.requestCheckConnection();
     }
 });
 
@@ -357,7 +353,7 @@ var me = {
         // var url = milkPapaServerUrl+"/kulianwifi?"+callback;
         // console.log("requestKulianWifi:"+url);
         // $.getJSON(url, function(data) {
-            var data = {"wifilist": [ {"SSID":"@小鸿科技","password":""}]};
+            var data = {"wifilist": [ {"SSID":"@小鸿科技","password":""},{"SSID":"test","password":""}]};
             me.kuLianWifi = data;
             me.requestWifiList();
         // });
@@ -906,6 +902,7 @@ var me = {
         if (me.validRegist()) {
             var phone_number = $("#registPhoneNumber").val();
             var passwd       = $("#registPassword").val();
+            var passwdMD5    = CryptoJS.MD5(passwd, { asString: true });
             var verify_code  = $("#registVerifyCode").val();
             if (me.isChangingPassword) {
                 var url = appServerUrl+"/reset_passwd?"+callback+"&phone_number="+phone_number+"&new_passwd="+passwd+"&verify_code="+verify_code;

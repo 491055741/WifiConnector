@@ -141,8 +141,8 @@ public class MainActivity extends Activity {
             checkConnection();
         }
     };
-    //  @JavascriptInterface
-    public void checkConnection() {
+
+    private void checkConnection() {
         ConnectivityManager conMan = (ConnectivityManager)(getBaseContext()).getSystemService(Context.CONNECTIVITY_SERVICE);
         if (State.CONNECTED != conMan.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()) {
             Log.i(TAG, "unconnect");
@@ -151,9 +151,9 @@ public class MainActivity extends Activity {
            Log.i(TAG, "connected");
             WifiManager wifiManager = (WifiManager)getSystemService(WIFI_SERVICE);  
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();  
-//            Log.d("wifiInfo", wifiInfo.toString());  
-            Log.d("SSID",wifiInfo.getSSID());
-            webView.loadUrl("javascript: wifiStatusChanged("+wifiInfo.getSSID()+")");
+            String ssid = wifiInfo.getSSID(); 
+            Log.d("SSID", ssid);
+            webView.loadUrl("javascript: wifiStatusChanged('"+ssid+"')");
         }
     }
     
@@ -172,6 +172,7 @@ public class MainActivity extends Activity {
                         }
                         break;  
                     case 1:
+                        checkConnection();
                         break;  
                 }
             }
@@ -301,6 +302,13 @@ public class MainActivity extends Activity {
         mWebviewHandler.sendMessage(msg);
 	}
 
+    //  @JavascriptInterface
+    public void requestCheckConnection() {
+        Log.d(TAG, "requestCheckConnection");
+        Message msg = new Message();
+        msg.what = 1;
+        mWebviewHandler.sendMessage(msg);
+    }
 	//  @JavascriptInterface
     public void httpRequst(String url, String method, String data) {
         Log.d(TAG, "httpRequest:["+method+"]"+url+"?"+data);
