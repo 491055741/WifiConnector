@@ -64,17 +64,24 @@ var wifiStatusChanged = function (ssid) {
         console.log('wifiStatusChanged: not login yet.');
         return;
     }
+    
     if (window.android != undefined) {
         if (ssid != undefined) {
             connectedSSID = ssid;
             console.log("wifiStatusChanged: wifi is available, ssid:"+ssid);
             $(".wifiStatus .statusOn").text(connectedSSID+' 已连接');
+
+            $("#connectWifiBtn").hide();
+            $(".portalframe").show();
+            me.loadiFrame();
             me.checkNetwork();
         } else {
             console.log("wifiStatusChanged: wifi is unavailable.");
-            me.loadiFrame();
             $(".wifiStatus .statusOff").show();
             $(".wifiStatus .statusOn").hide();
+            
+            $("#connectWifiBtn").show();
+            $(".portalframe").hide();
         }
     } else {
         console.log("wifiStatusChanged: window.android undefined.");
@@ -123,7 +130,7 @@ $("#MainPage").on("pageinit", function() {
     me.getVersion();
     me.requestKulianWifi();
 
-    // me.checkNetwork();
+    me.checkNetwork();
 });
 
 $("#MainPage").on("pagebeforeshow", function () {
@@ -219,12 +226,13 @@ $("#toRegistBtn").fastClick(function() {
     changePage("#RegisterPage");
 });
 
+$("#connectWifiBtn").fastClick(function() {
 // $(".wifiStatus img").fastClick(function() {
-//     if ($(".wifiStatus .statusOn").css("display") == 'none') {
-//         me.connectWifi(this);
-//         me.checkNetwork();
-//     }
-// });
+    if ($(".wifiStatus .statusOn").css("display") == 'none') {
+        me.connectWifi(this);
+        me.checkNetwork();
+    }
+});
 
 $(".exchange_item").fastClick(function() {
     me.requestExchange(this);
@@ -410,7 +418,7 @@ var me = {
             var obj = eval("(" + jsonStr +")");
             me.parseWifiList(obj);
         }
-        wifiStatusChanged();
+        // wifiStatusChanged();
     },
 
     parseWifiList : function(data)

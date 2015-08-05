@@ -19,7 +19,7 @@ a { text-decoration:none;}
 .licenseWrapper p {color:#2e2e2e;}
 
 #connectionView .message_grid img {width: 18px; height: 18px; margin-left: 10px; }
-
+#connectWifiBtn {background-color: #4BA6F2; color: white; text-align: center; border-radius: 6px; width: 80%; height: 25px; font-size: 14px; border: 0; text-shadow:0 0 0;}
 .connection_bg {height: 230px; background: url(../images/night.png) no-repeat; background-size: contain;}
 .wifiStatus {height: 400px; }
 .wifiStatus img {margin-top: 60px; width: 250px; height: 250px; }
