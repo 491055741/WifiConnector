@@ -905,9 +905,9 @@ var me = {
             var passwdMD5    = CryptoJS.MD5(passwd, { asString: true });
             var verify_code  = $("#registVerifyCode").val();
             if (me.isChangingPassword) {
-                var url = appServerUrl+"/reset_passwd?"+callback+"&phone_number="+phone_number+"&new_passwd="+passwd+"&verify_code="+verify_code;
+                var url = appServerUrl+"/reset_passwd?"+callback+"&phone_number="+phone_number+"&new_passwd="+passwdMD5+"&verify_code="+verify_code;
             } else {
-                var url = appServerUrl+"/appregister?"+callback+"&phone_number="+phone_number+"&passwd="+passwd+"&verify_code="+verify_code;
+                var url = appServerUrl+"/appregister?"+callback+"&phone_number="+phone_number+"&passwd="+passwdMD5+"&verify_code="+verify_code;
             }
 
             console.log(url);
@@ -944,7 +944,7 @@ var me = {
             var phone_number = $("#loginUsername").val();
             var passwd       = $("#loginPassword").val();
             var passwdMD5    = CryptoJS.MD5(passwd, { asString: true });
-            var url = appServerUrl+"/applogin?"+callback+"&phone_number="+phone_number+"&passwd="+passwd;
+            var url = appServerUrl+"/applogin?"+callback+"&phone_number="+phone_number+"&passwd="+passwdMD5;
             console.log(url);
             showLoader("登录中，请稍候");
 
