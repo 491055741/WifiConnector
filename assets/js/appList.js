@@ -647,7 +647,7 @@ var me = {
            me.downloadApp(this);
         });
 
-        $.mobile.changePage("#AppDetailPage", "slideup");
+        changePage("#AppDetailPage");
     },
 
     downloadApp : function (obj)
