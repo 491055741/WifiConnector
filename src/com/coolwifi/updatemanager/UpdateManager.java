@@ -114,7 +114,6 @@ public class UpdateManager
     	    public void taskFailed() {
     	    }
     	});
-//    	task.execute("http://app.milkpapa.com:8080/static/json/version.json?versioncode="+Integer.toString(getVersionCode(mContext)));
     	task.execute("http://livew.mobdsp.com/cb/klappversion");
     }
 
