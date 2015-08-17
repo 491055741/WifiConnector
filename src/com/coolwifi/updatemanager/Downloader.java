@@ -27,7 +27,7 @@ public class Downloader
     private Context mContext;
     private Handler mHandler;
     private ArrayList<String> mDownloadIds;
-    private int maxProgress = 0;
+
     public Downloader(Context context, Handler handler)
     {
         mHandler = handler;
@@ -88,13 +88,12 @@ public class Downloader
 
     private void queryDownloadStatus() {     
         DownloadManager.Query query = new DownloadManager.Query();     
-        maxProgress = 0;
 
         for (String downloadIdStr : mDownloadIds) {
         	Long downloadId = Long.parseLong(downloadIdStr);
             query.setFilterById(downloadId);
             Cursor c = downloadmanager.query(query);
-            if (c!=null&&c.moveToFirst()) {
+            if (c != null && c.moveToFirst()) {
                 int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));     
                 int titleIdx = c.getColumnIndex(DownloadManager.COLUMN_TITLE);    
                 int fileSizeIdx = c.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES);        
@@ -103,11 +102,11 @@ public class Downloader
 
                 String title = c.getString(titleIdx);
                 String path = c.getString(pathIdx);
-                int fileSize = c.getInt(fileSizeIdx);    
-                int bytesDL = c.getInt(bytesDLIdx);    
+                int fileSize = c.getInt(fileSizeIdx);
+                int bytesDL = c.getInt(bytesDLIdx);
                 int progress = (int)((float)bytesDL/(float)fileSize * 100);
 
-                switch(status) {     
+                switch(status) {
                     case DownloadManager.STATUS_PAUSED:     
 //                        Log.v("tag", "STATUS_PAUSED");
                     case DownloadManager.STATUS_PENDING:     
@@ -125,10 +124,18 @@ public class Downloader
 //                        downloadmanager.remove(downloadId);     ????? 下载失败怎么办？
                     break;
                 }
-                if (progress > maxProgress) {
-                    maxProgress = progress;
-                }
                 c.close();
+
+                Message msg = new Message();
+                if (progress == 100 || status == DownloadManager.STATUS_SUCCESSFUL) {
+                    msg.what = DOWNLOAD_FINISH;
+                } else {
+                    msg.what = DOWNLOAD;
+                }
+                msg.arg1 = downloadId.intValue();
+                msg.arg2 = progress;
+                mHandler.sendMessage(msg);
+
             }
         }
     }
@@ -172,14 +179,6 @@ public class Downloader
                    }
                    queryDownloadStatus();
 
-                   Message msg = new Message();
-                   if (maxProgress == 100 || mDownloadIds.size() == 0) {
-                       msg.what = DOWNLOAD_FINISH;
-                   } else {
-                       msg.what = DOWNLOAD;
-                   }
-                   msg.arg1 = maxProgress;
-                   mHandler.sendMessage(msg);
                }   
            }, 1000, 1000);  
         }

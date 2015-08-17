@@ -8,13 +8,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <link rel="stylesheet" href="css/reset.css" />
     <link rel="stylesheet" href="js/jquery.mobile/jquery.mobile-1.4.5.min.css" />
-    <link rel="stylesheet" href="css/hotel.css" />
+    <link rel="stylesheet" href="css/wificonnector.css" />
     <link rel="stylesheet" href="css/list.css" />
     <link rel="stylesheet" href="css/comment.css" />
     <link rel="stylesheet" href="css/content.css" />
-    <link rel="stylesheet" href="css/progress.css" />
     <link rel="stylesheet" href="js/gallery/idangerous.swiper.css">
     <link rel="stylesheet" href="js/gallery/gallery-app.css">
+    <link rel="stylesheet" href="js/tabs/jquery.mobile.tabs.css">
+    <link rel="stylesheet" href="js/iscroll/iscroll.css">
     <script src="js/jquery-1.9.0.min.js"></script>
     <script src="js/iscroll-lite.js"></script>
     <script src="js/jquery.mobile/jquery.mobile-1.4.5.min.js"></script>
@@ -107,6 +108,7 @@
                 <img class="statusOff" src="images/wifi_state_off.png">
                 <img class="statusOn" src="images/wifi_state_on.png" style="display:none;">
 
+                <!-- <div class="statusOff">点击连接WiFi</div> -->
                 <div class="statusOn" style="display:none;">WiFi已连接</div>
                 <!-- <div id="statusDesc">调试信息</div> -->
 
@@ -123,28 +125,102 @@
 
         <div id="choiceView">
 
-            <div class="fouce" style="display: none;">
-                <div id="divSlidePanle" style="overflow: hidden;">
-                    <div id="slidebox" class="img_box" style="width: 13153px; -webkit-transition-property: -webkit-transform; transition-property: -webkit-transform; -webkit-transform-origin: 0px 0px 0px; -webkit-transform: translate3d(-5637px, 0px, 0px) scale(1);">
-                        <ul id="adlist">
-                        </ul>
-                    </div>
+            <div data-role="header" data-position="fixed" >
+                <div data-role="tabs" onactivechanged="changeTabs">
+                    <ul>
+                        <li><a href="#tab-1" class="" data-idx='1'>精选</a></li>
+                        <li><a href="#tab-2" class="" data-idx='2'>应用</a></li>
+                        <li><a href="#tab-3" class="" data-idx='3'>游戏</a></li>
+                        <li><a href="#tab-4" class="" data-idx='4'>管理</a></li>
+                    </ul>
                 </div>
-                <ol id="olSlideNum">
-                    <li class=""></li>
-                    <li class=""></li>
-                    <li class="cur"></li>
-                    <li class=""></li>
-                    <li class=""></li>
-                </ol>
             </div>
-            <div class="app-list"></div>
-            <center>
-                <div class="refresh-app-list" style="display:none;">
-                    <img class="refresh-image" src="images/refresh.png">
-                    <p>点击重新加载</p>
+
+            <div data-role="content">
+                <div id="tab-1" >
+<!--                     <div class="fouce" style="display: none;">
+                        <div id="divSlidePanle" style="overflow: hidden;">
+                            <div id="slidebox" class="img_box" style="width: 13153px; -webkit-transition-property: -webkit-transform; transition-property: -webkit-transform; -webkit-transform-origin: 0px 0px 0px; -webkit-transform: translate3d(-5637px, 0px, 0px) scale(1);">
+                                <ul id="adlist">
+                                </ul>
+                            </div>
+                        </div>
+                        <ol id="olSlideNum">
+                            <li class=""></li>
+                            <li class=""></li>
+                            <li class="cur"></li>
+                            <li class=""></li>
+                            <li class=""></li>
+                        </ol>
+                    </div>
+ -->
+                    <div class="wrapper">
+                        <div style="transition-timing-function: cubic-bezier(0.1, 0.57, 0.1, 1); transition-duration: 0ms; transform: translate(0px, -1047px) translateZ(0px);" class="scroller">
+                            <div class="scroller-content">
+                                <ul class="app-list">
+                                </ul>
+                            </div>
+                            <div class="scroller-pullUp">
+                                <span class="up-icon" class="icon-double-angle-up pull-up-icon"></span>
+                                <span class="pullUp-msg" class="pull-up-msg">上拉加载更多</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <center>
+                        <div class="refresh-app-list" style="display:none;">
+                            <img class="refresh-image" src="images/refresh.png">
+                            <p>点击重新加载</p>
+                        </div>
+                    </center>
                 </div>
-            </center>
+
+                <div id="tab-2">
+                    <div class="wrapper">
+                        <div style="transition-timing-function: cubic-bezier(0.1, 0.57, 0.1, 1); transition-duration: 0ms; transform: translate(0px, -1047px) translateZ(0px);" class="scroller">
+<!--                             <div class="scroller-pullDown">
+                                <span class="down-icon icon-double-angle-down pull-down-icon reverse_icon"></span>
+                                <span class="pullDown-msg pull-down-msg">下拉刷新</span>
+                            </div>
+ -->                        
+                            <div class="scroller-content">
+                                <ul class="app-list">
+                                </ul>
+                            </div>
+                            <div class="scroller-pullUp">
+                                <span class="up-icon icon-double-angle-up pull-up-icon"></span>
+                                <span class="pullUp-msg pull-up-msg">上拉加载更多</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="tab-3">
+                    <div class="wrapper">
+                        <div style="transition-timing-function: cubic-bezier(0.1, 0.57, 0.1, 1); transition-duration: 0ms; transform: translate(0px, -1047px) translateZ(0px);" class="scroller">
+<!--                             <div class="scroller-pullDown">
+                                <span class="down-icon icon-double-angle-down pull-down-icon reverse_icon"></span>
+                                <span class="pullDown-msg pull-down-msg">下拉刷新</span>
+                            </div>
+ -->                        
+                            <div class="scroller-content">
+                                <ul class="app-list">
+                                </ul>
+                            </div>
+                            <div class="scroller-pullUp">
+                                <span class="up-icon icon-double-angle-up pull-up-icon"></span>
+                                <span class="pullUp-msg pull-up-msg">上拉加载更多</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <div id="tab-4">
+                    <div class="app-list"></div>
+                </div>
+            </div>
         </div>
 
         <div id="mineView">
@@ -194,12 +270,6 @@
 
     <div data-role="footer" data-position="fixed" data-tap-toggle="false">
         <div data-role="navbar" id="mainFooter" >
-
-            <div class="wrapper" id="counter_wrapper">
-              <div class="load-bar">
-                <div class="load-bar-inner" data-loading="0"> <span id="counter"></span> </div>
-              </div>
-            </div>
 
             <ul class="apple-navbar-ui comboSprite">
                 <li><a href="#" id="connectionBtn" data-icon="wifi" class="ui-btn-icon-top ui-btn-active">连接</a></li>
@@ -256,6 +326,8 @@
 <script src="js/appList.js"></script>
 <script src="js/gallery/idangerous.swiper-2.0.min.js"></script> 
 <script src="js/gallery/gallery-app.js"></script>
-
+<script src="js/tabs/jquery.mobile.tabs.js"></script>
+<script src="js/iscroll/iscroll.js"></script>
+<script src="js/plugin/radialIndicator.min.js"></script>
 </body>
 </html>

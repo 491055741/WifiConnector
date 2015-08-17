@@ -70,6 +70,7 @@ public class MainActivity extends Activity {
     private Downloader mDownloader;
 	private WifiAdmin wifiAdmin;
 	private HashMap<String, String> mDownloadAppInfoHashMap;
+	private HashMap<String, String> mDownloadIdHashMap;
 	private ActionBar mActionbar;
 	private FeedbackAgent feedbackAgent;
 	private boolean mIsActive = true; // 是否进入后台
@@ -187,15 +188,23 @@ public class MainActivity extends Activity {
             switch (msg.what)
             {
                 case DOWNLOAD:
+                {
     //                Log.i(TAG, "download progress:"+msg.arg1);
-                    webView.loadUrl("javascript: updateDownloadProgress("+msg.arg1+")" );
+                    String downloadIdStr = String.valueOf(msg.arg1);
+                    String appId = mDownloadIdHashMap.get(downloadIdStr);
+                    String progressStr = String.valueOf(msg.arg2);
+                    webView.loadUrl("javascript: updateDownloadProgress("+appId+","+progressStr+")" );
                     break;
+                }
                 case DOWNLOAD_FINISH:
+                {
                     Log.i(TAG, "download finished.");
-                    webView.loadUrl("javascript: finishDownloadProgress()");
-    //                String fileName = msg.obj.toString();
-    //                mDownloader.installApk(fileName);
+                    String downloadIdStr = String.valueOf(msg.arg1);
+                    String appId = mDownloadIdHashMap.get(downloadIdStr);
+                    webView.loadUrl("javascript: finishDownloadProgress('"+ appId +"')");
+                    mDownloadIdHashMap.remove(downloadIdStr);
                     break;
+                }
                 default:
                     break;
             }
@@ -250,6 +259,7 @@ public class MainActivity extends Activity {
 		wifiAdmin = new WifiAdmin(getBaseContext());
 		mDownloader = new Downloader(MainActivity.this, mDownloadHandler);
         mDownloadAppInfoHashMap = new HashMap<String, String>();
+        mDownloadIdHashMap = new HashMap<String, String>();
 
         boolean open = wifiAdmin.openWifi();
         Log.i(TAG, "wifi open:" + open);
@@ -414,7 +424,8 @@ public class MainActivity extends Activity {
     	Log.d(TAG, "download app");
     	mDownloadAppInfoHashMap.put(pkgName, appId);
     	try {
-    	    mDownloader.downloadApk(appUrl, appName); // "_"+(int)(Math.random()*100000)
+    	    Long downloadId = mDownloader.downloadApk(appUrl, appName); // "_"+(int)(Math.random()*100000)
+    	    mDownloadIdHashMap.put(String.valueOf(downloadId), appId);
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
