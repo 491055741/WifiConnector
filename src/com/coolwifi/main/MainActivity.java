@@ -48,6 +48,9 @@ import com.coolwifi.wifiadmin.*;
 import com.umeng.analytics.AnalyticsConfig;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.FeedbackAgent;
+import com.umeng.socialize.controller.UMServiceFactory;
+import com.umeng.socialize.controller.UMSocialService;
+import com.umeng.socialize.media.UMImage;
 import com.xiaohong.wificoolconnect.R;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -159,7 +162,7 @@ public class MainActivity extends Activity {
     }
     
     private Handler mWebviewHandler = new Handler()
-    {  
+    {
         public void handleMessage(Message msg) {// 定义一个Handler，用于处理webview线程与UI间通讯  
             if (!Thread.currentThread().isInterrupted()){
                 switch (msg.what) {  
@@ -210,7 +213,9 @@ public class MainActivity extends Activity {
             }
         };
     };
-	@Override
+
+    final UMSocialService mUMSocialController = UMServiceFactory.getUMSocialService("com.umeng.share");
+    @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 //        setContentView(R.layout.activity_main);
@@ -245,6 +250,11 @@ public class MainActivity extends Activity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        
+        // 设置分享内容
+        mUMSocialController.setShareContent("友盟社会化组件（SDK）让移动应用快速整合社交分享功能，http://www.umeng.com/social");
+        // 设置分享图片, 参数2为图片的url地址
+        mUMSocialController.setShareMedia(new UMImage(getBaseContext(), "http://www.umeng.com/images/pic/banner_module_social.png"));
         
 	    initCustomActionBar();
 	    AnalyticsConfig.setChannel("channel");
@@ -303,6 +313,13 @@ public class MainActivity extends Activity {
         webView.addJavascriptInterface(this, "android");
         setContentView(webView);
     }
+
+	//  @JavascriptInterface
+    public void socialShare() {
+        Log.d(TAG, "socialShare");
+        mUMSocialController.openShare(MainActivity.this, false);
+    }
+
 	//  @JavascriptInterface
 	public void showBackBtn(boolean isShow) {
 	    Log.d(TAG, "Show back button: "+isShow);

@@ -123,8 +123,8 @@ a { text-decoration:none;}
 #mineView .account_coin dd div:first-child {padding-left: 5px; font-size: 14px;}
 #mineView .account_coin dd div:first-child + div {font-size:45px; height: 45px; line-height: 40px; font-weight: bold; color: #5d5d5d;}
 
-#mineView .account_passModify dd div,#mineView .account_feedback dd div,#mineView .account_help dd div,#mineView .account_version dd div {height:45px; line-height: 47px; font-size: 16px; font-weight:bold; color: #5d5d5d;}
-#mineView .account_passModify dd,#mineView .account_feedback dd,#mineView .account_help dd,#mineView .account_version dd {height:45px; line-height:55px; }
+#mineView .account_passModify dd div,#mineView .account_feedback dd div,#mineView .account_socialShare dd div,#mineView .account_help dd div,#mineView .account_version dd div {height:45px; line-height: 47px; font-size: 16px; font-weight:bold; color: #5d5d5d;}
+#mineView .account_passModify dd,#mineView .account_feedback dd,#mineView .account_socialShare dd,#mineView .account_help dd,#mineView .account_version dd {height:45px; line-height:55px; }
 #mineView #version {position: absolute; text-align:right; height: 24px; top:0; color: #999; right:0; background-size: contain;}
 .exchange_list {padding: 10px; }
 .exchange_item {font-size: 16px; }
