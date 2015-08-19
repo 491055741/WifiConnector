@@ -25,16 +25,10 @@ var myScroll;
 // js-Android interface
 var updateDownloadProgress = function (appId, progress) {
     console.log('app['+appId+'] download progress: '+progress);
-    //已安装的应用
-    var installApps = $("div.installBtn[data-appid="+appId+"]");
-    //var raObj = $("div.installBtn[data-appid="+appId+"]").data('radialIndicator');
-    $.each(installApps, function (index,el) {
-        //获取进度条实例
-        var raObj = $(el).data('radialIndicator');
-        console.log(raObj);
-        raObj.animate(progress);
-    });
-};
+    //获取进度条实例
+    var raObj = $("div.installBtn[data-appid="+appId+"]").data('radialIndicator');
+    raObj.animate(progress);
+}
 // js-Android interface
 var finishDownloadProgress = function (appId) {
     console.log('app['+appId+'] download finished.');
@@ -129,8 +123,8 @@ $("#RegisterPage").on("pagebeforeshow", function () {
 $("#MainPage").on("pageinit", function() {
     console.log("main page init");
     // use fastClick will cause pop to home page when tap the tab on PC.
-    $("#excellentBtn").click(function(e) {me.showTab(0);});
-    $("#connectionBtn").click(function(e) {me.showTab(1);});
+    $("#connectionBtn").click(function(e) {me.showTab(0);});
+    $("#excellentBtn").click(function(e) {me.showTab(1);});
     $("#mineBtn").click(function(e) {me.showTab(2);});
 
     me.requestAppAds();
@@ -229,13 +223,6 @@ $(".feedbackBtn").fastClick(function() {
     console.log("feedback");
     if (window.android != undefined) {
         window.android.feedback();
-    }
-});
-
-$(".socialShareBtn").fastClick(function() {
-    console.log("social share");
-    if (window.android != undefined) {
-        window.android.socialShare();
     }
 });
 
@@ -355,7 +342,7 @@ var me = {
     },
 
     showTab : function(idx) {
-        var tabs = new Array("choiceView", "connectionView", "mineView");
+        var tabs = new Array("connectionView", "choiceView", "mineView");
         for (var i = 0; i < tabs.length; i++) {
             if (i == idx) {
                 $("#" + tabs[i]).show();
@@ -366,16 +353,16 @@ var me = {
             }
         }
         me.currentTabIdx = idx;
-        if (idx == 0 && slide.isInited == true) { // app tab
+        if (idx == 1 && slide.isInited == true) {
             slide.show();
         } else {
             slide.hide();
         }
-        if (idx == 0) {
+        if (idx == 1) {
             me.initIScroll();
         }
 
-        var titles = new Array("精选", "连接", "我的");
+        var titles = new Array("连接", "精选", "我的");
         setTitle(titles[idx]);
     },
 
