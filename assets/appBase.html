@@ -87,41 +87,9 @@
     </div>
 </div>
 
-<div data-role="page" id="MainPage" data-title="连接">
+<div data-role="page" id="MainPage" data-title="精选">
 
     <div role="main" class="ui-content main-content">
-
-        <div id="connectionView">
-
-            <div class="ui-grid-a message_grid" style="display: none;" >
-                <div class="ui-block-a" style="width:10%">
-                    <img src="images/horn.png"/>
-                </div>
-                <div class="ui-grid-b" style="width:90%">
-                    <ul id="twitter">
-                    </ul>
-                </div>
-            </div>
-
-            <div class="wifiStatus">
-                <center>
-                <img class="statusOff" src="images/wifi_state_off.png">
-                <img class="statusOn" src="images/wifi_state_on.png" style="display:none;">
-
-                <!-- <div class="statusOff">点击连接WiFi</div> -->
-                <div class="statusOn" style="display:none;">WiFi已连接</div>
-                <!-- <div id="statusDesc">调试信息</div> -->
-
-                <div class="statusOff">
-                    <div id="connectWifiBtn" class="ui-btn">连接WiFi</div>
-                    <iframe class='portalframe' style="display:none;">
-                        <p>T_T 浏览器不支持iframe</p>
-                    </iframe>
-                </div>
-                </center>
-            </div>
-
-        </div>
 
         <div id="choiceView">
 
@@ -157,7 +125,7 @@
                     <div class="wrapper">
                         <div style="transition-timing-function: cubic-bezier(0.1, 0.57, 0.1, 1); transition-duration: 0ms; transform: translate(0px, -1047px) translateZ(0px);" class="scroller">
                             <div class="scroller-content">
-                                <ul class="app-list">
+                                <ul class="app-list h-pt">
                                 </ul>
                             </div>
                             <div class="scroller-pullUp">
@@ -223,6 +191,38 @@
             </div>
         </div>
 
+        <div id="connectionView">
+
+            <div class="ui-grid-a message_grid" style="display: none;" >
+                <div class="ui-block-a" style="width:10%">
+                    <img src="images/horn.png"/>
+                </div>
+                <div class="ui-grid-b" style="width:90%">
+                    <ul id="twitter">
+                    </ul>
+                </div>
+            </div>
+
+            <div class="wifiStatus">
+                <center>
+                <img class="statusOff" src="images/wifi_state_off.png">
+                <img class="statusOn" src="images/wifi_state_on.png" style="display:none;">
+
+                <!-- <div class="statusOff">点击连接WiFi</div> -->
+                <div class="statusOn" style="display:none;">WiFi已连接</div>
+                <!-- <div id="statusDesc">调试信息</div> -->
+
+                <div class="statusOff">
+                    <div id="connectWifiBtn" class="ui-btn">连接WiFi</div>
+                    <iframe class='portalframe' style="display:none;">
+                        <p>T_T 浏览器不支持iframe</p>
+                    </iframe>
+                </div>
+                </center>
+            </div>
+
+        </div>
+
         <div id="mineView">
 <!--             <div class="avatar_bg">
                 <image src="images/me-head-bg.png" />
@@ -250,6 +250,10 @@
                     <dt><img src="images/contact.png"></dt>
                     <dd><div class="account_item feedbackBtn">问题反馈<i class="icon-arrow"></i></div></dd>
                 </dl>
+                <dl class="account_socialShare">
+                    <dt><img src="images/contact.png"></dt>
+                    <dd><div class="account_item socialShareBtn">分享<i class="icon-arrow"></i></div></dd>
+                </dl>
 
 <!--                 <dl class="account_help">
                     <dt><img src="images/help.png"></dt>
@@ -272,8 +276,8 @@
         <div data-role="navbar" id="mainFooter" >
 
             <ul class="apple-navbar-ui comboSprite">
-                <li><a href="#" id="connectionBtn" data-icon="wifi" class="ui-btn-icon-top ui-btn-active">连接</a></li>
-                <li><a href="#" id="excellentBtn" data-icon="choice" class="ui-btn-icon-top">精选</a></li>
+                <li><a href="#" id="excellentBtn" data-icon="choice" class="ui-btn-icon-top ui-btn-active">精选</a></li>
+                <li><a href="#" id="connectionBtn" data-icon="wifi" class="ui-btn-icon-top">连接</a></li>
                 <li><a href="#" id="mineBtn" data-icon="mine" class="ui-btn-icon-top">我的</a></li>
             </ul>
         </div>

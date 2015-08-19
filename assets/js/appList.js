@@ -25,10 +25,17 @@ var myScroll;
 // js-Android interface
 var updateDownloadProgress = function (appId, progress) {
     console.log('app['+appId+'] download progress: '+progress);
-    //获取进度条实例
-    var raObj = $("div.installBtn[data-appid="+appId+"]").data('radialIndicator');
-    raObj.animate(progress);
-}
+    //已安装的应用
+    var installApps = $("div.installBtn[data-appid="+appId+"]");
+    //var raObj = $("div.installBtn[data-appid="+appId+"]").data('radialIndicator');
+    $.each(installApps, function (index,el) {
+        //获取进度条实例
+            console.log("i'm installbtn");
+            var raObj = $(el).data('radialIndicator');
+        console.log(raObj);
+        raObj.animate(progress);
+    });
+};
 // js-Android interface
 var finishDownloadProgress = function (appId) {
     console.log('app['+appId+'] download finished.');
@@ -123,8 +130,8 @@ $("#RegisterPage").on("pagebeforeshow", function () {
 $("#MainPage").on("pageinit", function() {
     console.log("main page init");
     // use fastClick will cause pop to home page when tap the tab on PC.
-    $("#connectionBtn").click(function(e) {me.showTab(0);});
-    $("#excellentBtn").click(function(e) {me.showTab(1);});
+    $("#excellentBtn").click(function(e) {me.showTab(0);});
+    $("#connectionBtn").click(function(e) {me.showTab(1);});
     $("#mineBtn").click(function(e) {me.showTab(2);});
 
     me.requestAppAds();
@@ -223,6 +230,13 @@ $(".feedbackBtn").fastClick(function() {
     console.log("feedback");
     if (window.android != undefined) {
         window.android.feedback();
+    }
+});
+
+$(".socialShareBtn").fastClick(function() {
+    console.log("social share");
+    if (window.android != undefined) {
+        window.android.socialShare();
     }
 });
 
@@ -342,7 +356,7 @@ var me = {
     },
 
     showTab : function(idx) {
-        var tabs = new Array("connectionView", "choiceView", "mineView");
+        var tabs = new Array("choiceView", "connectionView", "mineView");
         for (var i = 0; i < tabs.length; i++) {
             if (i == idx) {
                 $("#" + tabs[i]).show();
@@ -353,16 +367,16 @@ var me = {
             }
         }
         me.currentTabIdx = idx;
-        if (idx == 1 && slide.isInited == true) {
+        if (idx == 0 && slide.isInited == true) { // app tab
             slide.show();
         } else {
             slide.hide();
         }
-        if (idx == 1) {
+        if (idx == 0) {
             me.initIScroll();
         }
 
-        var titles = new Array("连接", "精选", "我的");
+        var titles = new Array("精选", "连接", "我的");
         setTitle(titles[idx]);
     },
 
@@ -562,6 +576,7 @@ var me = {
             $("#tab-"+type+" .app-list").append(html);
 
             $("#tab-"+type+" .app-list li").click(function() {  // don't use fastclick, it will eat 'touchbegin' event
+               return; 
                me.clickOnApp(this);
             });
 
@@ -574,16 +589,20 @@ var me = {
                 me.downloadApp(this);
                 $(this).addClass("inactive");
                 //创建圆形进度条
+                var width = parseInt($(this).parent().width()/5);
+                var height = $(this).siblings('.app-img').children('img').height();
+                $(this).height(height);
+                console.log(width);
                 $(this).radialIndicator({
-                    radius: 18,
+                    radius: width,
                     barColor: '#fff',
-                    barBgColor: '#48D1CC',
-                    barWidth: 3,
+                    barBgColor: 'rgba(255,255,255,0.4)',
+                    barWidth: 6,
                     initValue: 0,
                     roundCorner : true,
                     percentage: true
                 });
-
+                $(this).siblings('.app-down-des').text('下载中...');
             });
 
             if (myScroll != null) {
@@ -625,42 +644,51 @@ var me = {
             }
             // arrHtml.push("<li style='height:50px;'>aaa");
 
-            arrHtml.push("<li data-appid='" + data[i].AppId + "' id=\"myId" + data[i].AppId +"\" class=\"index-item list-index\" >");
-            arrHtml.push("<div class=\"index-item-main\">");
-            arrHtml.push("<dl class=\"clearfix\">");
-            arrHtml.push("<dt class=\"item-icon\"><span class=\"app-tags hide\"></span>");
-            arrHtml.push("<img src=\"" + data[i].AppLogo + "\" />");
-            arrHtml.push("</dt>");
-            arrHtml.push("<dd class=\"item-title\">");
-            arrHtml.push("<div class=\"item-title-sname\">");
-            arrHtml.push("<div class=\"baiying-name\">");
-            arrHtml.push(subString.autoAddEllipsis(data[i].AppName, 30, true) + "</div></div></dd>");
-            arrHtml.push("<dd class=\"item-star\">");
-            // arrHtml.push("<span class=\"score-star\"><span style=\"width:" + data[i].AppScore + "%;\"></span></span>");
-
+            arrHtml.push("<li data-appid='" + data[i].AppId + "' id=\"myId" + data[i].AppId +"\" class=\"index-item list-index h-list-item\" >");
+            arrHtml.push("<div class=\"index-item-w\">");
+            // arrHtml.push("<dl class=\"clearfix\">");
+            // arrHtml.push("<dt class=\"item-icon\"><span class=\"app-tags hide\"></span>");
+            arrHtml.push("<div class='app-img'>");
+            arrHtml.push("<img src=\"" + data[i].AppLargeLogo + "\" />");
+            arrHtml.push("</div>");
+                //遮罩层
+            // arrHtml.push("</dt>");
+            // arrHtml.push("<dd class=\"item-title\">");
+            // arrHtml.push("<div class=\"item-title-sname\">");
+            arrHtml.push("<div class=\"h baiying-name\">");
+            // arrHtml.push(subString.autoAddEllipsis(data[i].AppName, 30, true) + "</div></div></dd>");
+            arrHtml.push(subString.autoAddEllipsis(data[i].AppName, 30, true));
             if (data[i].AppSize != "") {
                 // var size = parseFloat(data[i].AppSize/1000000).toFixed(1) + "MB";
-                arrHtml.push("<span class=\"new-item-size\">" + data[i].AppSize + "</span>");
+                arrHtml.push("<span class=\"new-item-size\"> " + data[i].AppSize + " </span>");
             }
-
-            arrHtml.push("</dd>");
-            arrHtml.push("<dd>");
-            arrHtml.push("<div class=\"xiaobian-comment\">");
-            arrHtml.push(data[i].BriefSummary == "" ? "暂无介绍" : subString.autoAddEllipsis(data[i].BriefSummary, 34, true));
-            arrHtml.push("</div></dd></dl></div>");
-
-            arrHtml.push("<div class='app_down'>");
-            arrHtml.push("<div class='app_coins'>");
-            arrHtml.push("<div class='coin_num' ><span>"+data[i].GiveCoin+"</span> 金币</div>");
-
             arrHtml.push("</div>");
+            // arrHtml.push("<dd class=\"item-star\">");
+            // arrHtml.push("<span class=\"score-star\"><span style=\"width:" + data[i].AppScore + "%;\"></span></span>");
+
+            // if (data[i].AppSize != "") {
+            //     // var size = parseFloat(data[i].AppSize/1000000).toFixed(1) + "MB";
+            //     arrHtml.push("<span class=\"new-item-size\">" + data[i].AppSize + "</span>");
+            // }
+
+            // arrHtml.push("</dd>");
+            // arrHtml.push("<dd>");
+            // arrHtml.push("<div class=\"xiaobian-comment\">");
+            // arrHtml.push(data[i].BriefSummary == "" ? "暂无介绍" : subString.autoAddEllipsis(data[i].BriefSummary, 34, true));
+            // arrHtml.push("</div></dd></dl></div>");
+            // arrHtml.push("</div>");
+
+            // arrHtml.push("<div class='coin_num' >下载并安装<span>"+data[i].GiveCoin+"</span></div>");
+
+            //if (isAppInstalled) {
             if (isAppInstalled) {
-                arrHtml.push("<div class='ui-btn installBtn inactive' data-installed='YES' ><span>已安装</span></div>");
+                arrHtml.push("<div class='ui-btn installBtn h-installBtn hasIns inactive' data-installed='YES' ></div>");
+                arrHtml.push("<div class='app-down-des'>已安装</div>");
             } else {
-                arrHtml.push("<div class='ui-btn installBtn' data-installed='NO' data-applogo=\""+data[i].AppLogo+"\"  data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\"></div>");
+                arrHtml.push("<div class='ui-btn installBtn h-installBtn' data-installed='NO' data-applogo=\""+data[i].AppLogo+"\"  data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\"></div>");
+                arrHtml.push("<div class='app-down-des'>下载并安装+"+data[i].GiveCoin+"</div>");
             }
 
-            arrHtml.push("</div>");
             arrHtml.push("</div>");
             arrHtml.push("</li>");
         }
