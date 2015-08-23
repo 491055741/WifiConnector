@@ -259,18 +259,19 @@ var slide = {
 
         slide.slidePanle.disable();
 
-        fnslide(jQuery);
-        $("#divSlidePanle").touchwipe({
-            min_move_x: 20,
-            min_move_y: 40,
-            wipeLeft: function () {
-                slide.scroll(true);
-            },
-            wipeRight: function () {
-                slide.scroll(false);
-            },
-            preventDefaultEvents: false
-        });
+        /* bind swipe action, confict with applist touch move */
+        // fnslide(jQuery); 
+        // $("#divSlidePanle").touchwipe({
+        //     min_move_x: 20,
+        //     min_move_y: 40,
+        //     wipeLeft: function () {
+        //         slide.scroll(true);
+        //     },
+        //     wipeRight: function () {
+        //         slide.scroll(false);
+        //     },
+        //     preventDefaultEvents: false
+        // });
 
         slide.start();
     },

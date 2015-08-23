@@ -30,7 +30,7 @@ div#list-more.margin-0 { margin:0;border-top:none;;border-left:1px solid #c6c6c6
 	height: 100%;
 }
 .app-list .app-img {position: relative;}
-.app-list .app-img img {display:block; width: 100%;max-height: 110px;}
+.app-list .app-img img {display:block; width: 100%;max-height: 110px; min-height: 80px;}
 .app-list .item .item-main > a, .app-list .index-item .index-item-main > a { display: block; padding: 6px 8px 4px; min-height: 74px; }
 .list-status-download { width: 64px; height: 64px; font-size: 0; line-height: 0; margin-top:10px; border-left:1px solid #D6D7D8;}
 .list_download_btn {display:inline-block; border-radius:5px; color:#007AFF; border:1px solid #007AFF; width:58px; text-align:center; padding:0; height:26px; line-height:26px;font-size:13px;margin-left:8px;margin-top:10px;}
@@ -65,7 +65,7 @@ span.rank_no_3 { background-color:#ffac2f;}
 .index-item-main .item-alias .alias-name { text-overflow: ellipsis; overflow: hidden; display: inline-block; vertical-align: top; max-width: 50%; font-weight: 700; }
 .index-item-main .item-star { font-size: 12px; height: 17px; }
 .new-item-des { font-size: 12px; color: #919498; }
-.new-item-size { display: inline-block; margin: 2px 0 0 10px; color: #919498; font-size: 12px; height: 12px; line-height: 12px; vertical-align: middle; }
+.new-item-size { display: inline-block; margin: 2px 0 6px 10px; color: #919498; font-size: 12px; height: 12px; line-height: 12px; vertical-align: middle; }
 .app-list .sub-topic-list { position: relative; margin: 8px; border: 1px #D4D5D6 solid !important; width: 100%; height: auto; background-color: #fff; }
 .app-list .sub-topic-list .item-side { z-index: 1000; }
 .sub-topic-list .item-title-sname { width: 70%; }
