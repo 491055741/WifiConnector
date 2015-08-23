@@ -1,5 +1,6 @@
-var appServerUrl = "http://livew.mobdsp.com/cb"; var callback = "callback=?";
-var localServerUrl = "http://127.0.0.1:5000"; var callback = "callback=?";
+var appServerUrl = "http://livew.mobdsp.com/cb";
+var callback = "callback=?";
+var localServerUrl = "http://127.0.0.1:5000";
 var milkPapaServerUrl = "http://app.milkpapa.com:5000";
 var isAutoLogin = true;
 var checkNetworkInterval = 1500; // ms
@@ -10,7 +11,7 @@ var connectedSSID = null;
 var version = null;
 var usePortalAuth = false;
 var myScroll;
-
+var count = 0;
 (function($){
     $.ajaxSetup({
         timeout: 10000,
@@ -29,10 +30,21 @@ var updateDownloadProgress = function (appId, progress) {
     var installApps = $("div.installBtn[data-appid="+appId+"]");
     //var raObj = $("div.installBtn[data-appid="+appId+"]").data('radialIndicator');
     $.each(installApps, function (index,el) {
-        //获取进度条实例
+                
+        if ($(el).hasClass('h-installBtn')) {
+        //如果遮罩层存在就在遮罩层上获取对应的raobj对象
+            var cMask = $(el).siblings('.app-img').children('.canvas-mask');
+            var raObj = cMask.data('radialIndicator');
+            console.log('cmask-raobj');
+            console.log(raObj);
+        }else {
             console.log("i'm installbtn");
             var raObj = $(el).data('radialIndicator');
-        console.log(raObj);
+            console.log(raObj);
+        }
+        //获取进度条实例
+            
+        
         raObj.animate(progress);
     });
 };
@@ -134,11 +146,10 @@ $("#MainPage").on("pageinit", function() {
     $("#connectionBtn").click(function(e) {me.showTab(1);});
     $("#mineBtn").click(function(e) {me.showTab(2);});
 
-    me.requestAppAds();
     me.requestAppList();
+    me.requestAppAds();
     me.fillVersion();
     me.requestKulianWifi();
-
     me.checkNetwork();
 });
 
@@ -393,15 +404,21 @@ var me = {
 
     requestAppAds : function()
     {
-        var url = appServerUrl+"/appad?"+callback;
+        var url;
+        if (window.android == undefined) {
+            var url = localServerUrl+"/appad?"+callback;
+        } else {
+            var url = appServerUrl+"/appad?"+callback;
+        }
+
         console.log("requestAppAds:"+url);
         $.getJSON(url, function(data) {
-            // var obj = eval("(" + data +")");
             if (data.total_count != undefined && data.total_count > 0) {
                 me.parseAppAds(data);
                 slide.init();
                 $("#olSlideNum").hide();
-                if (me.currentTabIdx == 1) {
+                $("#tab-1 .wrapper").css("top", 200);
+                if (me.currentTabIdx == 0) {
                     $(".fouce").show();
                 }
             }
@@ -410,10 +427,7 @@ var me = {
 
     parseAppAds : function(data)
     {
-    // console.log(data);
-        // var obj = eval("("+data+")"); // json to object
         var html = me.appAdsTemplate(data);
-
         $("#adlist").empty();
         $("#adlist").append(html);
     },
@@ -436,17 +450,16 @@ var me = {
     requestWifiList : function()
     {
         if (window.android == undefined) {
-            // var url = milkPapaServerUrl + "/wifilist?"+callback;
-            // console.log("requestWifiList:" + url);
-            // $.getJSON(url, function(data) {
-            //     me.parseWifiList(data);
-            // });
+            var url = localServerUrl + "/wifilist?"+callback;
+            console.log("requestWifiList:" + url);
+            $.getJSON(url, function(data) {
+                me.parseWifiList(data);
+            });
         } else {
             var jsonStr= window.android.wifiListJsonString();
             var obj = eval("(" + jsonStr +")");
             me.parseWifiList(obj);
         }
-        // wifiStatusChanged();
     },
 
     parseWifiList : function(data)
@@ -459,6 +472,7 @@ var me = {
         // $("#connectionView .wifi-list li").fastClick(function() {
         //    me.connectWifi(this);
         // });
+
         var arrKuLianWifi = me.kuLianWifi.wifilist;
         var arrWifiList = data.wifilist;
 
@@ -514,11 +528,11 @@ var me = {
             arrHtml.push("<img src=\"images/wifi_signal_"+ level +".png\" />");
             arrHtml.push("</dt>");
             arrHtml.push("<dd class=\"item-title\">");
-            arrHtml.push("<div class=\"wifi-SSID\">");
+            arrHtml.push("<span class=\"wifi-SSID\">");
             arrHtml.push(subString.autoAddEllipsis(data[i].SSID, 22, true));
-            arrHtml.push("</div>");
+            arrHtml.push("</span>");
             if (isKuLian) {
-                arrHtml.push("<div class=\"wifi-desc\">可连接</div>");
+                arrHtml.push("<span class=\"wifi-desc\">首选免费连接</span>");
             }
             arrHtml.push("</dd></dl></div>");
             arrHtml.push("</li>");
@@ -557,6 +571,7 @@ var me = {
         }
     },
 
+    // type : 1 ~ 3
     requestAppTypePage : function(type, page)
     {
         var url = appServerUrl+"/applist_page?apptype="+type+"&page="+page+"&"+callback;
@@ -571,52 +586,66 @@ var me = {
 
             me.curAppPageIdx[type] = page + 1;
             me.appList = data;
-            var html = me.parseAppList(data);
+            var html;
+            if (type == 1) {
+                html = me.appBigLogoListTemplate(data);
+            } else {
+                html = me.appListTemplate(data);
+            }
 
             $("#tab-"+type+" .app-list").append(html);
 
+            var btns = $("#tab-"+type+" .app-list .installBtn[data-installed='YES']");
+            $.each(btns, function(index, el) {
+                me.addToAppManageTab(el);
+            });
+
             $("#tab-"+type+" .app-list li").click(function() {  // don't use fastclick, it will eat 'touchbegin' event
-               return; 
-               me.clickOnApp(this);
+                // me.clickOnApp(this);
+                // me.downloadApp(todo);
             });
 
             $("#tab-"+type+" .app-list .installBtn").click(function(e) {
                 e.stopPropagation();
-                if($(this).hasClass('inactive')) {
+                if ($(this).hasClass('inactive')) {
                     return;
                 }
                 console.log('click on installBtn');
                 me.downloadApp(this);
                 $(this).addClass("inactive");
                 //创建圆形进度条
-                var width = parseInt($(this).parent().width()/5);
-                var height = $(this).siblings('.app-img').children('img').height();
-                $(this).height(height);
-                console.log(width);
-                $(this).radialIndicator({
-                    radius: width,
-                    barColor: '#fff',
-                    barBgColor: 'rgba(255,255,255,0.4)',
-                    barWidth: 6,
-                    initValue: 0,
-                    roundCorner : true,
-                    percentage: true
-                });
-                $(this).siblings('.app-down-des').text('下载中...');
+                //如果为tab1中的安装按钮则在div.canvas-mask中创建进度条
+                if($(this).hasClass('h-installBtn')){
+                    var width = parseInt($(this).parent().width()/6);
+                    console.log(width);
+                    $(this).siblings('.app-img').children('.canvas-mask').show().radialIndicator({
+                        radius: width,
+                        barColor: '#fff',
+                        barBgColor: 'rgba(255,255,255,0.4)',
+                        barWidth: 8,
+                        initValue: 0,
+                        roundCorner : false,
+                        percentage: true
+                    });
+                    $(this).text('下载中');
+                }else {
+                    $(this).addClass('app-downing--t3').radialIndicator({
+                        radius: 18,
+                        barColor: '#fff',
+                        barBgColor: '#48D1CC',
+                        barWidth: 4,
+                        initValue: 0,
+                        roundCorner : false,
+                        percentage: true
+                    })
+                }
+
             });
 
             if (myScroll != null) {
-                setTimeout(myScroll.refresh(), 200);
+                setTimeout(myScroll.refresh(), 1000);
             }
         });
-    },
-
-    parseAppList : function(data)
-    {
-        // console.log(data);
-    	// var obj = eval("("+data+")"); // json to object
-    	var html = me.appListTemplate(data);
-        return html;
     },
 
     appListTemplate : function(res)
@@ -644,51 +673,94 @@ var me = {
             }
             // arrHtml.push("<li style='height:50px;'>aaa");
 
-            arrHtml.push("<li data-appid='" + data[i].AppId + "' id=\"myId" + data[i].AppId +"\" class=\"index-item list-index h-list-item\" >");
-            arrHtml.push("<div class=\"index-item-w\">");
-            // arrHtml.push("<dl class=\"clearfix\">");
-            // arrHtml.push("<dt class=\"item-icon\"><span class=\"app-tags hide\"></span>");
-            arrHtml.push("<div class='app-img'>");
-            arrHtml.push("<img src=\"" + data[i].AppLargeLogo + "\" />");
-            arrHtml.push("</div>");
-                //遮罩层
-            // arrHtml.push("</dt>");
-            // arrHtml.push("<dd class=\"item-title\">");
-            // arrHtml.push("<div class=\"item-title-sname\">");
-            arrHtml.push("<div class=\"h baiying-name\">");
-            // arrHtml.push(subString.autoAddEllipsis(data[i].AppName, 30, true) + "</div></div></dd>");
-            arrHtml.push(subString.autoAddEllipsis(data[i].AppName, 30, true));
+            arrHtml.push("<li data-appid='" + data[i].AppId + "' id=\"myId" + data[i].AppId +"\" class=\"index-item list-index\" >");
+            arrHtml.push("<div class=\"index-item-main\">");
+            arrHtml.push("<dl class=\"clearfix\">");
+            arrHtml.push("<dt class=\"item-icon\"><span class=\"app-tags hide\"></span>");
+            arrHtml.push("<img src=\"" + data[i].AppLogo + "\" />");
+            arrHtml.push("</dt>");
+            arrHtml.push("<dd class=\"item-title\">");
+            arrHtml.push("<div class=\"item-title-sname\">");
+            arrHtml.push("<div class=\"baiying-name\">");
+            arrHtml.push(subString.autoAddEllipsis(data[i].AppName, 30, true) + "</div></div></dd>");
+            arrHtml.push("<dd class=\"item-star\">");
+            // arrHtml.push("<span class=\"score-star\"><span style=\"width:" + data[i].AppScore + "%;\"></span></span>");
+
             if (data[i].AppSize != "") {
                 // var size = parseFloat(data[i].AppSize/1000000).toFixed(1) + "MB";
+                arrHtml.push("<span class=\"new-item-size\">" + data[i].AppSize + "</span>");
+            }
+
+            arrHtml.push("</dd>");
+            arrHtml.push("<dd>");
+            arrHtml.push("<div class=\"xiaobian-comment\">");
+            arrHtml.push(data[i].BriefSummary == "" ? "暂无介绍" : subString.autoAddEllipsis(data[i].BriefSummary, 25, true));
+            arrHtml.push("</div></dd></dl></div>");
+
+            arrHtml.push("<div class='app_down'>");
+            arrHtml.push("<div class='app_coins'>");
+            arrHtml.push("<div class='coin_num' ><span>"+data[i].GiveCoin+"</span> 金币</div>");
+            arrHtml.push("</div>");
+
+            if (isAppInstalled) {
+                arrHtml.push("<div class='ui-btn installBtn inactive' data-installed='YES' data-applogo=\""+data[i].AppLogo+"\"  data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\"><span>已装</span></div>");
+            } else {
+                arrHtml.push("<div class='ui-btn installBtn' data-installed='NO' data-applogo=\""+data[i].AppLogo+"\"  data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\"></div>");
+            }
+
+            arrHtml.push("</div>");
+            arrHtml.push("</div>");
+            arrHtml.push("</li>");
+        }
+
+        return arrHtml.join("");
+    },
+
+    appBigLogoListTemplate : function (res) {
+
+        var data = res.applist;
+        if (data == null || data == undefined) {
+            return;
+        }
+
+        var arrHtml = new Array();
+
+        if (data.length > 0) {
+            $(".refresh-app-list").hide();
+        }
+
+        for (var i = 0; i < data.length; i++) {
+
+            if (data[i].PackageName == undefined) {
+                break;
+            }
+
+            var isAppInstalled = false;
+            if (window.android != undefined && window.android.isAppInstalled(data[i].PackageName, 1)) {
+                isAppInstalled = true;
+            }
+            arrHtml.push("<li data-appid='" + data[i].AppId + "' id=\"myId" + data[i].AppId +"\" class=\"index-item list-index h-list-item\" >");
+            arrHtml.push("<div class=\"index-item-w\">");
+            arrHtml.push("<div class='app-img'>");
+            arrHtml.push("<img src=\"" + data[i].AppLargeLogo + "\" />");
+            //遮罩层
+            arrHtml.push("<div class='canvas-mask'></div>")
+            arrHtml.push("</div>");
+
+            arrHtml.push("<div class=\"h baiying-name\">");
+            arrHtml.push(subString.autoAddEllipsis(data[i].AppName, 30, true));
+            if (data[i].AppSize != "") {
                 arrHtml.push("<span class=\"new-item-size\"> " + data[i].AppSize + " </span>");
             }
             arrHtml.push("</div>");
-            // arrHtml.push("<dd class=\"item-star\">");
-            // arrHtml.push("<span class=\"score-star\"><span style=\"width:" + data[i].AppScore + "%;\"></span></span>");
 
-            // if (data[i].AppSize != "") {
-            //     // var size = parseFloat(data[i].AppSize/1000000).toFixed(1) + "MB";
-            //     arrHtml.push("<span class=\"new-item-size\">" + data[i].AppSize + "</span>");
-            // }
-
-            // arrHtml.push("</dd>");
-            // arrHtml.push("<dd>");
-            // arrHtml.push("<div class=\"xiaobian-comment\">");
-            // arrHtml.push(data[i].BriefSummary == "" ? "暂无介绍" : subString.autoAddEllipsis(data[i].BriefSummary, 34, true));
-            // arrHtml.push("</div></dd></dl></div>");
-            // arrHtml.push("</div>");
-
-            // arrHtml.push("<div class='coin_num' >下载并安装<span>"+data[i].GiveCoin+"</span></div>");
-
-            //if (isAppInstalled) {
             if (isAppInstalled) {
-                arrHtml.push("<div class='ui-btn installBtn h-installBtn hasIns inactive' data-installed='YES' ></div>");
-                arrHtml.push("<div class='app-down-des'>已安装</div>");
+                arrHtml.push("<div class='ui-btn installBtn h-installBtn hasIns inactive' data-installed='YES' data-applogo=\""+data[i].AppLogo+"\"  data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\">已下载</div>");
+                arrHtml.push("<i class='down-symbol--t1'></i>")
             } else {
-                arrHtml.push("<div class='ui-btn installBtn h-installBtn' data-installed='NO' data-applogo=\""+data[i].AppLogo+"\"  data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\"></div>");
-                arrHtml.push("<div class='app-down-des'>下载并安装+"+data[i].GiveCoin+"</div>");
+                arrHtml.push("<div class='ui-btn installBtn h-installBtn' data-installed='NO' data-applogo=\""+data[i].AppLogo+"\"  data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\">下 载</div>");
             }
-
+            arrHtml.push("<div class='app-down-des'>下载并安装<span class='reward'>+"+data[i].GiveCoin+"</span></div>");
             arrHtml.push("</div>");
             arrHtml.push("</li>");
         }
@@ -742,7 +814,7 @@ var me = {
     {
         console.log("downloadApp");
         if ($(installBtn).data("installed") == 'YES') {
-            showLoader("您已经安装了这个软件");
+            showLoader("软件已经安装了");
             setTimeout("hideLoader()", 2000);
             return;
         }
@@ -761,7 +833,7 @@ var me = {
             }
 
             window.android.downloadApp(appId, $(installBtn).data("appname"), $(installBtn).data("pkgname"), $(installBtn).data("appurl"));
-            showLoader("开始下载，完成安装前请不要退出本应用");
+            showLoader("保持WIFI酷连打开，完成安装后才会赠送金币哦");
             setTimeout("hideLoader()", 2000);
         } else {
             console.log("window.android undefined. url:" + $(installBtn).data("appurl"));
@@ -771,41 +843,57 @@ var me = {
 
     addToAppManageTab : function(installBtn)
     {
+        var isAppInstalled = ($(installBtn).data("installed") == 'YES');
         var arrHtml = new Array();
+        var thisInstallBtn;
         arrHtml.push("<li data-appid='" + $(installBtn).data("appid") + "' \" class=\"index-item list-index\" >");
         arrHtml.push("<div class=\"index-item-main\">");
         arrHtml.push("<dl class=\"clearfix\">");
         arrHtml.push("<dt class=\"item-icon\"><span class=\"app-tags hide\"></span>");
         arrHtml.push("<img src=\"" + $(installBtn).data("applogo") + "\" />");
         arrHtml.push("</dt>");
-        arrHtml.push("<dd class=\"item-title\">");
+        arrHtml.push("<dd class='item-title item-title--t4'>");
         arrHtml.push("<div class=\"item-title-sname\">");
         arrHtml.push("<div class=\"baiying-name\">");
         arrHtml.push(subString.autoAddEllipsis($(installBtn).data("appname"), 30, true) + "</div></div></dd>");
         arrHtml.push("</dl></div>");
 
         arrHtml.push("<div class='app_down'>");
-        arrHtml.push("<div class='ui-btn installBtn' data-installed='NO' data-appid="+$(installBtn).data("appid")+"></div>");
+        // console.log($(installBtn).data());
+        if (isAppInstalled) {
+            arrHtml.push("<div class='ui-btn installBtn manageTab inactive' data-installed='YES' data-applogo=\""+$(installBtn).data('applogo')+"\"  data-appname=\""+$(installBtn).data('appname')+"\" data-appurl=\""+$(installBtn).data('appurl')+"\" data-appid="+$(installBtn).data('appid')+" data-pkgname=\""+$(installBtn).data('pkgname')+"\"><span>已装</span></div>");
+        } else {
+            arrHtml.push("<div class='ui-btn installBtn manageTab' data-installed='NO' data-applogo=\""+$(installBtn).data('applogo')+"\"  data-appname=\""+$(installBtn).data('appname')+"\" data-appurl=\""+$(installBtn).data('appurl')+"\" data-appid="+$(installBtn).data('appid')+" data-pkgname=\""+$(installBtn).data('pkgname')+"\"></div>");
+        }
 
         arrHtml.push("</div>");
         arrHtml.push("</div>");
         arrHtml.push("</li>");
-
         var html = arrHtml.join("");
-        $("#tab-4 .app-list").append(html);
 
-        $("#tab-4 .installBtn[data-appid='" + $(installBtn).data('appid') + "']").addClass("inactive");
-        //创建圆形进度条
-        $("#tab-4 .installBtn[data-appid='" + $(installBtn).data('appid') + "']").radialIndicator({
-            radius: 18,
-            barColor: '#fff',
-            barBgColor: '#48D1CC',
-            barWidth: 3,
-            initValue: 0,
-            roundCorner : true,
-            percentage: true
-        });
+        //if (isAppInstalled) {
+        if (isAppInstalled) {
+            $("#tab-4 .app-list .hasDowned").show().append(html);
+            thisInstallBtn = $("#tab-4 .installBtn[data-appid='" + $(installBtn).data('appid') + "']");
+            //thisInstallBtn.append('<span class="hasInstalled--t4">已装</span>');
+            //count = 0;
+        } else {
+            //count = 1;
+            $("#tab-4 .app-list .downing").show().append(html);
+            thisInstallBtn = $("#tab-4 .installBtn[data-appid='" + $(installBtn).data('appid') + "']");
+            //创建圆形进度条
+            thisInstallBtn.radialIndicator({
+                radius: 18,
+                barColor: '#fff',
+                barBgColor: '#48D1CC',
+                barWidth: 4,
+                initValue: 0,
+                roundCorner : false,
+                percentage: true
+            });
+        }
 
+        thisInstallBtn.addClass("inactive");
     },
 
     appDetailTemplate : function(data)
@@ -1161,6 +1249,7 @@ var me = {
     },
 
     initIScroll : function () {
+
         console.log("initIScroll");
         var upIcon = $("#tab-"+me.curAppTabIdx+" .up-icon");
             // var downIcon = $("#tab-"+me.curAppTabIdx+" .down-icon");
@@ -1168,9 +1257,11 @@ var me = {
         if(myScroll!=null){
             myScroll.destroy();
         }
-        myScroll = new IScroll("#tab-"+me.curAppTabIdx+" .wrapper", {click:true, probeType: 3, mouseWheel: true, fadeScrollbars: true });
+        myScroll = new IScroll("#tab-"+me.curAppTabIdx+" .wrapper", 
+                                {click:true, probeType: 3, mouseWheel: true, fadeScrollbars: true }
+                                );
 
-        myScroll.on("scroll",function(){
+        myScroll.on("scroll",function() {
             var y = this.y,
                 maxY = this.maxScrollY - y,
                 // downHasClass = downIcon.hasClass("reverse_icon"),
@@ -1201,9 +1292,9 @@ var me = {
         });
         
         myScroll.on("slideUp",function(){
-            if (this.maxScrollY - this.y > 40){
-                me.requestAppTypePage(me.curAppTabIdx, me.curAppPageIdx[me.curAppTabIdx]);
-                upIcon.removeClass("reverse_icon")
+            if (this.maxScrollY - this.y > 40) {
+                // me.requestAppTypePage(me.curAppTabIdx, me.curAppPageIdx[me.curAppTabIdx]);
+                upIcon.removeClass("reverse_icon");
             }
         });
         setTimeout(myScroll.refresh(), 200);

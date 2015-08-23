@@ -246,12 +246,10 @@ var slide = {
             slide.slidePanle = null;
         }
         slide.stop();
-        slide.slidePanle = new iScroll('divSlidePanle', {
+        slide.slidePanle = new IScroll("#divSlidePanle", {
             momentum: false,
-            hScrollbar: false,
-            vScrollbar: false,
             bounce: false,
-            vScroll: false
+            ScrollY: false
         });
 
         slide.intIndex = 1;

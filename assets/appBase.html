@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="js/tabs/jquery.mobile.tabs.css">
     <link rel="stylesheet" href="js/iscroll/iscroll.css">
     <script src="js/jquery-1.9.0.min.js"></script>
-    <script src="js/iscroll-lite.js"></script>
+    <script src="js/iscroll/iscroll.js"></script>
     <script src="js/jquery.mobile/jquery.mobile-1.4.5.min.js"></script>
     <script src="js/jquery.cookie.js"></script>
     <script src="js/google.fastbutton.js"></script>
@@ -106,7 +106,7 @@
 
             <div data-role="content">
                 <div id="tab-1" >
-<!--                     <div class="fouce" style="display: none;">
+                    <div class="fouce" style="display: none;">
                         <div id="divSlidePanle" style="overflow: hidden;">
                             <div id="slidebox" class="img_box" style="width: 13153px; -webkit-transition-property: -webkit-transform; transition-property: -webkit-transform; -webkit-transform-origin: 0px 0px 0px; -webkit-transform: translate3d(-5637px, 0px, 0px) scale(1);">
                                 <ul id="adlist">
@@ -121,17 +121,17 @@
                             <li class=""></li>
                         </ol>
                     </div>
- -->
+
                     <div class="wrapper">
                         <div style="transition-timing-function: cubic-bezier(0.1, 0.57, 0.1, 1); transition-duration: 0ms; transform: translate(0px, -1047px) translateZ(0px);" class="scroller">
                             <div class="scroller-content">
                                 <ul class="app-list h-pt">
                                 </ul>
                             </div>
-                            <div class="scroller-pullUp">
+<!--                             <div class="scroller-pullUp">
                                 <span class="up-icon" class="icon-double-angle-up pull-up-icon"></span>
                                 <span class="pullUp-msg" class="pull-up-msg">上拉加载更多</span>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 
@@ -155,10 +155,10 @@
                                 <ul class="app-list">
                                 </ul>
                             </div>
-                            <div class="scroller-pullUp">
+<!--                             <div class="scroller-pullUp">
                                 <span class="up-icon icon-double-angle-up pull-up-icon"></span>
                                 <span class="pullUp-msg pull-up-msg">上拉加载更多</span>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 
@@ -176,17 +176,26 @@
                                 <ul class="app-list">
                                 </ul>
                             </div>
-                            <div class="scroller-pullUp">
+<!--                             <div class="scroller-pullUp">
                                 <span class="up-icon icon-double-angle-up pull-up-icon"></span>
                                 <span class="pullUp-msg pull-up-msg">上拉加载更多</span>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 
                 </div>
                 
                 <div id="tab-4">
-                    <div class="app-list"></div>
+                    <div class="app-list">
+                        <div class="downing hide">
+                            <h5>正在下载</h5>
+
+                        </div>
+                        <div class="hasDowned hide">
+                            <h5>已安装</h5>
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -202,6 +211,11 @@
                     </ul>
                 </div>
             </div>
+
+<!-- 
+            <div class="wifi-list">
+            </div>
+ -->
 
             <div class="wifiStatus">
                 <center>
@@ -238,7 +252,7 @@
 
                 <dl class="account_coin">
                     <dt><img src="images/coin.png"></dt>
-                    <dd><div>&nbsp;当前可兑换金币</div><div class="account_item" id="coin" >coin</div></dd>
+                    <dd><div>&nbsp;当前可兑换金币</div><div class="account_item" id="coin">coin</div></dd>
                 </dl>
 
                 <dl class="account_passModify">
@@ -250,12 +264,13 @@
                     <dt><img src="images/contact.png"></dt>
                     <dd><div class="account_item feedbackBtn">问题反馈<i class="icon-arrow"></i></div></dd>
                 </dl>
+<!-- 
                 <dl class="account_socialShare">
                     <dt><img src="images/contact.png"></dt>
                     <dd><div class="account_item socialShareBtn">分享<i class="icon-arrow"></i></div></dd>
                 </dl>
 
-<!--                 <dl class="account_help">
+                <dl class="account_help">
                     <dt><img src="images/help.png"></dt>
                     <dd><div class="account_item" id="version">帮助<i class="icon-arrow"></i></div></dd>
                 </dl>
@@ -331,7 +346,7 @@
 <script src="js/gallery/idangerous.swiper-2.0.min.js"></script> 
 <script src="js/gallery/gallery-app.js"></script>
 <script src="js/tabs/jquery.mobile.tabs.js"></script>
-<script src="js/iscroll/iscroll.js"></script>
+<!-- <script src="js/iscroll/iscroll.js"></script> -->
 <script src="js/plugin/radialIndicator.min.js"></script>
 </body>
 </html>

@@ -152,7 +152,7 @@ public class MainActivity extends Activity {
             Log.i(TAG, "unconnect");
             webView.loadUrl("javascript: wifiStatusChanged()");
         } else {
-           Log.i(TAG, "connected");
+            Log.i(TAG, "connected");
             WifiManager wifiManager = (WifiManager)getSystemService(WIFI_SERVICE);  
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();  
             String ssid = wifiInfo.getSSID(); 
@@ -162,7 +162,7 @@ public class MainActivity extends Activity {
     }
     
     private Handler mWebviewHandler = new Handler()
-    {  
+    {
         public void handleMessage(Message msg) {// 定义一个Handler，用于处理webview线程与UI间通讯  
             if (!Thread.currentThread().isInterrupted()){
                 switch (msg.what) {  
@@ -478,6 +478,7 @@ public class MainActivity extends Activity {
                 JSONObject jsonObject = new JSONObject();  
                 jsonObject.put("SSID", scanResult.SSID);
                 jsonObject.put("level", scanResult.level);
+                Log.d(TAG, "SSID["+scanResult.SSID+"] cap: "+scanResult.capabilities);
                 jsonArray.put(jsonObject);
             }
         }
