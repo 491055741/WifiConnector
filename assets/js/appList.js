@@ -26,13 +26,11 @@ var count = 0;
 // js-Android interface
 var updateDownloadProgress = function (appId, progress) {
     console.log('app['+appId+'] download progress: '+progress);
-    //已安装的应用
+    //已安装的应用  包含app列表和app管理里的
     var installApps = $("div.installBtn[data-appid="+appId+"]");
-    //var raObj = $("div.installBtn[data-appid="+appId+"]").data('radialIndicator');
     $.each(installApps, function (index,el) {
-                
         if ($(el).hasClass('h-installBtn')) {
-        //如果遮罩层存在就在遮罩层上获取对应的raobj对象
+            //如果遮罩层存在就在遮罩层上获取对应的raobj对象
             var cMask = $(el).siblings('.app-img').children('.canvas-mask');
             var raObj = cMask.data('radialIndicator');
             console.log('cmask-raobj');
@@ -42,17 +40,32 @@ var updateDownloadProgress = function (appId, progress) {
             var raObj = $(el).data('radialIndicator');
             console.log(raObj);
         }
-        //获取进度条实例
-            
-        
         raObj.animate(progress);
     });
 };
 // js-Android interface
 var finishDownloadProgress = function (appId) {
     console.log('app['+appId+'] download finished.');
-    $("div.installBtn[data-appid="+appId+"]").empty();
-    $("div.installBtn[data-appid="+appId+"]").append("<span>已下载</span>");
+
+    // 已安装的应用  包含app列表和app管理里的
+    var installApps = $("div.installBtn[data-appid="+appId+"]");
+    $.each(installApps, function (index,el) {
+        if ($(el).hasClass('h-installBtn')) { // 推荐中的
+            //如果遮罩层存在就在遮罩层上获取对应的raobj对象
+            $(el).siblings('.app-img').children('.canvas-mask').hide();
+            $(el).children('canvas').hide();
+            $(el).text('已下载');
+            $(el).attr('data-installed', 'YES');
+            $(el).addClass("hasIns inactive");
+            $(el).after("<i class='down-symbol--t1'></i>");
+        } else {// 软件管理列表中的
+            console.log("i'm installbtn");
+            // console.log(raObj);
+            $(el).attr('data-installed', 'YES');
+            me.removeFromAppManageTab(el);
+            me.addToAppManageTab(el);            
+        }
+    });
 }
 // js-Android interface
 var appInstallFinished = function (appId) {
@@ -839,10 +852,17 @@ var me = {
             window.android.downloadApp(appId, $(installBtn).data("appname"), $(installBtn).data("pkgname"), $(installBtn).data("appurl"));
             showLoader("保持WIFI酷连打开，完成安装后才会赠送金币哦");
             setTimeout("hideLoader()", 2000);
-        } else {
+        } else { // for test on browser
             console.log("window.android undefined. url:" + $(installBtn).data("appurl"));
             setTimeout("updateDownloadProgress("+$(installBtn).data("appid")+",50)", 1000);
+            setTimeout("finishDownloadProgress("+$(installBtn).data("appid")+")", 3000);
         }
+    },
+
+    removeFromAppManageTab : function(installBtn)
+    {
+        var li = $("#tab-4 .app-list li[data-appid='" + $(installBtn).data('appid')+"'");
+        li.remove();
     },
 
     addToAppManageTab : function(installBtn)
