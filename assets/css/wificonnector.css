@@ -5,7 +5,7 @@ a { text-decoration:none;}
 .hide {display: none;}
 .goBack {height: 12px;}
 .ui-content {padding: 0;}
-.account-wrapper { padding:15px; }
+.account-wrapper { padding:15px; padding-top: 0;}
 
 #loginBtn {width: 35%; float:right; margin-top:10px; background-color: #FF8800; color: white; text-shadow:0 0 0;}
 #toRegistBtn {width: 35%; float:left; margin-top:10px; }
@@ -33,6 +33,11 @@ a { text-decoration:none;}
 
 .refresh-app-list {margin-top: 150px; }
 #choiceView .ui-tabs-content {margin-top: 0; }
+#choiceView .ui-header {border: 0;}
+#choiceView .ui-header .ui-navbar .ui-btn {font-size: 16px; border: 0; }
+.ui-page-theme-a .ui-btn {background-color: #f0f0f0; color: #555; }
+.ui-page-theme-a .ui-btn.ui-btn-active {background-color: #f0f0f0; color: #38c; text-shadow:none; }
+
 .app-list .coin_icon {position: absolute; width: 20px; top:30px; right: 75px;}
 .app-list .coin_num {
     position: absolute;
@@ -49,7 +54,6 @@ a { text-decoration:none;}
     color: #ff8800;
     vertical-align: bottom;
 }
-
 .app-list .installBtn {
     position: absolute;
     width: 65px;
@@ -67,10 +71,13 @@ a { text-decoration:none;}
     padding-left: 6px;
     color: red;
 }
+.app-list .installBtn.inactive {
+    background: transparent;
+}
 .app-list .installBtn.manageTab {
     background: transparent;
-} 
-.app-list .h-installBtn {
+}
+.app-list .bigLogo-instBtn {
     /*width: 100%;
     height: 100%;*/
     width: 50px;
@@ -86,7 +93,7 @@ a { text-decoration:none;}
     text-align: center;
     letter-spacing: 1px;
 }
-.app-list li .h-installBtn:hover {
+.app-list li .bigLogo-instBtn:hover {
     background: rgba(0,0,0,0.5);
 }
 .app-list .h.baiying-name {font-size: 16px;height: 22px;padding-top: 2px;}
@@ -100,11 +107,11 @@ a { text-decoration:none;}
     border: 0;
     font: 100 12px '微软雅黑';
 }
-.app-list .h-installBtn.inactive {
+.app-list .bigLogo-instBtn.inactive {
     background: #ccc;
     color:#fff;
 }
-.app-list .hasIns.h-installBtn.inactive {
+.app-list .hasIns.bigLogo-instBtn.inactive {
     background: rgb(245,149,13);
     text-align: center;
     letter-spacing: 1px;
@@ -124,7 +131,7 @@ a { text-decoration:none;}
     background: rgba(0,0,0,0.6);
     padding: 1%;
 }
-.app-list .h-installBtn.inactive canvas{
+.app-list .bigLogo-instBtn.inactive canvas{
     background: none;
 }
 .app-list .installBtn.inactive span {
@@ -132,10 +139,12 @@ a { text-decoration:none;}
     font-size: 14px;
     background: #bebebe;
     color: #fff;
-    /*padding: 3px 5px 1px 6px;*/
-    padding: 8px;
+    display: inline-block;
+    padding: 3px 5px 1px 6px;
+    margin-top: 10px;
     text-shadow: none;
 }
+
 .app-list .installBtn.app-downing--t3 {
     background: #fff;
 }
@@ -146,7 +155,9 @@ a { text-decoration:none;}
     background: #f2f2f2;
     padding: 7px 0 5px 10px;
     font-weight: bold;
-    color: #000;   
+    color: #000;
+    border-top: 1px;
+    border-style:solid;
 }
 #tab-4 .app-list .hasDowned h5 {
     border-top: 1px solid #ccc;
@@ -180,7 +191,7 @@ a { text-decoration:none;}
 
 #mineView .account_w {display: inline-block; width: 50%;}
 #mineView .nick_name { font-size: 24px; font-weight: bold; width: 65%; height: 25px; line-height: 25px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;} 
-#mineView .acount_list {border-bottom: 1px #d4d5d6 solid; padding-left: 0;}
+#mineView .acount_list {border-bottom: 1px #d4d5d6 solid; padding-left: 0; padding-top: 0;}
 #mineView .acount_list dt {height: 80px; margin-right: 15px; padding-left: 0;}
 #mineView .acount_list dt img{width:70px; height:70px;}
 #mineView .acount_list dd {text-align:left; line-height: 20px; height: 20px;}
