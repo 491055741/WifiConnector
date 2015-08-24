@@ -86,7 +86,6 @@ function applicationCacheHandeler()
     applicationCache.onerror = function(){
         console.log(" application cache error");
     };
-    
 }
 
 function isAndroid()
@@ -98,13 +97,25 @@ function isAndroid()
     return true;
 }
 
-function clearStorage()
+function saveItem(key, value)
 {
-    for (var i=0, len = sessionStorage.length; i < len; i++){
-        var key = sessionStorage.key(i);
-        var value = sessionStorage.getItem(key);
-        console.log("removing " + key + " : " + value);
-        sessionStorage.removeItem(key); /// ?????
+    if (window.localStorage) {
+        localStorage.setItem(key, value);
+    } else if (window.android) {
+        window.android.saveItem(key, value);
+    } else {
+        console.log("error: unsupport localStorage nor native storage!");
+    }
+}
+
+function getItem(key)
+{
+    if (window.localStorage) {
+        return localStorage.getItem(key);
+    } else if (window.android) {
+        return window.android.getItem(key);
+    } else {
+        console.log("error: unsupport localStorage nor native storage!");
     }
 }
 

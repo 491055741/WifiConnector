@@ -5,10 +5,12 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo.State;
 import android.net.Uri;
@@ -177,7 +179,10 @@ public class MainActivity extends Activity {
                         break;  
                     case 1:
                         checkConnection();
-                        break;  
+                        break;
+                    case 2:
+                    	
+                    	break;
                 }
             }
             super.handleMessage(msg);  
@@ -255,6 +260,7 @@ public class MainActivity extends Activity {
 	    registerWIFI();
 		registerConnection();
 		registerAppInstall();
+		checkDownloadManager();
         feedbackAgent = new FeedbackAgent(this);
 		feedbackAgent.sync();
 		PushManager.getInstance().initialize(this.getApplicationContext());
@@ -327,7 +333,31 @@ public class MainActivity extends Activity {
         Log.d(TAG, "httpRequest:["+method+"]"+url+"?"+data);
         HttpRequest.post(url, data);
     }
-	
+    //  @JavascriptInterface
+    public void saveItem(String key, String value)
+    {
+    	SharedPreferences.Editor editor = getSharedPreferences("xiaohong", MODE_WORLD_WRITEABLE).edit();
+        editor.putString(key, value);
+        editor.commit();
+    }
+    //  @JavascriptInterface
+    public String getItem(String key)
+    {
+//    	JSONObject obj = new JSONObject();
+//    	SharedPreferences read = getSharedPreferences("xiaohong", MODE_WORLD_READABLE);
+//        String val1 = read.getString(nameKey, "");
+//    	String val2 = read.getString(pwdKey, "");
+//        String val3 = read.getString(rmbKey, "");
+//        obj.put(nameKey, val1);
+//        obj.put(pwdKey, val2);
+//        obj.put(rmbKey, val3);
+//        return obj.toString();
+       	SharedPreferences read = getSharedPreferences("xiaohong", MODE_WORLD_READABLE);
+       	String val = read.getString(key, "");
+       	Log.d(TAG, "getItem:"+key+" val:"+val);
+       	return val;
+    }
+
 	private boolean initCustomActionBar() {
 
 	    if (mActionbar == null) {
@@ -488,6 +518,27 @@ public class MainActivity extends Activity {
     	return jsonObject3.toString();
     }
 
+    private void checkDownloadManager() {
+    	  int state = this.getPackageManager().getApplicationEnabledSetting("com.android.providers.downloads");
+
+    	  if (state == PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+           || state == PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER) {
+    		  String packageName = "com.android.providers.downloads";
+
+			  try {
+			      //Open the specific App Info page:
+			      Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+			      intent.setData(Uri.parse("package:" + packageName));
+			      startActivity(intent);
+			  } catch ( ActivityNotFoundException e ) {
+			      //e.printStackTrace();
+			      //Open the generic Apps page:
+			      Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS);
+			      startActivity(intent);
+			  }
+    	  }
+    }
+    
     private void registerWIFI() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);

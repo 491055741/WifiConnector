@@ -128,9 +128,10 @@ var wifiStatusChanged = function (ssid) {
 
 $("#LoginPage").on("pageinit", function () {
     console.log("login page init");
-    $("#loginUsername").attr("value", localStorage.getItem("userName"));
-    $("#loginPassword").attr("value", localStorage.getItem("passWord"));
-    $("#checkbox-1").prop("checked",  localStorage.getItem("rmbUser")).checkboxradio("refresh");
+
+    $("#loginUsername").attr("value", getItem("userName"));
+    $("#loginPassword").attr("value", getItem("passWord"));
+    $("#checkbox-1").prop("checked",  getItem("rmbUser")).checkboxradio("refresh");
 });
 
 $("#LoginPage").on("pagebeforeshow", function () {
@@ -278,6 +279,8 @@ $("#connectWifiBtn").fastClick(function() {
     if ($(".wifiStatus .statusOn").css("display") == 'none') {
         me.connectWifi(this);
         me.checkNetwork();
+    } else {
+        console.log("connectWifiBtn clicked, wifi alreay connected.");
     }
 });
 
@@ -411,13 +414,17 @@ var me = {
 
     requestKulianWifi : function()
     {
-        // var url = milkPapaServerUrl+"/kulianwifi?"+callback;
-        // console.log("requestKulianWifi:"+url);
-        // $.getJSON(url, function(data) {
-            var data = {"wifilist": [ {"SSID":"@小鸿科技","password":""},{"SSID":"test","password":""}]};
-            me.kuLianWifi = data;
+        // http://livew.mobdsp.com/cb/get_ssidlist
+        var url = appServerUrl+"/get_ssidlist?"+callback;
+        console.log("requestKulianWifi:"+url);
+        me.kuLianWifi = {"ssidlist": [ {"ssid":"@小鸿科技","ssid_passwd":""},{"ssid":"test","ssid_passwd":""}]};
+        $.getJSON(url, function(data) {
+
+            if (data.ret_code == 0 && data.ssidlist.length > 0) {
+                me.kuLianWifi = data.ssidlist;
+            }
             me.requestWifiList();
-        // });
+        });
     },
 
     requestAppAds : function()
@@ -498,17 +505,19 @@ var me = {
         //    me.connectWifi(this);
         // });
 
-        var arrKuLianWifi = me.kuLianWifi.wifilist;
+        var arrKuLianWifi = me.kuLianWifi;
         var arrWifiList = data.wifilist;
 
         for (var i = 0; i < arrWifiList.length; i++) {
 
             var isKuLian = false;
             var passwd = "";
+            console.log("Found Wifi: "+arrWifiList[i].SSID);
             for (var j = 0; j < arrKuLianWifi.length; j++) {
-                if (arrKuLianWifi[j].SSID == arrWifiList[i].SSID) {
+                if (arrKuLianWifi[j].ssid == CryptoJS.MD5(arrWifiList[i].SSID, { asString: true })) {
                     isKuLian = true;
-                    passwd = arrKuLianWifi[j].password;
+                    console.log("Found a xiaohong wifi:"+arrWifiList[i].SSID);
+                    passwd = arrKuLianWifi[j].ssid_passwd;
                     // $(".wifiStatus .statusOn").text(connectedSSID+' 已连接');// arrWifiList[i].SSID
                     $(".wifiStatus").data("wifissid", arrWifiList[i].SSID);
                     $(".wifiStatus").data("wifipasswd", passwd);
@@ -572,10 +581,10 @@ var me = {
             var ssid = $(obj).data("wifissid");
             var pwd = $(obj).data("wifipasswd");
             if (ssid == undefined) {
-                ssid = me.kuLianWifi.wifilist[0].SSID;
-                pwd = me.kuLianWifi.wifilist[0].password;
+                showLoader("没有搜索到小鸿Wifi");
+                setTimeout("hideLoader()", 2000);
+                return;
             }
-
             console.log("connectWifi " + ssid);
             showLoader("正在连接Wifi，请稍候");
             setTimeout("hideLoader()", 3000);
@@ -873,7 +882,7 @@ var me = {
 
     removeFromAppManageTab : function(installBtn)
     {
-        var li = $("#tab-4 .app-list li[data-appid='" + $(installBtn).data('appid')+"'");
+        var li = $("#tab-4 .app-list li[data-appid='" + $(installBtn).data('appid')+"']");
         li.remove();
     },
 
@@ -1066,7 +1075,7 @@ var me = {
                 showLoader("验证码已通过短信发送");
                 setTimeout("hideLoader()", 2000);
                 $(".verifyCodeBtn").addClass("text_disabled");
-                me.countDownSeconds = 60;
+                me.countDownSeconds = 120;
                 setTimeout("me.countDown()", 1000);
                 $(".verifyCodeBtn").attr("disabled","disabled");
             } else {
@@ -1213,13 +1222,13 @@ var me = {
                     $("#coin").text(data.coin_num);
 
                     if ($("#checkbox-1").prop("checked") == true) { 
-                        localStorage.setItem("rmbUser", "true");
-                        localStorage.setItem("userName", phone_number);
-                        localStorage.setItem("passWord", passwd);
+                        saveItem("rmbUser", "true");
+                        saveItem("userName", phone_number);
+                        saveItem("passWord", passwd);
                     } else {
-                        localStorage.setItem("rmbUser", "false");
-                        localStorage.setItem("userName", '');
-                        localStorage.setItem("passWord", '');
+                        saveItem("rmbUser", "false");
+                        saveItem("userName", '');
+                        saveItem("passWord", '');
                     }
 
                 } else {

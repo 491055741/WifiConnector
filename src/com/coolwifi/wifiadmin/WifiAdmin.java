@@ -133,7 +133,7 @@ public class WifiAdmin {
         return mWifiInfo;
     }
  
-    public void addNetwork(WifiConfiguration wcg) { // ���һ���������ò�����  
+    public void addNetwork(WifiConfiguration wcg) {
         int wcgID = mWifiManager.addNetwork(wcg);
         boolean b = mWifiManager.enableNetwork(wcgID, true);
         System.out.println("addNetwork--" + wcgID);
