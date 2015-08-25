@@ -117,12 +117,13 @@ public class Downloader
                     case DownloadManager.STATUS_SUCCESSFUL:
                         Log.v("tag", title+" 下载完成");
                         installApk(path);
-                        mDownloadIds.remove(String.valueOf(downloadId));
                         break;
                     case DownloadManager.STATUS_FAILED:
                         Log.v("tag", "STATUS_FAILED");
 //                        downloadmanager.remove(downloadId);     ????? 下载失败怎么办？
-                    break;
+                        break;
+                    default:
+                    	break;
                 }
                 c.close();
 
@@ -136,11 +137,15 @@ public class Downloader
                 msg.arg2 = progress;
                 mHandler.sendMessage(msg);
 
+                if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                    mDownloadIds.remove(String.valueOf(downloadId));
+                    break;
+                }
             }
         }
     }
 
-    public void cancelDownload(long downloadId)
+    public void cancelDownload(long downloadId) // todo: consider concurrent modification
     {
         Log.d("tag", "cancelDownload");
         downloadmanager.remove(downloadId);
