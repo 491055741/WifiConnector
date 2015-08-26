@@ -468,6 +468,10 @@ public class MainActivity extends Activity {
 //    @JavascriptInterface
     public void connectWifi(String ssid, String passwd) {
     	Log.d(TAG, "Try to connect wifi");
+    	
+        WifiManager wifiManager = (WifiManager)getBaseContext().getSystemService(Context.WIFI_SERVICE);
+        wifiManager.setWifiEnabled(true);
+    	
     //  1.WIFICIPHER_NOPASS
     //  2.WIFICIPHER_WEP
     //  3.WIFICIPHER_WPA   
@@ -602,6 +606,17 @@ public class MainActivity extends Activity {
         }
     }
 
+    // @JavascriptInterface
+    public void startAPP(String appPackageName)
+    {
+        try{
+            Intent intent = this.getPackageManager().getLaunchIntentForPackage(appPackageName);
+            startActivity(intent);
+        }catch(Exception e){
+            Toast.makeText(this, "没有安装", Toast.LENGTH_LONG).show();
+        }
+    }
+
     //  @JavascriptInterface
     public void socialShare() {
         
@@ -669,16 +684,20 @@ public class MainActivity extends Activity {
         }
         return false;
     }
-
+    // @JavascriptInterface
     public String getMacAddress()// todo: use WifiAdmin instead
     {
-        Context context = getBaseContext();
-        WifiManager wifi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE); 
-        WifiInfo info = wifi.getConnectionInfo();
-        String macAddress = info.getMacAddress(); //获取mac地址
-        return macAddress;
+//        Context context = getBaseContext();
+//        WifiManager wifi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE); 
+//        WifiInfo info = wifi.getConnectionInfo();
+//    	String macAddress = info.getMacAddress(); //获取mac地址
+        return wifiAdmin.getMacAddress();
     }
-
+    // @JavascriptInterface
+    public String getBSSID()
+    {
+    	return wifiAdmin.getBSSID();
+    }
     public String getIMEI()
     {
         String imei = ((TelephonyManager) getSystemService(TELEPHONY_SERVICE)).getDeviceId();
