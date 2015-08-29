@@ -7,6 +7,7 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -59,11 +60,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources.NotFoundException;
+import android.database.ContentObserver;
+import android.database.Cursor;
 
 
 public class MainActivity extends Activity {
@@ -79,8 +85,66 @@ public class MainActivity extends Activity {
 	private ActionBar mActionbar;
 	private FeedbackAgent feedbackAgent;
 	private boolean mIsActive = true; // 是否进入后台
+	private SmsObserver smsObserver;
 	
-	private BroadcastReceiver mAppInstallReceiver = new BroadcastReceiver() {
+    class SmsObserver extends ContentObserver {
+
+        public SmsObserver(Context context, Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            super.onChange(selfChange);
+            // 每当有新短信到来时，使用我们获取短消息的方法
+            getSmsFromPhone();
+        }
+    }
+    
+    public Handler smsHandler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            System.out.println("smsHandler 执行了.....");
+        };
+    };
+
+    private Uri SMS_INBOX = Uri.parse("content://sms/");
+
+    public void getSmsFromPhone() {
+        ContentResolver cr = getContentResolver();
+        String[] projection = new String[] { "body","address","person"};// "_id", "address",
+                                                        // "person",, "date",
+                                                        // "type
+        String where = " date >  "
+                + (System.currentTimeMillis() - 10 * 60 * 1000);
+        Cursor cur = cr.query(SMS_INBOX, projection, where, null, "date desc");
+        if (null == cur)
+            return;
+        if (cur.moveToNext()) {
+            String number = cur.getString(cur.getColumnIndex("address"));// 手机号
+            String name = cur.getString(cur.getColumnIndex("person"));// 联系人姓名列表
+            String body = cur.getString(cur.getColumnIndex("body"));
+            
+            System.out.println(">>>>>>>>>>>>>>>>手机号：" + number);
+            System.out.println(">>>>>>>>>>>>>>>>联系人姓名列表：" + name);
+            System.out.println(">>>>>>>>>>>>>>>>短信的内容：" + body);
+            
+            // 这里我是要获取自己短信服务号码中的验证码~~
+            // 【小鸿网络】您的验证码是8992。如非本人操作，请忽略本短信
+            Pattern pattern = Pattern.compile("【小鸿网络】您的验证码是[0-9]{4}"); 
+            Matcher matcher = pattern.matcher(body);
+            if (matcher.find()) {
+            	String match = matcher.group();
+                String res = match.substring(12, 16);// 获取短信中的验证码
+            	
+                System.out.println(res);
+                webView.loadUrl("javascript: receivedVerifyCode('"+res+"')");
+                // stop observer
+                getContentResolver().unregisterContentObserver(smsObserver);
+            }
+        }
+    }
+    
+    private BroadcastReceiver mAppInstallReceiver = new BroadcastReceiver() {
 	    @Override
 	    public void onReceive(Context context, Intent intent) {
 
@@ -237,7 +301,7 @@ public class MainActivity extends Activity {
 	}
 
 	@SuppressLint("SetJavaScriptEnabled") private void init() throws JSONException{
-
+		
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
         Log.d("tag", "download path: "+path);
         
@@ -273,7 +337,7 @@ public class MainActivity extends Activity {
         boolean open = wifiAdmin.openWifi();
         Log.i(TAG, "wifi open:" + open);
         wifiAdmin.startScan();
-
+		smsObserver = new SmsObserver(this, smsHandler);
         webView = new WebView(this);
         webView.setVerticalScrollBarEnabled(false);
         WebSettings webSettings = webView.getSettings();
@@ -311,7 +375,7 @@ public class MainActivity extends Activity {
         CookieManager.getInstance().setAcceptCookie(true);
         webView.addJavascriptInterface(this, "android");
         setContentView(webView);
-    }
+	}
 	//  @JavascriptInterface
 	public void showBackBtn(boolean isShow) {
 	    Log.d(TAG, "Show back button: "+isShow);
@@ -320,7 +384,10 @@ public class MainActivity extends Activity {
         msg.arg1 = isShow ? 1 : 0;
         mWebviewHandler.sendMessage(msg);
 	}
-
+	//  @JavascriptInterface
+	public void startVerifyCodeObserver() {
+	    getContentResolver().registerContentObserver(SMS_INBOX, true, smsObserver);
+	}
     //  @JavascriptInterface
     public void requestCheckConnection() {
         Log.d(TAG, "requestCheckConnection");
@@ -523,9 +590,9 @@ public class MainActivity extends Activity {
     }
 
     private void checkDownloadManager() {
-    	  int state = this.getPackageManager().getApplicationEnabledSetting("com.android.providers.downloads");
+        int state = this.getPackageManager().getApplicationEnabledSetting("com.android.providers.downloads");
 
-    	  if (state == PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+        if (state == PackageManager.COMPONENT_ENABLED_STATE_DISABLED
            || state == PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER) {
     		  String packageName = "com.android.providers.downloads";
 
@@ -539,8 +606,8 @@ public class MainActivity extends Activity {
 			      //Open the generic Apps page:
 			      Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS);
 			      startActivity(intent);
-			  }
-    	  }
+		    }
+        }
     }
     
     private void registerWIFI() {
@@ -609,6 +676,7 @@ public class MainActivity extends Activity {
     // @JavascriptInterface
     public void startAPP(String appPackageName)
     {
+    	Log.d(TAG, "startApp:"+appPackageName);
         try{
             Intent intent = this.getPackageManager().getLaunchIntentForPackage(appPackageName);
             startActivity(intent);
@@ -685,12 +753,8 @@ public class MainActivity extends Activity {
         return false;
     }
     // @JavascriptInterface
-    public String getMacAddress()// todo: use WifiAdmin instead
+    public String getMacAddress()
     {
-//        Context context = getBaseContext();
-//        WifiManager wifi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE); 
-//        WifiInfo info = wifi.getConnectionInfo();
-//    	String macAddress = info.getMacAddress(); //获取mac地址
         return wifiAdmin.getMacAddress();
     }
     // @JavascriptInterface

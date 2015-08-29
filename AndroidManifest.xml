@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.xiaohong.wificoolconnect"
-    android:versionCode="22"
+    android:versionCode="23"
     android:versionName="1.0"
     >
 
@@ -28,6 +28,10 @@
     <uses-permission android:name="getui.permission.GetuiService.com.xiaohong.wificoolconnect" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+	<uses-permission android:name="android.permission.SEND_SMS" />
+	<uses-permission android:name="android.permission.RECEIVE_SMS" /> 
+	<uses-permission android:name="android.permission.READ_SMS" />
+
     <!-- 自定义权限 -->
     <!--
     <permission

@@ -61,6 +61,7 @@ span.rank_no_3 { background-color:#ffac2f;}
 .app-list .item .item-main .item-size, .app-list .item .item-main .item-incompatible, .app-list .item .item-main .item-downnum, .app-list .index-item .index-item-main .item-size, .app-list .index-item .index-item-main .item-incompatible, .app-list .index-item .index-item-main .item-downnum { color: #919498; font-size: 14px; }
 .app-list .item .item-main dd { padding-left: 66px; padding-right: 6px; line-height: 23px; white-space: nowrap; }
 .item-title-sname { display: inline-block; font-size: 16px; text-overflow: ellipsis;white-space:nowrap; overflow: hidden; height: 18px; line-height: 18px; }
+.item-title-sname div { font-size: 16px;}
 .index-item-main .item-alias { color: #919498; font-size: 12px; }
 .index-item-main .item-alias .alias-name { text-overflow: ellipsis; overflow: hidden; display: inline-block; vertical-align: top; max-width: 50%; font-weight: 700; }
 .index-item-main .item-star { font-size: 12px; height: 17px; }
@@ -188,5 +189,5 @@ div { position: relative; z-index: 998; }
     text-align: center;
 }
 .canvas-mask canvas {
-	margin-top: 2.5%;
+	margin-top: 5%;
 }
