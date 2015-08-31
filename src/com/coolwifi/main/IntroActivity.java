@@ -1,23 +1,23 @@
 package com.coolwifi.main;
 
 import java.util.ArrayList;
-
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import com.xiaohong.wificoolconnect.R;
 
-public class IntroActivity extends Activity implements OnClickListener,
+public class IntroActivity extends AppCompatActivity implements OnClickListener,
 		OnPageChangeListener {
 
 	private ViewPager viewPager;
@@ -33,7 +33,7 @@ public class IntroActivity extends Activity implements OnClickListener,
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_intro);
 
-		ActionBar actionBar = getActionBar(); //得<span></span>到ActionBar
+		ActionBar actionBar = getSupportActionBar(); //得<span></span>到ActionBar
 	    actionBar.hide(); //隐藏ActionBar
 		
 		initView();

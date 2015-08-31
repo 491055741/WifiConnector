@@ -49,7 +49,7 @@ public class Downloader
         .setAllowedOverRoaming(false)
         .setTitle(appName)
         .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "_"+(int)(Math.random()*100000)+".apk");//appName+".apk")
-        request.allowScanningByMediaScanner();
+//        request.allowScanningByMediaScanner();
 
         long downloadId = downloadmanager.enqueue(request);
         mDownloadIds.add(Long.toString(downloadId));
@@ -98,7 +98,7 @@ public class Downloader
                 int titleIdx = c.getColumnIndex(DownloadManager.COLUMN_TITLE);    
                 int fileSizeIdx = c.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES);        
                 int bytesDLIdx = c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR);
-                int pathIdx = c.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME);
+                int pathIdx = c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
 
                 String title = c.getString(titleIdx);
                 String path = c.getString(pathIdx);

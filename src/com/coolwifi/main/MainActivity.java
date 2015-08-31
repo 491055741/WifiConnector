@@ -1,8 +1,6 @@
 package com.coolwifi.main;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.content.ActivityNotFoundException;
@@ -23,6 +21,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -72,7 +72,7 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 	private static final String TAG = "WifiConnector";
     private static final int DOWNLOAD = 1;
     private static final int DOWNLOAD_FINISH = 2;
@@ -345,13 +345,13 @@ public class MainActivity extends Activity {
         webSettings.setBuiltInZoomControls(false);
         webSettings.setSupportZoom(false);
         webSettings.setDomStorageEnabled(true);
-        webSettings.setAppCacheMaxSize(1024*1024*8);
+//        webSettings.setAppCacheMaxSize(1024*1024*8);
         String appCachePath = getApplicationContext().getCacheDir().getAbsolutePath();
         webSettings.setAppCachePath(appCachePath);
         webSettings.setAllowFileAccess(true);
         webSettings.setAppCacheEnabled(true);
         webSettings.setDatabaseEnabled(true);
-        webSettings.setDatabasePath("/data/data/" + webView.getContext().getPackageName() + "/databases/");
+//        webSettings.setDatabasePath("/data/data/" + webView.getContext().getPackageName() + "/databases/");
         String ua = webSettings.getUserAgentString();
         webSettings.setUserAgentString(ua+";WIFICoolConnect;");
 
@@ -419,7 +419,7 @@ public class MainActivity extends Activity {
 //        obj.put(pwdKey, val2);
 //        obj.put(rmbKey, val3);
 //        return obj.toString();
-       	SharedPreferences read = getSharedPreferences("xiaohong", MODE_WORLD_READABLE);
+       	SharedPreferences read = getSharedPreferences("xiaohong", MODE_PRIVATE);
        	String val = read.getString(key, "");
        	Log.d(TAG, "getItem:"+key+" val:"+val);
        	return val;
@@ -428,7 +428,7 @@ public class MainActivity extends Activity {
 	private boolean initCustomActionBar() {
 
 	    if (mActionbar == null) {
-	        mActionbar = getActionBar();
+	        mActionbar = getSupportActionBar();
 	        if (mActionbar == null) {
 	            return false;
 	        }
