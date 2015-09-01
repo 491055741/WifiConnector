@@ -99,9 +99,12 @@ function isAndroid()
 
 function saveItem(key, value)
 {
+    console.log("saveItem:["+key+","+value+"]");
     if (window.localStorage) {
+        console.log("window.localStorage");
         localStorage.setItem(key, value);
     } else if (window.android) {
+        console.log("window.android.saveItem");
         window.android.saveItem(key, value);
     } else {
         console.log("error: unsupport localStorage nor native storage!");

@@ -12,8 +12,9 @@
     <link rel="stylesheet" href="css/list.css" />
     <link rel="stylesheet" href="css/comment.css" />
     <link rel="stylesheet" href="css/content.css" />
-    <link rel="stylesheet" href="js/gallery/idangerous.swiper.css">
-    <link rel="stylesheet" href="js/gallery/gallery-app.css">
+    <link rel="stylesheet" href="css/swiper.min.css" />
+    <!--<link rel="stylesheet" href="js/gallery/idangerous.swiper.css">-->
+    <!--<link rel="stylesheet" href="js/gallery/gallery-app.css">-->
     <link rel="stylesheet" href="js/tabs/jquery.mobile.tabs.css">
     <link rel="stylesheet" href="js/iscroll/iscroll.css">
     <script src="js/jquery-1.9.0.min.js"></script>
@@ -25,16 +26,68 @@
     <script src="js/compatibility.js"></script>
     <script src="js/crypto-js.js"></script>
     <script src="js/lazyload.min.js"></script>
-    <title>登录</title>
+    <script src="js/plugin/swiper.jquery.min.js"></script>
+    <title>验证</title>
 </head>
 
 <body>
+
+<div data-role="page" id="WelcomPage">
+    <center>请稍侯</center>
+</div>
+
+<div data-role="page" id="RegisterPage">
+    <div role="main" class="ui-content account-wrapper">
+        <br>
+        <br>
+        <p><font color="gray">验证手机号码和使用Wifi完全免费</font></p>
+        <br>
+        <p style="backg"><font color="#2EB1E8" >手机号</font></p>
+        <input type="tel" id="registPhoneNumber" value="请填写您的手机号"/>
+        <br>
+        <div class="ui-grid-a">
+            <div class="ui-block-a" style="width:50%">
+            <p style="backg"><font color="#2EB1E8" >验证码</font></p>
+                <input type="text" id="registVerifyCode"/>
+            </div>
+            <div class="ui-grid-b" style="width:50%">
+                <a class="ui-btn verifyCodeBtn" name="getVerifyCode" >获取验证码</a>
+            </div>
+        </div>
+
+        <div id="passwordFields">
+            <p style="backg"><font color="#2EB1E8" >密 码</font></p>
+            <input type="password" id="registPassword"/>
+
+            <p style="backg"><font color="#2EB1E8" >再次输入密码</font></p>
+            <input type="password" id="repeatPassword"/>
+        </div>
+
+        <p style="backg"><font color="#2EB1E8" >邀请码</font></p>
+        <input type="text" id="inviteCode" value="选填"/>
+        <p><font color="gray">首次验证时输入邀请码，邀请和被邀请人都会获得奖励</font></p>
+        <br>
+        <div>
+            <center>
+                <a class="ui-btn" id="registBtn">提   交</a>
+                <br />
+                <br />
+                <br />
+                <div class="licenseLink">
+                    <p>点击上面按钮“提交”即表示您同意<a href="license.html">《用户协议》</a></p>
+                    <!-- <p>小鸿Wifi不收取任何费用，完全免费</p> -->
+                    <p>如果遇到任何问题，请加QQ群227306629获得帮助</p>
+                </div>
+            </center>
+        </div>
+    </div>
+</div>
 
 <div data-role="page" id="LoginPage" data-title="登录">
     <div role="main" class="ui-content account-wrapper">
         <br>
         <p style="backg"><font color="#2EB1E8" >用户名</font></p>
-         <input type="text" name="username" id="loginUsername" value="手机号"/>
+         <input type="text" name="username" id="loginUsername" value="请填写您的手机号"/>
         <br>
         <p style="backg"><font color="#2EB1E8" >密码</font></p>
         <input type="password" name="password" id="loginPassword" value=""/>
@@ -54,44 +107,6 @@
     </div>
 </div>
 
-<div data-role="page" id="RegisterPage">
-    <div role="main" class="ui-content account-wrapper">
-        <br>
-        <p style="backg"><font color="#2EB1E8" >用户名</font></p>
-        <input type="tel" id="registPhoneNumber" value="手机号"/>
-        <br>
-        <div class="ui-grid-a">
-            <div class="ui-block-a" style="width:50%">
-            <p style="backg"><font color="#2EB1E8" >验证码</font></p>
-                <input type="text" id="registVerifyCode"/>
-            </div>
-            <div class="ui-grid-b" style="width:50%">
-                <a class="ui-btn verifyCodeBtn" name="getVerifyCode" >获取验证码</a>
-            </div>
-        </div>
-        <p style="backg"><font color="#2EB1E8" >密 码</font></p>
-        <input type="password" id="registPassword"/>
-
-        <p style="backg"><font color="#2EB1E8" >再次输入密码</font></p>
-        <input type="password" id="repeatPassword"/>
-
-        <p style="backg"><font color="#2EB1E8" >邀请码</font></p>
-        <input type="text" id="inviteCode" value="选填"/>
-
-        <br>
-        <div>
-            <center>
-                <a class="ui-btn" id="registBtn">提   交</a>
-                <br />
-                <div class="licenseLink">
-                    <p>点击上面按钮“提交”即表示您同意</p>
-                    <a href="license.html">《用户协议》</a>
-                </div>
-            </center>
-        </div>
-    </div>
-</div>
-
 <div data-role="page" id="MainPage" data-title="精选">
 
     <div role="main" class="ui-content main-content">
@@ -104,6 +119,8 @@
                 </div>
                 <div class="ui-grid-b" style="width:90%">
                     <ul id="twitter">
+                        <!-- <li>1.这是第一条测试消息，它有很长很长，看看能不能显示的下</li> -->
+                        <!-- <li>2.这是第二条测试消息，它有很长很长，看看能不能显示的下</li> -->
                     </ul>
                 </div>
             </div>
@@ -348,8 +365,6 @@
 
 <script src="js/appBase.js"></script>
 <script src="js/appList.js"></script>
-<script src="js/gallery/idangerous.swiper-2.0.min.js"></script> 
-<script src="js/gallery/gallery-app.js"></script>
 <script src="js/tabs/jquery.mobile.tabs.js"></script>
 <!-- <script src="js/iscroll/iscroll.js"></script> -->
 <script src="js/plugin/radialIndicator.min.js"></script>

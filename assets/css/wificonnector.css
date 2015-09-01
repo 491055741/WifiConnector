@@ -8,6 +8,7 @@ a { text-decoration:none;}
 .account-wrapper { padding:15px; padding-top: 0;}
 
 #loginBtn {width: 35%; float:right; margin-top:10px; background-color: #FF8800; color: white; text-shadow:0 0 0;}
+#registBtn {background-color: #FF8800; color: white; text-shadow:0 0 0; border-radius: 6px; }
 #toRegistBtn {width: 35%; float:left; margin-top:10px; }
 .verifyCodeBtn {width: 70%; float: right; margin-top: 20px; }
 #LoginPage .changePwdBtn {float: right; padding-top: 20px; }
@@ -20,6 +21,7 @@ a { text-decoration:none;}
 .licenseWrapper h2 {font-size:16px; margin: 30px 0 20px; font-weight:100;}
 .licenseWrapper p {color:#2e2e2e;}
 
+#connectionView .message_grid {margin-top: 50px; color: gray; }
 #connectionView .message_grid img {width: 18px; height: 18px; margin-left: 10px; }
 #connectWifiBtn {background-color: #4BA6F2; color: white; text-align: center; border-radius: 6px; width: 80%; height: 25px; line-height: 25px; font-size: 14px; border: 0; text-shadow:0 0 0;}
 .connection_bg {height: 230px; background: url(../images/night.png) no-repeat; background-size: contain;}
@@ -166,7 +168,7 @@ a { text-decoration:none;}
 .appDetail .content-brief {width: 70%; }
 .appDetail .down-area {width: 30%; height: 100% ;float: right; }
 .appDetail .swiper-wrapper {float: top;}
-.appDetail .des-long-content {position: absolute; top: 530px; }
+.appDetail .des-long-content {position: absolute; top: 430px; }
 
 .avatar_bg {position: relative; height: 55px; overflow: hidden;}
 .avatar_bg img {width: 100%; }
@@ -245,3 +247,11 @@ li { list-style: none; }
 .fouce ol .cur { -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.31), inset 0 0 2px rgba(133,200,234,.6); box-shadow: 0 1px 1px rgba(0,0,0,.31), inset 0 0 2px rgba(133,200,234,.6); background-image: -webkit-linear-gradient(bottom, #2ca0dc, #77c2e8); background-image: linear-gradient(to top, #2ca0dc, #77c2e8);}
 .score-star { background: url(../images/star.png); width: 65px; line-height: 14px; height: 14px; background-position: 0 0; display: inline-block; background-size: 65px 15px; vertical-align: middle; margin:1px 0 0;}
 .score-star span { background: url(../images/stat5.png); height: 14px; display: inline-block; background-position: 0 0; padding: 0 !important; background-size: 65px 15px; }
+
+.swiper-container {
+    width: 100%;
+    height: 300px;
+}
+.swiper-slide img {
+    width: 100%;
+}
