@@ -575,6 +575,7 @@ public class MainActivity extends AppCompatActivity {
             jsonObject2.put("level", 90);
             jsonArray.put(jsonObject2);
         } else {
+        	wifiAdmin.startScan();
             for (ScanResult scanResult : wifiAdmin.getWifiList()) {
                 JSONObject jsonObject = new JSONObject();  
                 jsonObject.put("SSID", scanResult.SSID);

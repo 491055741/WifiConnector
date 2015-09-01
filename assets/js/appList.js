@@ -131,29 +131,27 @@ var wifiStatusChanged = function (ssid) {
         return;
     }
     console.log("wifiStatusChanged, ssid:"+ssid);
-    // if (window.android != undefined) {
-        if (ssid != undefined) { // wifi连接上了
-            connectedSSID = ssid;
-            // $(".wifiStatus .statusOn").text(connectedSSID+' 已连接');
-            if (me.isKuLianWifi(ssid)) {
-                // $("#connectWifiBtn").show().text("连接免费小鸿wifi");
-                $("#connectWifiBtn").attr("data-wifiStatus", WifiStatus.kulian);
-            } else {
-                $("#connectWifiBtn").attr("data-wifiStatus", WifiStatus.connected);
-                // $("#connectWifiBtn").show().text("切换到免费小鸿Wifi");
-            }
-            $("#statusDesc").data("wifissid", ssid);
-            me.updateWifiStatusUI($("#connectWifiBtn").attr("data-wifiStatus"));
-            if (usePortalAuth) {
-                $("#connectWifiBtn").hide(); // 隐藏连接wifi按钮
-                $(".portalframe").show();  // 显示认证portal frame
-                me.loadiFrame();
-            }
-            me.checkNetwork();
-        } else { // 断开连接了
-            me.updateWifiStatusUI(WifiStatus.disconnected);
+    if (ssid != undefined) { // wifi连接上了
+        ssid = ssid.replace(/\"/g, ""); // 去掉双引号
+        connectedSSID = ssid;
+        if (me.isKuLianWifi(ssid)) {
+            console.log("wifiStatusChanged: is kulian wifi.");
+            $("#connectWifiBtn").attr("data-wifiStatus", WifiStatus.kulian);
+        } else {
+            console.log("wifiStatusChanged: not kulian wifi.");
+            $("#connectWifiBtn").attr("data-wifiStatus", WifiStatus.connected);
         }
-    // }
+        $("#statusDesc").data("wifissid", ssid);
+        me.updateWifiStatusUI($("#connectWifiBtn").attr("data-wifiStatus"));
+        if (usePortalAuth) {
+            $("#connectWifiBtn").hide(); // 隐藏连接wifi按钮
+            $(".portalframe").show();  // 显示认证portal frame
+            me.loadiFrame();
+        }
+        me.checkNetwork();
+    } else { // 断开连接了
+        me.updateWifiStatusUI(WifiStatus.disconnected);
+    }
 }
 // js-android interface
 var receivedVerifyCode = function(verifyCode) {
@@ -227,7 +225,7 @@ $("#MainPage").on("pageinit", function() {
     me.requestKulianWifi();
     me.checkNetwork();
     if (window.android == undefined) {
-        // setTimeout("wifiStatusChanged('Hongwifi_test')", 1000);
+        setTimeout("wifiStatusChanged('Hongwifi_xx')", 1000);
     }
 });
 
@@ -728,6 +726,7 @@ var me = {
             if (ssid == undefined) {
                 showLoader("没有搜索到小鸿Wifi");
                 setTimeout("hideLoader()", 2000);
+                me.requestWifiList();
                 return;
             }
             console.log("connectWifi " + ssid);
@@ -1513,6 +1512,7 @@ var me = {
             } else {
                 // showLoader(data.ret_msg);
                 // setTimeout("hideLoader()", 3000);
+                console.log("auto login:"+data.ret_msg);
                 changePage("#RegisterPage");
             }
         });
