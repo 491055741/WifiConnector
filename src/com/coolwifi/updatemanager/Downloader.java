@@ -154,6 +154,9 @@ public class Downloader
 
     public void installApk(String filePath)
     {
+    	if (filePath.startsWith("file://")) {
+    		filePath = filePath.substring(7);
+    	}
         Log.d("tag", "installApk: "+filePath);
     	File apkfile = new File(filePath);
     	apkfile.setReadable(true, false);

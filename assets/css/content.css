@@ -202,6 +202,9 @@ li.slideritem { display: inline-block; }
 
 .content-comment-area .comment-more { height: 40px; line-height: 40px; }
 .xiaobian-comment { overflow: hidden; color: #999; font-size: 12px; height: 20px; text-overflow: ellipsis; /* margin-top: 8px; */    text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-size: 16px;}
+@media (max-width: 321px){
+    .xiaobian-comment{width:60%;}
+}
 .mod { margin: 5px; border: 1px solid #c6c6c6; border-radius: 3px; background-color: #fff; }
 .mod .mod-hd { position: relative; height: 40px; line-height: 40px; padding-left: 10px; overflow: hidden; color: #333; font-size: 16px; font-weight: 400; border-bottom: 1px solid #d6d6d6; z-index: 6; background: #fff; }
 .mod .mod-hd h1 { color: #333; font-size: 16px; font-weight: 400; }

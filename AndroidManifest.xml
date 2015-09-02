@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.xiaohong.wificoolconnect"
-    android:versionCode="24"
+    android:versionCode="26"
     android:versionName="1.0"
     >
 
@@ -19,12 +19,11 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.RESTART_PACKAGES" />
-    <!-- <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="getui.permission.GetuiService.第三方包名" /> -->
     <uses-permission android:name="getui.permission.GetuiService.com.xiaohong.wificoolconnect" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -79,7 +78,8 @@
    	    </activity> 
 	    
         <activity
-            android:name="com.umeng.fb.ConversationActivity"/>
+            android:name="com.umeng.fb.ConversationActivity"
+            android:theme="@style/Theme.AppCompat.Light" />
 
         
         <activity 
