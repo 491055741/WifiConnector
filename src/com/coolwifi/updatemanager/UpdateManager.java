@@ -44,7 +44,7 @@ public class UpdateManager
     HashMap<String, String> mHashMap; // update info
 
     private Context mContext;
-    /* 更新进度条 */
+    private int mVersionCode;
     private ProgressBar mProgress;
     private Dialog mDownloadDialog;
     private Downloader mDownloader;
@@ -77,6 +77,7 @@ public class UpdateManager
     {
         this.mContext = context;
         mDownloader = new Downloader(context, mHandler);
+        mVersionCode = 0;
     }
 
     public void checkUpdate() throws NotFoundException, JSONException
@@ -108,25 +109,25 @@ public class UpdateManager
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
     	    }
 
     	    public void taskFailed() {
     	    }
     	});
-    	task.execute("http://livew.mobdsp.com/cb/klappversion");
+    	task.execute("http://livew.mobdsp.com/cb/klappversion?versionCode="+mVersionCode);
     }
 
 	private int getVersionCode(Context context)
 	{
-	    int versionCode = 0;
-	    try {
-	        // 获取软件版本号，对应AndroidManifest.xml下android:versionCode
-	        versionCode = context.getPackageManager().getPackageInfo("com.xiaohong.wificoolconnect", 0).versionCode;
-	    } catch (NameNotFoundException e) {
-	        e.printStackTrace();
+	    if (mVersionCode == 0) {
+		    try {
+		        // 获取软件版本号，对应AndroidManifest.xml下android:versionCode
+		        mVersionCode = context.getPackageManager().getPackageInfo("com.xiaohong.wificoolconnect", 0).versionCode;
+		    } catch (NameNotFoundException e) {
+		        e.printStackTrace();
+		    }
 	    }
-	    return versionCode;
+	    return mVersionCode;
 	}
 
     private void showNoticeDialog()

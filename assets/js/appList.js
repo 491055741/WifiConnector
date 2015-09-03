@@ -150,6 +150,7 @@ var wifiStatusChanged = function (ssid) {
         }
         me.checkNetwork();
     } else { // 断开连接了
+        $("#connectWifiBtn").attr("data-wifiStatus", WifiStatus.disconnected);
         me.updateWifiStatusUI(WifiStatus.disconnected);
     }
 }
@@ -253,20 +254,6 @@ $("#AppDetailPage").on("pagebeforeshow", function () {
 });
 
 $("#AppDetailPage").on("pageshow", function () {
-    //var gallery = $('.swiper-container').swiper({
-    //    slidesPerView:'auto',
-    //    watchActiveIndex: true,
-    //    centeredSlides: true,
-    //    pagination:'.pagination',
-    //    paginationClickable: true,
-    //    resizeReInit: true,
-    //    keyboardControl: true,
-    //    grabCursor: true,
-    //    onImagesReady: function(){
-    //        gallerySwiper.changeSize();
-    //    }
-    //});
-    //setTimeout(gallerySwiper.changeSize(), 100);
     var gallery = new Swiper('.swiper-container',{
         pagination: '.swiper-pagination',
         spaceBetween: 30,
@@ -283,7 +270,6 @@ $("#ExchangePage").on("pagebeforeshow", function () {
 
 $("#logoutBtn").fastClick(function() {
     isLogin = false;
-    // changePage("#LoginPage");
     changePage("#RegisterPage");
 });
 
@@ -293,7 +279,6 @@ $("#registBtn").fastClick(function() {
 
 $("#loginBtn").fastClick( function() {
     me.login();
-    // isAutoLogin = true;
 });
 
 $("#coin").fastClick( function() {
@@ -637,7 +622,6 @@ var me = {
         //    me.connectWifi(this);
         // });
 
-        
         var arrWifiList = data.wifilist;
 
         for (var i = 0; i < arrWifiList.length; i++) {
@@ -654,7 +638,7 @@ var me = {
 
     isKuLianWifi : function(ssid)
     {
-        if (ssid.startWith("SuperMary") || ssid.startWith("Hongwifi") || ssid.indexOf("小鸿")!=-1) {
+        if (ssid.startWith("Hongwifi") || ssid.indexOf("小鸿")!=-1) { // ssid.startWith("SuperMary") || 
             console.log("isKuLianWifi match pattern: "+ssid);
             return true;
         }
@@ -783,7 +767,7 @@ var me = {
             });
 
             $("#tab-"+type+" .app-list li").click(function() {  // don't use fastclick, it will eat 'touchbegin' event
-                me.clickOnApp(this);
+                // me.clickOnApp(this);
                 // me.downloadApp(todo);
             });
 
@@ -821,7 +805,7 @@ var me = {
                         displayNumber: false,
                         barColor: '#fff',
                         barBgColor: 'rgba(255,255,255,0.4)',
-                        barWidth: 12,
+                        barWidth: 6,
                         initValue: 0,
                         roundCorner : false,
                         percentage: true
@@ -1041,8 +1025,8 @@ var me = {
         } else { // for test on browser
             console.log("window.android undefined. url:" + $(installBtn).data("appurl"));
             setTimeout("updateDownloadProgress("+$(installBtn).data("appid")+",50)", 1000);
-            // setTimeout("finishDownloadProgress("+$(installBtn).data("appid")+")", 3000);
-            // setTimeout("appInstallFinished("+$(installBtn).data("appid")+")", 8000);
+            setTimeout("finishDownloadProgress("+$(installBtn).data("appid")+")", 3000);
+            setTimeout("appInstallFinished("+$(installBtn).data("appid")+")", 8000);
         }
     },
 
@@ -1445,6 +1429,12 @@ var me = {
             var passwd       = $("#loginPassword").val();
             var passwdMD5    = CryptoJS.MD5(passwd, { asString: true });
             var url = appServerUrl+"/applogin?"+callback+"&phone_number="+phone_number+"&passwd="+passwdMD5;
+
+            if (window.android) {
+                var imei = window.android.getIMEI();
+                url = url + "&m3=" + imei;
+            }
+
             console.log(url);
             showLoader("登录中，请稍候");
 

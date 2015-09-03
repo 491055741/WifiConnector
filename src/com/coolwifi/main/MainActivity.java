@@ -351,7 +351,7 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setAllowFileAccess(true);
         webSettings.setAppCacheEnabled(true);
         webSettings.setDatabaseEnabled(true);
-//        webSettings.setDatabasePath("/data/data/" + webView.getContext().getPackageName() + "/databases/");
+        webSettings.setDatabasePath("/data/data/" + webView.getContext().getPackageName() + "/databases/");
         String ua = webSettings.getUserAgentString();
         webSettings.setUserAgentString(ua+";WIFICoolConnect;");
 
