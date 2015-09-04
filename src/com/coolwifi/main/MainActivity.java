@@ -319,7 +319,6 @@ public class MainActivity extends AppCompatActivity {
         }
         
 	    initCustomActionBar();
-	    AnalyticsConfig.setChannel("channel");
 
 	    registerWIFI();
 		registerConnection();

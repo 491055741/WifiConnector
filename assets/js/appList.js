@@ -2,7 +2,6 @@ var appServerUrl = "http://livew.mobdsp.com/cb";
 var callback = "callback=?";
 var localServerUrl = "http://127.0.0.1:5000";
 var milkPapaServerUrl = "http://app.milkpapa.com:5000";
-var isLogin = false;
 var checkNetworkInterval = 1500; // ms
 var checkNetworkUrl = "http://115.159.3.16/cb/app_test";
 var countDownTimer = null;
@@ -50,8 +49,7 @@ var finishDownloadProgress = function (appId) {
     // 已安装的应用  包含app列表和app管理里的
     var installApps = $("div.installBtn[data-appid="+appId+"]");
     $.each(installApps, function (index,el) {
-        
-        
+
         $(el).removeClass("downloading");
         if ($(el).hasClass('bigLogo-instBtn')) { // 推荐中的
             //如果遮罩层存在就在遮罩层上获取对应的raobj对象
@@ -198,9 +196,11 @@ $("#RegisterPage").on("pagebeforeshow", function () {
     if (me.isChangingPassword) {
         setTitle("修改密码");
         $("#passwordFields").show();
+        $("#inviteCodeFields").hide();
     } else {
         setTitle("验证");
         $("#passwordFields").hide();
+        $("#inviteCodeFields").show();
     }
 
     $("#registPassword").val('');
@@ -269,7 +269,8 @@ $("#ExchangePage").on("pagebeforeshow", function () {
 });
 
 $("#logoutBtn").fastClick(function() {
-    isLogin = false;
+    me.isLogin = false;
+    me.isChangingPassword = false;
     changePage("#RegisterPage");
 });
 
@@ -362,6 +363,7 @@ var me = {
     curAppPageIdx : [1,1,1], // current page of each app tab
     kuLianWifi : null,
     appList : null,
+    isLogin : false,
 
     showBackBtn : function (isShowBackBtn) {
         console.log("showBackBtn:"+isShowBackBtn);
@@ -403,7 +405,7 @@ var me = {
                             me.updateWifiStatusUI(WifiStatus.kulianAuthed);
                         }
                         console.log("connectWifiBtn wifiStatus:"+$("#connectWifiBtn").attr("data-wifiStatus"));
-                        if (!isLogin) {
+                        if (!me.isLogin) {
                             me.autoLogin();
                         }
                       },
@@ -1273,6 +1275,12 @@ var me = {
             setTimeout("hideLoader()", 2000);
             return;
         }
+
+        // workaround the sms failure
+        // setTimeout("receivedVerifyCode('0904')", 1000);
+        // return;
+        // end
+
         var url = appServerUrl+"/appverifycode?"+callback+"&phone_number="+phone_number;
         console.log(url);
         $.getJSON(url, function(data) {
@@ -1441,7 +1449,7 @@ var me = {
             $.getJSON(url, function(data) {
                 hideLoader();
                 if (data.ret_code == 0) {
-                    isLogin = true;
+                    me.isLogin = true;
                     me.saveToken(data.token);
                     changePage("#MainPage");
                     console.log("login success, coin num:" + data.coin_num);
@@ -1486,7 +1494,7 @@ var me = {
         $.getJSON(url, function(data) {
             hideLoader();
             if (data.ret_code == 0) {
-                isLogin = true;
+                me.isLogin = true;
                 me.saveToken(data.token);
                 // changePage("#MainPage");
                 console.log("login success, coin num:" + data.coin_num);
