@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
@@ -51,7 +52,6 @@ import com.coolwifi.httpconnection.HttpRequest;
 import com.coolwifi.updatemanager.Downloader;
 import com.coolwifi.updatemanager.UpdateManager;
 import com.coolwifi.wifiadmin.*;
-import com.umeng.analytics.AnalyticsConfig;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.FeedbackAgent;
 import com.xiaohong.wificoolconnect.R;
@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
 	        }
 	    }
     };
-	
+
     BroadcastReceiver mConnectionReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -213,7 +213,13 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void checkConnection() {
-        ConnectivityManager conMan = (ConnectivityManager)(getBaseContext()).getSystemService(Context.CONNECTIVITY_SERVICE);
+    	ConnectivityManager nw = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netinfo = nw.getActiveNetworkInfo();
+        if (netinfo.isAvailable()) {
+            webView.loadUrl("javascript: autoLogin()");        	
+        }
+    	
+    	ConnectivityManager conMan = (ConnectivityManager)(getBaseContext()).getSystemService(Context.CONNECTIVITY_SERVICE);
         if (State.CONNECTED != conMan.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()) {
             Log.i(TAG, "unconnect");
             webView.loadUrl("javascript: wifiStatusChanged()");
@@ -570,7 +576,7 @@ public class MainActivity extends AppCompatActivity {
             jsonObject.put("level", 10);
             jsonArray.put(jsonObject);
             JSONObject jsonObject2 = new JSONObject();
-            jsonObject2.put("SSID", "NetGear");
+            jsonObject2.put("SSID", "@小鸿科技");
             jsonObject2.put("level", 90);
             jsonArray.put(jsonObject2);
         } else {
@@ -630,7 +636,7 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(mAppInstallReceiver, filter);
     }
 
-//    @JavascriptInterface
+    // @JavascriptInterface
     public boolean isAppInstalled(String pkgName, int versionCode) {
         ArrayList<AppInfo> list = getAllAppList();
         for (Iterator<AppInfo> iterator = list.iterator(); iterator.hasNext();) {

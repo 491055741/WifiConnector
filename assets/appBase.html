@@ -15,8 +15,9 @@
     <link rel="stylesheet" href="css/swiper.min.css" />
     <!--<link rel="stylesheet" href="js/gallery/idangerous.swiper.css">-->
     <!--<link rel="stylesheet" href="js/gallery/gallery-app.css">-->
-    <link rel="stylesheet" href="js/tabs/jquery.mobile.tabs.css">
-    <link rel="stylesheet" href="js/iscroll/iscroll.css">
+    <link rel="stylesheet" href="js/tabs/jquery.mobile.tabs.css" />
+    <link rel="stylesheet" href="js/iscroll/iscroll.css" />
+    <link rel="stylesheet" href="js/jqModal/jqModal.css" />
     <script src="js/jquery-1.9.0.min.js"></script>
     <script src="js/iscroll/iscroll.js"></script>
     <script src="js/jquery.mobile/jquery.mobile-1.4.5.min.js"></script>
@@ -27,12 +28,15 @@
     <script src="js/crypto-js.js"></script>
     <script src="js/lazyload.min.js"></script>
     <script src="js/plugin/swiper.jquery.min.js"></script>
+    <script src="js/jqModal/jqModal.min.js"></script>
     <title>验证</title>
 </head>
 
 <body>
 
 <div data-role="page" id="WelcomPage">
+    <br/>
+    <br/>
     <center>请稍侯</center>
 </div>
 
@@ -115,7 +119,15 @@
 
         <div id="connectionView">
 
-            <div class="ui-grid-a message_grid" style="display: none;" >
+            <div class="jqmWindow" id="connect_success_dialog" style="display:none;">
+                <hr />
+                <p>恭喜 联网成功</p>
+                <p>消费金币50个，剩余金币1000个</p>
+                <!-- <a href="#" class="jqmClose" style="position:absolute; right:10px; top:10px;">Close</a> -->
+                <center><a href="" class="jqmClose" class="ui-btn">确定</a></center>
+            </div>
+
+            <div class="ui-grid-a message_grid">
                 <div class="ui-block-a" style="width:10%">
                     <img src="images/horn.png"/>
                 </div>
@@ -142,11 +154,6 @@
                 <!-- <div class="statusOn" style="display:none;"></div> -->
                 <div id="connectWifiBtn" class="ui-btn">连接</div>
 
-                <div class="statusOff">    
-                    <iframe class='portalframe' style="display:none;">
-                        <p>T_T 浏览器不支持iframe</p>
-                    </iframe>
-                </div>
                 </center>
             </div>
 
@@ -270,7 +277,7 @@
                 <dl class="acount_list">
                     <dt><img src="images/account.png"></dt>
                     <dd><span class="nick_name" id="nick_name">WIFI酷连</span></dd>
-                    <dd><span>账&nbsp;号: </span><div class="account_item account_w" id="account">account</div></dd>
+                    <dd><span>账&nbsp;号: </span><div class="account_item account_w" id="account">未登录</div></dd>
                     <dd><span>邀请码: </span><div class="account_item account_w" id="myInviteCode">000000</div></dd>
                 </dl>
 

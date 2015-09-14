@@ -1,3 +1,7 @@
+// 扣金币前查询接口：http://livew.mobdsp.com/cb/query_coin?phone_number=13418680969
+// 扣金币接口：http://livew.mobdsp.com/cb/dec_coin?phone_number=13418680969
+// 签到接口：http://livew.mobdsp.com/cb/user_sign?phone_number=13418680969
+
 var appServerUrl = "http://livew.mobdsp.com/cb";
 var callback = "callback=?";
 var localServerUrl = "http://127.0.0.1:5000";
@@ -6,9 +10,9 @@ var checkNetworkInterval = 1500; // ms
 var checkNetworkUrl = "http://115.159.3.16/cb/app_test";
 var countDownTimer = null;
 var checkNetworkTimer = null;
+var autoLoginTimer = null;
 var connectedSSID = null;
 var version = null;
-var usePortalAuth = false;
 var myScroll;
 var count = 0;
 var WifiStatus = {"disconnected" : 0, "connected" : 1, "kulian" : 2, "kulianAuthed" : 3};
@@ -21,7 +25,6 @@ var WifiStatus = {"disconnected" : 0, "connected" : 1, "kulian" : 2, "kulianAuth
             setTimeout("hideLoader()", 3000);
         }
     });
-
 })(jQuery);
 // js-Android interface
 var updateDownloadProgress = function (appId, progress) {
@@ -141,11 +144,6 @@ var wifiStatusChanged = function (ssid) {
         }
         $("#statusDesc").data("wifissid", ssid);
         me.updateWifiStatusUI($("#connectWifiBtn").attr("data-wifiStatus"));
-        if (usePortalAuth) {
-            $("#connectWifiBtn").hide(); // 隐藏连接wifi按钮
-            $(".portalframe").show();  // 显示认证portal frame
-            me.loadiFrame();
-        }
         me.checkNetwork();
     } else { // 断开连接了
         $("#connectWifiBtn").attr("data-wifiStatus", WifiStatus.disconnected);
@@ -156,6 +154,13 @@ var wifiStatusChanged = function (ssid) {
 var receivedVerifyCode = function(verifyCode) {
     console.log("receivedVerifyCode:"+verifyCode);
     $("#registVerifyCode").val(verifyCode);
+}
+// js-android interface
+var checkLogin = function() {
+    console.log("checkLogin");
+    if (!me.isLogin) {
+        me.autoLogin();
+    }
 }
 /*
 $("#LoginPage").on("pageinit", function () {
@@ -225,8 +230,10 @@ $("#MainPage").on("pageinit", function() {
     me.fillVersion();
     me.requestKulianWifi();
     me.checkNetwork();
+    // for debug on browser
     if (window.android == undefined) {
-        setTimeout("wifiStatusChanged('@小鸿科技')", 1000);
+        setTimeout("wifiStatusChanged('@小鸿科技')", 10000);
+        setTimeout("me.autoLogin()", 1000);
     }
 });
 
@@ -234,9 +241,6 @@ $("#MainPage").on("pagebeforeshow", function () {
     console.log("main page before show");
     me.showBackBtn(false);
     me.showTab(me.currentTabIdx);
-
-    finishDownloadProgress();
-    me.loadiFrame();
 });
 
 $("#MainPage").on("pageshow", function () {
@@ -247,6 +251,10 @@ $("#MainPage").on("pageshow", function () {
     if (myScroll) {
         setTimeout(me.initIScroll(), 100);
     }
+});
+
+$('#connect_success_dialog').jqm({
+    modal: true
 });
 
 $("#AppDetailPage").on("pagebeforeshow", function () {
@@ -364,7 +372,7 @@ var me = {
     kuLianWifi : null,
     appList : null,
     isLogin : false,
-
+    autoLoginRetryCount : 0,
     showBackBtn : function (isShowBackBtn) {
         console.log("showBackBtn:"+isShowBackBtn);
         if (window.android != undefined) {
@@ -375,15 +383,12 @@ var me = {
         }
     },
 
-    loadiFrame : function () {
-        var url = "http://115.159.89.152/portaltt/APP_suc.html?r="+Math.random();
-        console.log("iframe src: "+ url);
-        $(".portalframe").attr("src", url);
-    },
-
     checkNetwork : function() {
         clearTimeout(checkNetworkTimer);
-        var url = checkNetworkUrl + "?mobile="+$("#account").text();
+        var url = checkNetworkUrl;
+        if (me.isLogin) {
+            url = url + "?mobile="+$("#account").text();
+        }
         console.log("checkNetwork: "+checkNetworkUrl);
         // $("#statusDesc").text("检查网络...");
         $.ajax({
@@ -391,7 +396,7 @@ var me = {
             url: url,
             dataType : "jsonp",
             jsonp: "callback",//"callname",//服务端用于接收callback调用的function名的参数
-            // jsonpCallback:"success",//callback的function名称  todo：启用会造成appdetail无法获取？？
+            // jsonpCallback:"success",//callback的function名称
             success : function(data) {
                         console.log("checkNetwork success.");
                         // $("#statusDesc").text("网络连接成功");
@@ -403,21 +408,19 @@ var me = {
                         } else if (parseInt($("#connectWifiBtn").attr("data-wifiStatus")) == WifiStatus.kulian) {
                             $("#connectWifiBtn").attr("data-wifiStatus", WifiStatus.kulianAuthed);
                             me.updateWifiStatusUI(WifiStatus.kulianAuthed);
+                            me.reportAuthenSuccess();
                         }
                         console.log("connectWifiBtn wifiStatus:"+$("#connectWifiBtn").attr("data-wifiStatus"));
                         if (!me.isLogin) {
                             me.autoLogin();
                         }
-                      },
+                    },
             error : function() {
                         console.log("checkNetwork fail.");
                         // $("#statusDesc").text("网络连接失败");
                         $(".wifiStatus .statusOn").hide();
                         $(".wifiStatus .statusOff").show();
-                        
-                        if (usePortalAuth) {
-                            checkNetworkTimer = setTimeout(me.checkNetwork(), checkNetworkInterval);
-                        } else {
+                        if (parseInt($("#connectWifiBtn").attr("data-wifiStatus")) == WifiStatus.kulian) {
                             checkNetworkTimer = setTimeout(me.authentication(), checkNetworkInterval);
                         }
                     }
@@ -425,7 +428,26 @@ var me = {
     },
 
     authentication : function() {
+        if (!me.isLogin) {
+            me.autoLogin();
+            return;
+        }
         console.log("authentication.");
+        var phone_number = $(".acount_list #account").text();
+        var url = appServerUrl+"/query_coin?phone_number="+phone_number;
+        $.getJSON(url, function(data) {
+
+            if (data.ret_code == 0) {
+                me.sendAuthenticationRequest();
+            } else {
+                showLoader(data.ret_msg);
+                setTimeout("hideLoader()", 2000);
+            }
+        });
+    },
+
+    sendAuthenticationRequest : function() {
+        console.log("sendAuthenticationRequest.");
         clearTimeout(checkNetworkTimer);
         // $("#statusDesc").text("认证中...");
         if (checkNetworkInterval > 10000) {
@@ -434,6 +456,7 @@ var me = {
             // $("#statusDesc").text("认证超时");
             return;
         }
+
         var authUrl = "http://182.254.140.228/portaltt/Logon.html";
         $.ajax({
             type: "GET",
@@ -448,18 +471,25 @@ var me = {
                         // $("#statusDesc").text("认证成功");
                       },
             error : function(XMLHttpRequest, textStatus, errorThrown) {
-                    // alert(XMLHttpRequest.status);
-                    if (XMLHttpRequest.status == 302) {
-                        // $("#statusDesc").text("认证成功");
-                    } else {
-                        console.log("authentication fail.");
-                        // $("#statusDesc").text("认证失败");
-                    }
             }
         });
 
         checkNetworkTimer = setTimeout(me.checkNetwork(), checkNetworkInterval);
         checkNetworkInterval = checkNetworkInterval + 1000;
+    },
+
+    reportAuthenSuccess : function() {
+        console.log("reportAuthenSuccess.");
+        var phone_number = $(".acount_list #account").text();
+        var url = appServerUrl+"/dec_coin?phone_number="+phone_number;
+        $.getJSON(url, function(data) {
+            if (data.ret_code == 0) {
+                $("#connect_success_dialog").jqmShow();
+            } else {
+                // showLoader(data.ret_msg);
+                // setTimeout("hideLoader()", 2000);
+            }
+        });
     },
 
     updateWifiStatusUI : function(status) {
@@ -775,6 +805,7 @@ var me = {
 
             $("#tab-"+type+" .app-list .installBtn").click(function(e) {
                 e.stopPropagation();
+                console.log('click on installBtn');
                 if ($(this).hasClass('downloading')) {
                     console.log('downloading, ignore download request...');
                     return;
@@ -783,6 +814,7 @@ var me = {
                     if (window.android) {
                         showLoader("请稍候...");
                         setTimeout("hideLoader()", 2000);
+                        console.log('start app '+$(this).data("pkgname"));
                         window.android.startAPP($(this).data("pkgname"));
                     } else {
                         showLoader("只能在手机中打开");
@@ -794,7 +826,7 @@ var me = {
                     console.log('downloaded, ignore download request...');
                     return;
                 }
-                console.log('click on installBtn');
+
                 me.downloadApp(this);
                 $(this).addClass("inactive");
                 //创建圆形进度条
@@ -1013,7 +1045,7 @@ var me = {
             var appInfo = me.getAppInfoById(appId);
             if (appInfo != null) {
                 var mac = window.android.getMacAddress();
-                var url= appInfo.Clickurl.replace("[M_MAC]", mac);
+                var url = appInfo.Clickurl.replace("[M_MAC]", mac);
                 var imei = window.android.getIMEI();
                 url = url.replace("[M_IMEI]", imei);
                 $.getJSON(url, function(data) {
@@ -1105,6 +1137,31 @@ var me = {
         }
 
         thisInstallBtn.addClass("inactive");
+
+        thisInstallBtn.click(function(e) {
+            e.stopPropagation();
+            console.log('click on installBtn');
+            if ($(this).hasClass('downloading')) {
+                console.log('downloading, ignore download request...');
+                return;
+            }
+            if ($(this).attr("data-installed") == "YES") {
+                if (window.android) {
+                    showLoader("请稍候...");
+                    setTimeout("hideLoader()", 2000);
+                    console.log('start app '+$(this).data("pkgname"));
+                    window.android.startAPP($(this).data("pkgname"));
+                } else {
+                    showLoader("只能在手机中打开");
+                    setTimeout("hideLoader()", 2000);
+                }
+                return;
+            }
+            if ($(this).attr("data-downloaded") == "YES") {
+                console.log('downloaded, ignore download request...');
+                return;
+            }
+        });
     },
 
     appDetailTemplate : function(data)
@@ -1258,7 +1315,7 @@ var me = {
                     $("#twitter li.in").next().fadeIn(500);
                     $("li.in").hide().removeClass("in");
                 }
-            },5000); // 切换间隔        
+            },5000); // 切换间隔
         }
     },
 
@@ -1417,10 +1474,15 @@ var me = {
                     if (data.coin_num == undefined) {
                         data.coin_num = 0;
                     }
+                    if (data.invite_code == undefined) {
+                        $("#myInviteCode").hide();
+                    }
+
                     $("#coin").text(data.coin_num);
 
                     setTimeout("changePageAndHideLoader(\"#MainPage\")", 2000);
                     $("#account").text(phone_number);
+                    $("#myInviteCode").text(data.invite_code);
 
                 } else {
                     showLoader(data.ret_msg);
@@ -1481,6 +1543,18 @@ var me = {
 
     autoLogin : function()
     {
+        console.log("autoLogin");
+        clearTimeout(autoLoginTimer);
+
+        if (me.isLogin) {
+            return;
+        }
+        if (me.autoLoginRetryCount > 4) {
+            console.log("reach max auto login retry count, abort.");
+            me.autoLoginRetryCount = 0;
+            return;
+        }
+        console.log("autoLogin retry count:"+me.autoLoginRetryCount);
         var phone_number = getItem("userName");
         var passwd       = getItem("passWord");
         if (phone_number == undefined || phone_number == null || phone_number.length == 0) {
@@ -1491,47 +1565,63 @@ var me = {
         var url = appServerUrl+"/applogin?"+callback+"&phone_number="+phone_number+"&passwd="+passwdMD5;
         console.log(url);
 
-        $.getJSON(url, function(data) {
-            hideLoader();
-            if (data.ret_code == 0) {
-                me.isLogin = true;
-                me.saveToken(data.token);
-                // changePage("#MainPage");
-                console.log("login success, coin num:" + data.coin_num);
-                if (data.coin_num == undefined) {
-                    data.coin_num = 0;
-                }
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType : "jsonp",
+            jsonp: "callback",//"callname",//服务端用于接收callback调用的function名的参数
+            success : function(data) {
+                        me.autoLoginRetryCount = 0;
+                        if (data.ret_code == 0) {
+                            me.isLogin = true;
+                            me.saveToken(data.token);
+                            // changePage("#MainPage");
+                            console.log("login success, coin num:" + data.coin_num);
+                            if (data.coin_num == undefined) {
+                                data.coin_num = 0;
+                            }
 
-                $("#account").text(phone_number);
-                $("#myInviteCode").text(data.invite_code);
-                $("#coin").text(data.coin_num);
+                            $("#account").text(phone_number);
+                            $("#myInviteCode").text(data.invite_code);
+                            $("#coin").text(data.coin_num);
+                            
+                            if (parseInt($("#connectWifiBtn").attr("data-wifiStatus")) == WifiStatus.kulian) {
+                                me.authentication();
+                            } else if (parseInt($("#connectWifiBtn").attr("data-wifiStatus")) == WifiStatus.kulianAuthed) {
+                                $("#connectWifiBtn").attr("data-wifiStatus", WifiStatus.kulianAuthed);
+                                me.updateWifiStatusUI(WifiStatus.kulianAuthed);
+                                me.reportAuthenSuccess();
+                            }
 
-                me.reportConnection(phone_number);
-            } else {
-                // showLoader(data.ret_msg);
-                // setTimeout("hideLoader()", 3000);
-                console.log("auto login:"+data.ret_msg);
-                changePage("#RegisterPage");
-            }
+                            me.reportConnection(phone_number);
+                        } else {
+                            console.log("auto login:"+data.ret_msg);
+                            changePage("#RegisterPage");
+                        }
+                    },
+            error : function() {
+                        console.log("autoLogin network fail.");
+                        autoLoginTimer = setTimeout(me.autoLogin(), 2000);
+                        me.autoLoginRetryCount++;
+                    }
         });
-
     },
 
     reportConnection : function(phone_number)
     {
+        if (window.android == undefined || phone_number == undefined) {
+            return;
+        }
         // data内容，utf8，json编码， 
         // mm，手机mac 
         // wm，wifimac 
         // mn，手机号码 
         // tm，时间戳
-        var macAddr;
-        var BSSID;
-        if (window.android) {
-            macAddr = window.android.getMacAddress();
-            BSSID = window.android.getBSSID();
-        } else {
-            macAddr = '00:00:00:00:00:00';
-            BSSID = 'FF:FF:FF:FF:FF:FF';
+        var macAddr = window.android.getMacAddress();
+        var BSSID = window.android.getBSSID();
+        if (macAddr == undefined || BSSID == undefined) {
+            console.log("reportConnection error : mac["+macAddr+"] BSSID["+BSSID+"]");
+            return;
         }
         var time = parseInt(new Date().getTime()/1000);
         var data = {"mm":macAddr, "mn":phone_number, "tm":time, "wm":BSSID};
