@@ -43,7 +43,12 @@ import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
 
 import com.igexin.sdk.PushManager;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -62,6 +67,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import junit.framework.Assert;
 
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -143,7 +150,53 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    
+	//  @JavascriptInterface
+    public void shenZhouShuMaAuth() {
+        new Thread(shenMaAuthTask).start();
+    }
+
+    private void sendShenZhouAuthRequest() throws Exception {
+    	Log.d(TAG, "sendShenZhouAuthRequest");
+        String url="http://www.baidu.com";
+        String redictURL = getRedirectUrl(url);
+        if (redictURL == null) {
+        	Log.d(TAG, "url not redirected");
+        	return;
+        }
+        String ip = getUrlPara(redictURL, "ip");
+        String gw = getUrlPara(redictURL, "gw");
+
+        String authUrl = "http://"+gw+"/dcmecloud/interface/RestHttpAuth.php?har={\"ip\":\""+ip+"\",\"tool\":\"onekey\"}";
+        webView.loadUrl("javascript: alert("+authUrl+")" );
+        HttpURLConnection conn = (HttpURLConnection) new URL(authUrl).openConnection();  
+        conn.setInstanceFollowRedirects(false);
+        conn.setConnectTimeout(5000);
+    	BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(),"utf-8"));
+    	String line="";
+    	while ((line = reader.readLine()) != null) {
+    		System.out.println(line);  
+        }
+    }
+
+    private String getUrlPara(String url, String key) {
+        String params = url.substring(url.indexOf("?")+1);
+    	Pattern pattern = Pattern.compile("(^|&)"+key+"=([^&]*)(&|$)");
+        Matcher m = pattern.matcher(params);
+        while(m.find()) {
+        	String value = m.group(2);
+        	return value;
+        }
+        return null;
+    }
+
+    private String getRedirectUrl(String path) throws Exception {  
+        HttpURLConnection conn = (HttpURLConnection) new URL(path).openConnection();  
+        conn.setInstanceFollowRedirects(false);  
+        conn.setConnectTimeout(5000);
+        return conn.getHeaderField("Location");
+//    	return "http://a123.com?url=123455&gw=192.168.0.1&ip=192.168.8.0&o=balabala";
+    }  
+
     private BroadcastReceiver mAppInstallReceiver = new BroadcastReceiver() {
 	    @Override
 	    public void onReceive(Context context, Intent intent) {
@@ -212,11 +265,31 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    Runnable shenMaAuthTask = new Runnable() {  
+    	  
+        @Override  
+        public void run() {  
+
+            try {
+            	sendShenZhouAuthRequest();
+    		} catch (Exception e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+
+//            Message msg = new Message();  
+//            Bundle data = new Bundle();  
+//            data.putString("value", "请求结果");  
+//            msg.setData(data);  
+//            handler.sendMessage(msg);  
+        }  
+    };  
+    
     private void checkConnection() {
     	ConnectivityManager nw = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netinfo = nw.getActiveNetworkInfo();
         if (netinfo.isAvailable()) {
-            webView.loadUrl("javascript: autoLogin()");        	
+            webView.loadUrl("javascript: checkLogin()");        	
         }
     	
     	ConnectivityManager conMan = (ConnectivityManager)(getBaseContext()).getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -538,7 +611,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 //    @JavascriptInterface
-    public void connectWifi(String ssid, String passwd) {
+    public void connectWifi(String ssid, String passwd, String encType) {
     	Log.d(TAG, "Try to connect wifi");
     	
         WifiManager wifiManager = (WifiManager)getBaseContext().getSystemService(Context.WIFI_SERVICE);
@@ -547,10 +620,15 @@ public class MainActivity extends AppCompatActivity {
     //  1.WIFICIPHER_NOPASS
     //  2.WIFICIPHER_WEP
     //  3.WIFICIPHER_WPA   
-    	int type = 3;
+    	int type = 1;
     	if (passwd.equals("")) {
     		type = 1;
-    	}
+    	} else if (encType.equals("WEP")) { 
+        	type = 2;
+        } else if (encType.equals("WPA")) {
+        	type = 3;
+        }
+
     	wifiAdmin.addNetwork(wifiAdmin.CreateWifiInfo(ssid, passwd, type));
     }
     
@@ -574,18 +652,21 @@ public class MainActivity extends AppCompatActivity {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("SSID", "Mary");
             jsonObject.put("level", 10);
+            jsonObject.put("encrypt", wifiEncryptType("[WPA-PSK-CCMP][WPA2-PSK-CCMP][ESS]"));
             jsonArray.put(jsonObject);
             JSONObject jsonObject2 = new JSONObject();
             jsonObject2.put("SSID", "@小鸿科技");
             jsonObject2.put("level", 90);
+            jsonObject.put("encrypt", wifiEncryptType("[ESS]"));
             jsonArray.put(jsonObject2);
         } else {
         	wifiAdmin.startScan();
             for (ScanResult scanResult : wifiAdmin.getWifiList()) {
                 JSONObject jsonObject = new JSONObject();  
                 jsonObject.put("SSID", scanResult.SSID);
+                jsonObject.put("encrypt", wifiEncryptType(scanResult.capabilities));
                 jsonObject.put("level", scanResult.level);
-                Log.d(TAG, "SSID["+scanResult.SSID+"] cap: "+scanResult.capabilities);
+//                Log.d(TAG, "SSID["+scanResult.SSID+"] cap: "+scanResult.capabilities);
                 jsonArray.put(jsonObject);
             }
         }
@@ -595,6 +676,19 @@ public class MainActivity extends AppCompatActivity {
     	return jsonObject3.toString();
     }
 
+    private String wifiEncryptType(String capabilities) {
+    	ArrayList <String> encTypes = new ArrayList<String> ();
+    	encTypes.add("WEP");
+    	encTypes.add("WPA");
+    	encTypes.add("WAPI");
+    	for (String type : encTypes) {
+    		if (capabilities.indexOf(type) != -1) {
+    			return type;
+    		}
+    	}
+    	return "";
+    }
+    
     private void checkDownloadManager() {
         int state = this.getPackageManager().getApplicationEnabledSetting("com.android.providers.downloads");
 

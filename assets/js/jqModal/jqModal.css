@@ -9,10 +9,11 @@
     position: fixed;
     /*top: 17%;*/
     width: 100%;
-    background-color: #EEE;
+    height: 250px;
+    background-color: white;
     color: #333;
     border: 1px solid black;
-    padding: 12px;
+    /*padding: 12px;*/
 }
 
 .jqmOverlay { background-color: #000; }
