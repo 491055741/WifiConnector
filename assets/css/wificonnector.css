@@ -36,7 +36,7 @@ a { text-decoration:none;}
 
 .text_disabled {color:gray;}
 
-.wifiList .lock-icon {position: absolute; right: 20px; width: 15px;}
+.wifiList .lock-icon {position: absolute; right: 20px; width: 10px;}
 .recomWifi_txtspan {background: #38E; color: white; position: absolute; right: 20px; width: 40px; border-radius: 3px; text-shadow: 0 0 0; text-align: center;;}
 
 .modalViewTitle {text-align:center; color: #38E; font-size: 22px; padding-top: 30px; padding-bottom: 20px; }
