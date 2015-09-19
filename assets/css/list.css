@@ -230,20 +230,17 @@ div { position: relative; z-index: 998; }
 	border-bottom: 1px solid #ECECEA;
 }
 .recomWifi .recomWifi_img{
-	
-	height: 53px;
+	height: 60px;
 	float: left;
 }
 .recomWifi .recomWifi_txt{
-/*float: left;
-padding: 0 20px;
-*/
-position: absolute;
-left: 80px;
+    padding-top: 10px;
+    position: absolute;
+    left: 80px;
 }
 .recomWifi .recomWifi_txt h2{
-font-size: 16px;
-font-weight: 600;
+    font-size: 16px;
+    font-weight: 600;
     line-height: 30px;
 }
 .recomWifi .recomWifi_txt .recomWifi_txtspan{
@@ -251,7 +248,7 @@ font-weight: 600;
 	color: #fff;
 	font-size: 14px;
 	padding: 2px 5px;
-	    line-height: 30px;
+    line-height: 30px;
 }
 .recomWifi .recomWifi_btn{
 	
@@ -288,7 +285,7 @@ font-weight: 600;
 	cursor:pointer;
 	    margin: 10px 0;
 }
-.freeWifi .freeWifi_box li img{
+.freeWifi .freeWifi_box li .wifi-icon {
 	width: 20px;
 }
 .freeWifi .freeWifi_box li a{
@@ -323,7 +320,7 @@ font-weight: 600;
 	cursor:pointer;
 	    margin: 10px 0;
 }
-.annexWifi .annexWifi_box li img{
+.annexWifi .annexWifi_box li .wifi-icon {
 	width: 20px;
 }
 .annexWifi .annexWifi_box li a{

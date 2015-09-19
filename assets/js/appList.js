@@ -230,7 +230,7 @@ $("#MainPage").on("pageinit", function() {
     me.checkNetwork();
     // for debug on browser
     if (window.android == undefined) {
-        setTimeout("wifiStatusChanged('Hongwifi-SuperMarySuperMario')", 1000);
+        setTimeout("wifiStatusChanged('SuperMary')", 1000);
         setTimeout("me.autoLogin()", 10000);
     }
 });
@@ -746,21 +746,9 @@ var me = {
     {
         var data = res.wifilist;
         var arrHtml = new Array();
-        // var arrKuLianWifi = me.kuLianWifi.wifilist;
         var wifiCount = 0;
         for (var i = 0; i < data.length; i++) {
 
-            // var isKuLian = false;
-            // var passwd = "";
-            // for (var j = 0; j < arrKuLianWifi.length; j++) {
-            //     if (arrKuLianWifi[j].SSID == data[i].SSID) {
-            //         isKuLian = true;
-            //         passwd = arrKuLianWifi[j].password;
-            //         $(".wifiStatus").data("wifissid", data[i].SSID);
-            //         $(".wifiStatus").data("wifipasswd", passwd);
-            //         break;
-            //     }
-            // }
             if (data[i].encrypt != "") {
                 continue;
             }
@@ -771,25 +759,22 @@ var me = {
             else if (level > 50) { level = 3; }
             else { level = 4; }
             
-            arrHtml.push("<li data-wifissid='"+data[i].SSID+"' data-wifiencrypt='"+data[i].encrypt+"'><img src=\"images/wifi_signal_"+ level +".png\"><a>"+subString.autoAddEllipsis(data[i].SSID, 22, true)+"</a></li>");
+            var li = "<li data-wifissid='"+data[i].SSID+"' data-wifiencrypt='"+data[i].encrypt+"'>";
+            li += "<img class='wifi-icon' src='images/wifi_signal_"+ level +".png' />";
+            li += "<a>"+subString.autoAddEllipsis(data[i].SSID, 22, true)+"</a>";
+            if (me.isKuLianWifi(data[i].SSID)) {
+                li += "<span class='recomWifi_txtspan'>推荐</span>";
+            }
+            li += "</li>";
+            arrHtml.push(li);
             wifiCount++;
-            // arrHtml.push("<li data-wifissid='"+data[i].SSID+"' data-wifipasswd='"+passwd+"' class=\"index-item list-index\" >"); // style=\"display:none;\"
-            // arrHtml.push("<div class=\"index-item-main\">");
-            // arrHtml.push("<dl class=\"clearfix\">");
-            // arrHtml.push("<dt class=\"item-icon\">");
-            // arrHtml.push("<img src=\"images/wifi_signal_"+ level +".png\" />");
-            // arrHtml.push("</dt>");
-            // arrHtml.push("<dd class=\"item-title\">");
-            // arrHtml.push("<span class=\"wifi-SSID\">");
-            // arrHtml.push(subString.autoAddEllipsis(data[i].SSID, 22, true));
-            // arrHtml.push("</span>");
-            // if (isKuLian) {
-            //     arrHtml.push("<span class=\"wifi-desc\">首选免费连接</span>");
-            // }
-            // arrHtml.push("</dd></dl></div>");
-            // arrHtml.push("</li>");
         }
         $(".freeWifi_title").text(wifiCount+"个免费WiFi");
+        if (wifiCount == 0) {
+            $(".freeWifi").hide();
+        } else {
+            $(".freeWifi").show();
+        }
         return arrHtml.join("");
     },
 
@@ -797,10 +782,8 @@ var me = {
     {
         var data = res.wifilist;
         var arrHtml = new Array();
-        // var arrKuLianWifi = me.kuLianWifi.wifilist;
-
+        var wifiCount = 0;
         for (var i = 0; i < data.length; i++) {
-
             if (data[i].encrypt == "") {
                 continue;
             }
@@ -811,10 +794,18 @@ var me = {
             else if (level > 50) { level = 3; }
             else { level = 4; }
             
-            // todo : add a lock icon at the right of the item
-            arrHtml.push("<li data-wifissid='"+data[i].SSID+"' data-wifiencrypt='"+data[i].encrypt+"' ><img src=\"images/wifi_signal_"+ level +".png\"><a>"+subString.autoAddEllipsis(data[i].SSID, 22, true)+"</a></li>");
+            var li = "<li data-wifissid='"+data[i].SSID+"' data-wifiencrypt='"+data[i].encrypt+"' >";
+            li += "<img class='wifi-icon' src=\"images/wifi_signal_"+ level +".png\"><a>"+subString.autoAddEllipsis(data[i].SSID, 22, true)+"</a>";
+            li += "<img class='lock-icon' src='images/lock.png' />";
+            li += "</li>";
+            arrHtml.push(li);
+            wifiCount++;
         }
-
+        if (wifiCount == 0) {
+            $(".annexWifi").hide();
+        } else {
+            $(".annexWifi").show();
+        }
         return arrHtml.join("");
     },
 
@@ -1156,6 +1147,17 @@ var me = {
     {
         var li = $(".wifiList li[data-wifissid='"+SSID+"']");
         li.remove();
+        var wifiCount = $(".freeWifi_box li").length;
+        $(".freeWifi_title").text(wifiCount+"个免费WiFi");
+        if (wifiCount == 0) {
+            $(".freeWifi").hide();
+        }
+        wifiCount = $(".annexWifi_box li").length;
+        if (wifiCount == 0) {
+            $(".annexWifi").hide();
+        } else {
+            $(".annexWifi").show();
+        }
     },
 
     removeFromAppManageTab : function(installBtn)

@@ -25,16 +25,19 @@ a { text-decoration:none;}
 .licenseWrapper h2 {font-size:16px; margin: 30px 0 20px; font-weight:100;}
 .licenseWrapper p {color:#2e2e2e;}
 
-#connectionView .user_signin {padding-top: 5px; padding-left: 5px; color: #38E; }
-#connectionView .message_grid {padding-top: 30px; color: gray; min-height: 50px; }
+#connectionView .user_signin {padding-top: 5px; padding-left: 5px; color: #38E; font-weight: bold; }
+#connectionView .message_grid {padding-top: 10px; color: gray; min-height: 50px; }
 #connectionView .message_grid img {width: 18px; height: 18px; margin-left: 10px; }
-#connectWifiBtn {background-color: #4BA6F2; color: white; text-align: center; border-radius: 6px; width: 80%; height: 25px; line-height: 25px; font-size: 14px; border: 0; text-shadow:0 0 0;}
+#connectWifiBtn {background-color: #38E; color: white; text-align: center; border-radius: 6px; width: 80%; height: 25px; line-height: 25px; font-size: 14px; border: 0; text-shadow:0 0 0;}
 .connection_bg {height: 230px; background: url(../images/night.png) no-repeat; background-size: contain;}
 .wifiStatus {height: 100%; min-height: 500px; }
 .wifiStatus img {margin-top: 20px; width: 250px; height: 250px; }
 .wifiStatus div.statusOn, #statusDesc {width: 100%; color: #38E; text-shadow:0 0 0; border-width:0; padding-top: 5px;}
 
 .text_disabled {color:gray;}
+
+.wifiList .lock-icon {position: absolute; right: 20px; width: 15px;}
+.recomWifi_txtspan {background: #38E; color: white; position: absolute; right: 20px; width: 40px; border-radius: 3px; text-shadow: 0 0 0; text-align: center;;}
 
 .modalViewTitle {text-align:center; color: #38E; font-size: 22px; padding-top: 30px; padding-bottom: 20px; }
 .modalViewText  {text-align:center; color: black; font-size: 16px; }
