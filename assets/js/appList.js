@@ -1612,12 +1612,8 @@ var me = {
                             $("#account").text(phone_number);
                             $("#myInviteCode").text(data.invite_code);
                             $("#coin").text(data.coin_num);
-                            
-                            if (parseInt($("#connectWifiBtn").attr("data-wifiStatus")) == WifiStatus.kulian) {
-                                me.authentication();
-                            } else if (parseInt($("#connectWifiBtn").attr("data-wifiStatus")) == WifiStatus.kulianAuthed) {
-                                $("#connectWifiBtn").attr("data-wifiStatus", WifiStatus.kulianAuthed);
-                                me.updateWifiStatusUI(WifiStatus.kulianAuthed);
+
+                            if (parseInt($("#connectWifiBtn").attr("data-wifiStatus")) == WifiStatus.kulianAuthed) {
                                 me.reportAuthenSuccess();
                             }
 
