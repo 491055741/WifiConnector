@@ -143,9 +143,10 @@ var wifiStatusChanged = function (ssid) {
         me.checkNetwork();
         me.removeFromWifiList(ssid);
     } else { // 断开连接了
+        connectedSSID = null;
         $("#connectWifiBtn").attr("data-wifiStatus", WifiStatus.disconnected);
         me.updateWifiStatusUI(WifiStatus.disconnected);
-        me.requestWifiList();
+        // me.requestWifiList();
     }
 }
 // js-android interface
@@ -160,24 +161,6 @@ var checkLogin = function() {
         me.autoLogin();
     }
 }
-/*
-$("#LoginPage").on("pageinit", function () {
-    console.log("login page init");
-
-    $("#loginUsername").attr("value", getItem("userName"));
-    $("#loginPassword").attr("value", getItem("passWord"));
-    $("#checkbox-1").prop("checked",  getItem("rmbUser")).checkboxradio("refresh");
-});
-
-$("#LoginPage").on("pagebeforeshow", function () {
-    console.log("login page show");
-    me.showBackBtn(false);
-    if (isAutoLogin && $("#loginUsername").val()!='' && $("#loginUsername").val()!='手机号' && isPhoneNumber($("#loginUsername").val())
-        && $("#loginPassword").val()!='') {
-        me.login();
-    }
-});
-*/
 
 $("#WelcomPage").on("pageshow", function () {
     console.log("welcome page show");
@@ -226,13 +209,6 @@ $("#MainPage").on("pageinit", function() {
     me.requestMessage();
     // me.requestAppAds();
     me.fillVersion();
-    me.requestKulianWifi();
-    me.checkNetwork();
-    // for debug on browser
-    if (window.android == undefined) {
-        setTimeout("wifiStatusChanged('SuperMary')", 1000);
-        setTimeout("me.autoLogin()", 10000);
-    }
 });
 
 $("#MainPage").on("pagebeforeshow", function () {
@@ -243,9 +219,17 @@ $("#MainPage").on("pagebeforeshow", function () {
 
 $("#MainPage").on("pageshow", function () {
     console.log("main page show");
+    me.requestKulianWifi();
+    me.checkNetwork();
     if (window.android != undefined) {
         window.android.requestCheckConnection();
     }
+    // for debug on browser
+    if (window.android == undefined) {
+        setTimeout("wifiStatusChanged('SuperMary')", 1000);
+        setTimeout("me.autoLogin()", 10000);
+    }
+
     if (myScroll) {
         setTimeout(me.initIScroll(), 100);
     }
@@ -282,10 +266,6 @@ $("#logoutBtn").fastClick(function() {
 
 $("#registBtn").fastClick(function() {
     me.register();
-});
-
-$("#loginBtn").fastClick(function() {
-    me.login();
 });
 
 $("#coin").fastClick(function() {
@@ -507,6 +487,7 @@ var me = {
                 html += "<div class='modalViewText'>您还有"+data.coin_num+"金币</div>";
                 $("#dialog_message").append(html);
                 $("#dialog").jqmShow();
+                $("#coin").text(data.coin_num);
             } else if (data.ret_code != 3001) {
                 showLoader(data.ret_msg);
                 setTimeout("hideLoader()", 2000);
@@ -529,6 +510,7 @@ var me = {
                 html += "<div class='modalViewBigText'>"+data.add_coin_num+"</div>"
                 $("#dialog_message").append(html);
                 $("#dialog").jqmShow();
+                $("#coin").text(data.coin_num);
             } else if (data.ret_code == 3002) {
                 showLoader("今天已经领取过了，明天再来哟！");
                 setTimeout("hideLoader()", 3000);
@@ -688,6 +670,7 @@ var me = {
             var obj = eval("(" + jsonStr +")");
             me.parseWifiList(obj);
         }
+        setTimeout("me.requestWifiList()", 15000);
     },
 
     parseWifiList : function(data)
@@ -695,24 +678,19 @@ var me = {
         var html = me.freeWifiListTemplate(data);
         $("#connectionView .freeWifi_box").empty();
         $("#connectionView .freeWifi_box").append(html);
-        $("#connectionView .freeWifi_box li").fastClick(function() {
-            me.connectWifi(this);
-        });
 
         var html = me.encryptWifiListTemplate(data);
         $("#connectionView .annexWifi_box").empty();
         $("#connectionView .annexWifi_box").append(html);
-        $("#connectionView .annexWifi_box li").fastClick(function() {
+
+        $("#connectionView .wifiList li").fastClick(function() {
             me.connectWifi(this);
         });
 
         var arrWifiList = data.wifilist;
 
         for (var i = 0; i < arrWifiList.length; i++) {
-            var ssidMD5 = CryptoJS.MD5(arrWifiList[i].SSID, { asString: true });
-            console.log("my wifi ssid:"+arrWifiList[i].SSID+"  MD5:"+ssidMD5+"  encrypt:"+arrWifiList[i].encrypt);
             if (me.isKuLianWifi(arrWifiList[i].SSID)) {
-                // var passwd = arrKuLianWifi[j].ssid_passwd; // todo
                 $("#connectWifiBtn").data("wifissid", arrWifiList[i].SSID);
                 $("#connectWifiBtn").data("wifipasswd", '');
                 $("#connectWifiBtn").data("wifiencrypt", arrWifiList[i].encrypt);
@@ -749,7 +727,7 @@ var me = {
         var wifiCount = 0;
         for (var i = 0; i < data.length; i++) {
 
-            if (data[i].encrypt != "") {
+            if (data[i].encrypt != "" || data[i].SSID == connectedSSID) {
                 continue;
             }
 
@@ -784,7 +762,7 @@ var me = {
         var arrHtml = new Array();
         var wifiCount = 0;
         for (var i = 0; i < data.length; i++) {
-            if (data[i].encrypt == "") {
+            if (data[i].encrypt == "" || data[i].SSID == connectedSSID) {
                 continue;
             }
 
@@ -817,11 +795,14 @@ var me = {
         if (ssid == undefined) {
             showLoader("没有搜索到小鸿Wifi");
             setTimeout("hideLoader()", 2000);
-            me.requestWifiList();
+            // me.requestWifiList();
             return;
         }
         if (encrypt != "") {
             pwd = prompt("请输入"+ssid+"的密码:", '');
+            if (pwd == null) {
+                return;
+            }
         }
         console.log("connectWifi: "+ssid+"  pwd: "+pwd+"  encrypt: "+encrypt);
         showLoader("正在连接Wifi，请稍候");
@@ -1580,55 +1561,6 @@ var me = {
                     $("#account").text(phone_number);
                     $("#myInviteCode").text(data.invite_code);
 
-                } else {
-                    showLoader(data.ret_msg);
-                    setTimeout("hideLoader()", 3000);
-                }
-            });
-        }
-    },
-
-    login : function()
-    {
-        if (me.validLogin()) {
-            var phone_number = $("#loginUsername").val();
-            var passwd       = $("#loginPassword").val();
-            var passwdMD5    = CryptoJS.MD5(passwd, { asString: true });
-            var url = appServerUrl+"/applogin?"+callback+"&phone_number="+phone_number+"&passwd="+passwdMD5;
-
-            if (window.android) {
-                var imei = window.android.getIMEI();
-                url = url + "&m3=" + imei;
-            }
-
-            console.log(url);
-            showLoader("登录中，请稍候");
-
-            $.getJSON(url, function(data) {
-                hideLoader();
-                if (data.ret_code == 0) {
-                    me.isLogin = true;
-                    me.saveToken(data.token);
-                    changePage("#MainPage");
-                    console.log("login success, coin num:" + data.coin_num);
-                    if (data.coin_num == undefined) {
-                        data.coin_num = 0;
-                    }
-
-                    $("#account").text(phone_number);
-                    $("#myInviteCode").text(data.invite_code);
-                    $("#coin").text(data.coin_num);
-
-                    if ($("#checkbox-1").prop("checked") == true) { 
-                        saveItem("rmbUser", "true");
-                        saveItem("userName", phone_number);
-                        saveItem("passWord", passwd);
-                    } else {
-                        saveItem("rmbUser", "false");
-                        saveItem("userName", '');
-                        saveItem("passWord", '');
-                    }
-                    me.reportConnection(phone_number);
                 } else {
                     showLoader(data.ret_msg);
                     setTimeout("hideLoader()", 3000);
