@@ -158,6 +158,11 @@ a { text-decoration:none;}
     text-shadow: none;
 }
 
+.app-list .installBtn.inactive.hasIns span {
+    background: rgb(245,149,13);
+    color: #fff;
+}
+
 .app-list .installBtn.app-downing--t3 {
     background: #fff;
 }

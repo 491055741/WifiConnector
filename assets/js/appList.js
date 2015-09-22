@@ -97,6 +97,7 @@ var appInstallFinished = function (appId) {
             $(el).children('canvas').remove();
             $(el).siblings('.app_down').hide();
             $(el).attr('data-installed', 'YES');
+            $(el).addClass("hasIns inactive");
             $(el).children('span').text('打  开');
         }
     });
@@ -992,7 +993,7 @@ var me = {
             arrHtml.push("<div class='app_down'>");
             // isAppInstalled = true;
             if (isAppInstalled) {
-                arrHtml.push("<div class='ui-btn installBtn inactive' data-installed='YES' data-applogo=\""+data[i].AppLogo+"\"  data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\"><span>打  开</span></div>");
+                arrHtml.push("<div class='ui-btn installBtn inactive hasIns' data-installed='YES' data-applogo=\""+data[i].AppLogo+"\"  data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\"><span>打  开</span></div>");
             } else {
                 arrHtml.push("<div class='app_coins'>");
                 arrHtml.push("<div class='coin_num'><span>"+data[i].GiveCoin+"</span> 金币</div>");
@@ -1191,7 +1192,7 @@ var me = {
         arrHtml.push("<div class='app_down'>");
         // console.log($(installBtn).data());
         if (isAppInstalled) {
-            arrHtml.push("<div class='ui-btn installBtn manageTab inactive' data-installed='YES' data-applogo=\""+$(installBtn).data('applogo')+"\"  data-appname=\""+$(installBtn).data('appname')+"\" data-appurl=\""+$(installBtn).data('appurl')+"\" data-appid="+$(installBtn).data('appid')+" data-pkgname=\""+$(installBtn).data('pkgname')+"\"><span>打  开</span></div>");
+            arrHtml.push("<div class='ui-btn installBtn manageTab inactive hasIns' data-installed='YES' data-applogo=\""+$(installBtn).data('applogo')+"\"  data-appname=\""+$(installBtn).data('appname')+"\" data-appurl=\""+$(installBtn).data('appurl')+"\" data-appid="+$(installBtn).data('appid')+" data-pkgname=\""+$(installBtn).data('pkgname')+"\"><span>打  开</span></div>");
         } else if (isAppDownloaded) {
             arrHtml.push("<div class='ui-btn installBtn manageTab inactive' data-downloaded='YES' data-applogo=\""+$(installBtn).data('applogo')+"\"  data-appname=\""+$(installBtn).data('appname')+"\" data-appurl=\""+$(installBtn).data('appurl')+"\" data-appid="+$(installBtn).data('appid')+" data-pkgname=\""+$(installBtn).data('pkgname')+"\"><span>已下载</span></div>");
         } else {
