@@ -239,20 +239,17 @@ public class MainActivity extends AppCompatActivity {
 		}
 	};
 
-	public class MyBroadcastReceiver extends BroadcastReceiver {  
-
+	private class MyBroadcastReceiver extends BroadcastReceiver {  
 	    @Override  
 	    public void onReceive(Context context, Intent intent) {  
 	        Log.v(TAG, "onReceive");  
-	        checkConnection();
+	        requestCheckConnection();
 	    }  
 	}
 
 	Runnable shenMaAuthTask = new Runnable() {
-
 		@Override
 		public void run() {
-
 			try {
 				sendShenZhouAuthRequest();
 			} catch (Exception e) {
@@ -262,13 +259,13 @@ public class MainActivity extends AppCompatActivity {
 	};
 
 	private void checkConnection() {
-		ConnectivityManager nw = (ConnectivityManager) (getBaseContext()).getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager nw = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo netinfo = nw.getActiveNetworkInfo();
-		if (netinfo.isAvailable()) {
+		if (netinfo != null && netinfo.isAvailable()) {
 			webView.loadUrl("javascript: checkLogin()");
 		}
 
-		ConnectivityManager conMan = (ConnectivityManager) (getBaseContext()).getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager conMan = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 		if (State.CONNECTED != conMan.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()) {
 			Log.i(TAG, "unconnect");
 			webView.loadUrl("javascript: wifiStatusChanged()");
@@ -351,6 +348,10 @@ public class MainActivity extends AppCompatActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		unregisterReceiver(mAppInstallReceiver);
+		if (mConnectionReceiver != null) {
+			unregisterReceiver(mConnectionReceiver);
+			mConnectionReceiver = null;
+		}
 	}
 
 	@SuppressLint("SetJavaScriptEnabled")
@@ -385,7 +386,8 @@ public class MainActivity extends AppCompatActivity {
 		mDownloadAppInfoHashMap = new HashMap<String, String>();
 		mDownloadIdHashMap = new HashMap<String, String>();
 
-		mConnectionReceiver = new MyBroadcastReceiver();
+		registerConnection();
+		registerAppInstall();
 		
 		boolean open = wifiAdmin.openWifi();
 		Log.i(TAG, "wifi open:" + open);
@@ -507,9 +509,6 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	public void onResume() {
-		registerConnection();
-		registerAppInstall();
-
 		MobclickAgent.onResume(this);
 		if (!mIsActive) {// app从后台唤醒，进入前台
 			mIsActive = true;
@@ -701,6 +700,9 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void registerConnection() {
+		if (mConnectionReceiver == null) {
+			mConnectionReceiver = new MyBroadcastReceiver();
+		}
 		IntentFilter intentFilter = new IntentFilter();
 		intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 		registerReceiver(mConnectionReceiver, intentFilter);
@@ -863,7 +865,6 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	protected void onStop() {
-		unregisterReceiver(mConnectionReceiver);
 		if (!isAppOnForeground()) {
 			mIsActive = false;// 记录当前已经进入后台
 		}

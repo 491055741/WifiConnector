@@ -7,6 +7,7 @@ var checkNetworkUrl = "http://115.159.3.16/cb/app_test";
 var countDownTimer = null;
 var checkNetworkTimer = null;
 var autoLoginTimer = null;
+var requestKulianWifiTimer = null;
 var connectedSSID = null;
 var version = null;
 var myScroll;
@@ -220,6 +221,7 @@ $("#MainPage").on("pagebeforeshow", function () {
 $("#MainPage").on("pageshow", function () {
     console.log("main page show");
     me.requestKulianWifi();
+    me.requestWifiList();
     me.checkNetwork();
     if (window.android != undefined) {
         window.android.requestCheckConnection();
@@ -480,7 +482,7 @@ var me = {
         var url = appServerUrl+"/dec_coin?phone_number="+phone_number;
         $.getJSON(url, function(data) {
             if (data.ret_code == 0) {
-                $("#dialog_message").clear();
+                $("#dialog_message").empty();
                 var html = "<div class='modalViewTitle'>恭喜您已连接到免费小鸿WiFi</div>";
                 html += "<div class='modalViewText'>今日消耗金币</div>";
                 html += "<div class='modalViewBigText'>"+data.dec_coin_num+"</div>"
@@ -488,7 +490,7 @@ var me = {
                 $("#dialog_message").append(html);
                 $("#dialog").jqmShow();
                 $("#coin").text(data.coin_num);
-            } else if (data.ret_code != 3001) {
+            } else if (data.ret_code != 3001) { // 3001 means already  coin
                 showLoader(data.ret_msg);
                 setTimeout("hideLoader()", 2000);
             }
@@ -527,7 +529,7 @@ var me = {
         switch (parseInt(status))
         {
             case 0:
-                $("#statusDesc").text("未连接到wifi");
+                $("#statusDesc").text("未连接到Wifi");
                 $(".wifiStatus .statusOff").show();
                 $(".wifiStatus .statusOn").hide();
                 $("#connectWifiBtn").show().text("连接小鸿免费Wifi");
@@ -586,16 +588,26 @@ var me = {
 
     requestKulianWifi : function()
     {
-        // http://livew.mobdsp.com/cb/get_ssidlist
         var url = appServerUrl+"/get_ssidlist?"+callback;
         console.log("requestKulianWifi:"+url);
         me.kuLianWifi = {"ssidlist": [ {"ssid":"@小鸿科技","ssid_passwd":""},{"ssid":"test","ssid_passwd":""}]};
-        $.getJSON(url, function(data) {
 
-            if (data.ret_code == 0 && data.ssidlist.length > 0) {
-                me.kuLianWifi = data.ssidlist;
-            }
-            me.requestWifiList();
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType : "jsonp",
+            jsonp: "callback",
+            success : function(data) {
+                        console.log("requestKulianWifi success.");
+                        if (data.ret_code == 0 && data.ssidlist.length > 0) {
+                            me.kuLianWifi = data.ssidlist;
+                        }
+                        clearTimeout(requestKulianWifiTimer);
+                    },
+            error : function() {
+                        console.log("requestKulianWifi fail.");
+                        requestKulianWifiTimer = setTimeout(me.requestKulianWifi(), 2000);
+                    }
         });
     },
 
@@ -659,6 +671,7 @@ var me = {
 
     requestWifiList : function()
     {
+        console.log("requestWifiList");
         if (window.android == undefined) {
             var url = localServerUrl + "/wifilist?"+callback;
             console.log("requestWifiList:" + url);
@@ -701,7 +714,7 @@ var me = {
 
     isKuLianWifi : function(ssid)
     {
-        if (ssid.startWith("Hongwifi") || ssid.indexOf("小鸿")!=-1) { // ssid.startWith("SuperMary") || 
+        if (ssid.startWith("Hongwifi") || ssid.indexOf("小鸿")!=-1)) { //  || ssid.startWith("SuperMary"
             console.log("isKuLianWifi match pattern: "+ssid);
             return true;
         }
