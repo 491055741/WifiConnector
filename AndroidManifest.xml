@@ -197,9 +197,8 @@
 
         <provider
             android:name="com.igexin.download.DownloadProvider"
-            android:authorities="downloads.com.getui.demo"
+            android:authorities="downloads.com.xiaohong.wificoolconnect"
             android:process=":pushservice" />
-        <!-- android:authorities="downloads.第三方包名" -->
 
         <activity
             android:name="com.igexin.getuiext.activity.GetuiExtActivity"
