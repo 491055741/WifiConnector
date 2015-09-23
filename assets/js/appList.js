@@ -1561,6 +1561,8 @@ var me = {
                         showLoader("验证成功");
                     } else {
                         showLoader("密码修改成功");
+                        saveItem("userName", phone_number);
+                        saveItem("passWord", passwd);
                     }
 
                     if (data.coin_num == undefined) {

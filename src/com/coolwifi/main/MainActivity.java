@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
 		String gw = getUrlPara(redictURL, "gw");
 
 		String authUrl = "http://" + gw
-				+ "/dcmecloud/interface/RestHttpAuth.php?har={\"ip\":\"" + ip
+				+ ":8800/dcmecloud/interface/RestHttpAuth.php?har={\"ip\":\"" + ip
 				+ "\",\"tool\":\"onekey\"}";
 		webView.loadUrl("javascript: alert(" + authUrl + ")");
 		HttpURLConnection conn = (HttpURLConnection) new URL(authUrl)
