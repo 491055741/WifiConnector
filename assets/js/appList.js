@@ -180,12 +180,13 @@ $("#WelcomPage").on("pageshow", function () {
 $("#RegisterPage").on("pagebeforeshow", function () {
     console.log("register page show");
 
-    me.showBackBtn(true);
     if (me.isChangingPassword) {
+        me.showBackBtn(true);
         setTitle("修改密码");
         $("#passwordFields").show();
         $("#inviteCodeFields").hide();
     } else {
+        me.showBackBtn(false);
         setTitle("验证");
         $("#passwordFields").hide();
         $("#inviteCodeFields").show();
