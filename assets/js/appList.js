@@ -299,6 +299,11 @@ $(".verifyCodeBtn").fastClick(function() {
 });
 
 $(".changePwdBtn").fastClick(function() {
+    if (!me.isLogin) {
+        showLoader("还未登录");
+        setTimeout("hideLoader()", 2000);
+        return;
+    }
     me.isChangingPassword = true;
     changePage("#RegisterPage");
 });
@@ -490,6 +495,7 @@ var me = {
                 html += "<div class='modalViewBigText'>"+data.dec_coin_num+"</div>"
                 html += "<div class='modalViewText'>您还有"+data.coin_num+"金币</div>";
                 $("#dialog_message").append(html);
+                me.showTab(0);
                 $("#dialog").jqmShow();
                 $("#coin").text(data.coin_num);
             } else if (data.ret_code != 3001) { // 3001 means already  coin
@@ -513,6 +519,7 @@ var me = {
                 html += "<div class='modalViewText'>今日赢取金币</div>";
                 html += "<div class='modalViewBigText'>"+data.add_coin_num+"</div>"
                 $("#dialog_message").append(html);
+                me.showTab(0);
                 $("#dialog").jqmShow();
                 $("#coin").text(data.coin_num);
             } else if (data.ret_code == 3002) {
