@@ -16,7 +16,7 @@ $.widget( "mobile.tabs", $.mobile.widget, {
 		load: function(event, ui) { },
 		beforeTabHide: function(event, ui) { },
 		beforeTabShow: function(event, ui) {me.showAppTab($(ui.nextTab).data("idx")); },
-		afterTabShow:  function(event, ui) {me.initIScroll(); }
+		afterTabShow:  function(event, ui) {me.refreshScroll(); }
 	},
 	_create: function(){
 		var

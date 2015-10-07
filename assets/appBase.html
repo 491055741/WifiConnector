@@ -8,11 +8,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <link rel="stylesheet" href="css/reset.css" />
     <link rel="stylesheet" href="js/jquery.mobile/jquery.mobile-1.4.5.min.css" />
-    <link rel="stylesheet" href="css/wificonnector.css" />
     <link rel="stylesheet" href="css/list.css" />
     <link rel="stylesheet" href="css/comment.css" />
     <link rel="stylesheet" href="css/content.css" />
     <link rel="stylesheet" href="css/swiper.min.css" />
+    <link rel="stylesheet" href="css/wificonnector.css" />
     <!--<link rel="stylesheet" href="js/gallery/idangerous.swiper.css">-->
     <!--<link rel="stylesheet" href="js/gallery/gallery-app.css">-->
     <link rel="stylesheet" href="js/tabs/jquery.mobile.tabs.css" />
@@ -210,12 +210,12 @@
                         </div>
                     </div>
 
-                    <center>
-                        <div class="refresh-app-list" style="display:none;">
+                    <div class="refresh-app-list" style="display:none;">
+                        <center>
                             <img class="refresh-image" src="images/refresh.png">
                             <p>点击重新加载</p>
-                        </div>
-                    </center>
+                        </center>
+                    </div>
                 </div>
 
                 <div id="tab-2">
@@ -236,6 +236,12 @@
                             </div> -->
                         </div>
                     </div>
+                    <div class="refresh-app-list" style="display:none;">
+                        <center>
+                            <img class="refresh-image" src="images/refresh.png">
+                            <p>点击重新加载</p>
+                        </center>
+                    </div>
 
                 </div>
 
@@ -246,7 +252,7 @@
                                 <span class="down-icon icon-double-angle-down pull-down-icon reverse_icon"></span>
                                 <span class="pullDown-msg pull-down-msg">下拉刷新</span>
                             </div>
- -->                        
+ -->
                             <div class="scroller-content">
                                 <ul class="app-list">
                                 </ul>
@@ -257,18 +263,31 @@
                             </div> -->
                         </div>
                     </div>
+                    <div class="refresh-app-list" style="display:none;">
+                        <center>
+                            <img class="refresh-image" src="images/refresh.png">
+                            <p>点击重新加载</p>
+                        </center>
+                    </div>
                 </div>
                 
                 <div id="tab-4">
-                    <div class="app-list">
-                        <div class="downloading hide">
-                            <h5>下载中</h5>
-                        </div>
-                        <div class="hasDownloaded hide">
-                            <h5>已下载</h5>
-                        </div>
-                        <div class="hasInstalled hide">
-                            <h5>已安装</h5>
+                    <div class="wrapper">
+                        <div style="transition-timing-function: cubic-bezier(0.1, 0.57, 0.1, 1); transition-duration: 0ms; transform: translate(0px, -1047px) translateZ(0px);" class="scroller">
+
+                            <div class="scroller-content">
+                                <div class="app-list">
+                                    <div class="downloading hide">
+                                        <h5>下载中</h5>
+                                    </div>
+                                    <div class="hasDownloaded hide">
+                                        <h5>已下载</h5>
+                                    </div>
+                                    <div class="hasInstalled hide">
+                                        <h5>已安装</h5>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

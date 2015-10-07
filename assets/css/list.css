@@ -3,7 +3,7 @@ html,body {
 } 
 .margin-6 { margin:6px;}
 div#list-more.margin-0 { margin:0;border-top:none;;border-left:1px solid #c6c6c6;border-right:1px solid #c6c6c6; border-bottom:1px solid #c6c6c6;}
-.app-list { border-bottom: 1px solid #D4D5D6; }
+.app-list { border-bottom: 1px solid #D4D5D6; height: 100%; }
 .list-page { padding-top: 0; }
 .app-list .item, .app-list .index-item { height: 80px; border-top: 1px #d4d5d6 solid; background-color: #fafafa; position: relative; }
 .app-list .index-item .btn { position: absolute; right: 7px; font-style: normal; padding: 0 12px 0 0; background: url(/images/icon27.png) no-repeat right 3px; background-size: auto 12px; color: #666; top: 22px; }
@@ -29,8 +29,9 @@ div#list-more.margin-0 { margin:0;border-top:none;;border-left:1px solid #c6c6c6
 	position: relative;
 	height: 100%;
 }
-.app-list .app-img {position: relative;}
-.app-list .app-img img {display:block; width: 100%;max-height: 110px; min-height: 80px;}
+.app-list .app-img {position: relative; display: inline-block; width: 100%;}
+.app-list .app-img .dummy {margin-top: 45.33%;}
+.app-list .app-img img {position: absolute; min-height: 80px; width: 100%;}
 .app-list .item .item-main > a, .app-list .index-item .index-item-main > a { display: block; padding: 6px 8px 4px; min-height: 74px; }
 .list-status-download { width: 64px; height: 64px; font-size: 0; line-height: 0; margin-top:10px; border-left:1px solid #D6D7D8;}
 .list_download_btn {display:inline-block; border-radius:5px; color:#007AFF; border:1px solid #007AFF; width:58px; text-align:center; padding:0; height:26px; line-height:26px;font-size:13px;margin-left:8px;margin-top:10px;}
