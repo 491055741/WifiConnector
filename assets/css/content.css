@@ -24,10 +24,10 @@ div.allwidth a {background-color:#1e92ff;border:1px solid #1e92ff;color:#FFF; }
 .down-area {height:45px;}
 /*详情页顶部应用信息按钮*/
 .content-btn-con { padding-top: 20px; width:100%;z-index: 7;display:inline-block; }
-.DownloadBtn { width: 75%; height: 28px;float: none; display: block; text-align: center; line-height: 28px;  border-radius: 4px; background-size: 96px 32px; color: #A3A5A9;margin:auto; border:1px solid #A3A5A9; font-size:16px;}
+.downloadBtn { width: 75%; height: 28px;float: none; display: block; text-align: center; line-height: 28px;  border-radius: 4px; background-size: 96px 32px; color: #A3A5A9;margin:auto; border:1px solid #A3A5A9; font-size:16px;}
     /*[2015-9-26] 下载中样式*/
-.DownloadBtn.inactive {  text-align: center;  }
-.DownloadBtn.inactive canvas {}
+.downloadBtn.inactive {  text-align: center;  }
+.downloadBtn.inactive canvas {}
 /*除详情页顶部应用信息按钮*/
 .btn-con {float: right;margin-bottom: 10px;position: absolute;top: 5px;right: 0;z-index: 7;}
 .baiYingFreeDownload {width: 96px;height: 32px;text-indent: 1em;float: none;display: block;text-align: center;line-height: 32px;background: url(/images/icon7.png);background-color: #1e92ff;border-radius: 4px;background-size: 96px 32px;color: #fff;}
