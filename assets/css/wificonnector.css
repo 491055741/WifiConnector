@@ -125,14 +125,14 @@ body{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-khtml-
     background: #ccc;
     color:#fff;
 }
-.app-list .hasIns.bigLogo-instBtn.inactive {
+.app-list .hasInstalled.bigLogo-instBtn.inactive {
     background: rgb(245,149,13);
     text-align: center;
     letter-spacing: 1px;
     font-weight: normal;
     font-family: '微软雅黑';
 }
-.app-list .hasIns + .down-symbol--t1 {
+.app-list .hasInstalled + .down-symbol--t1 {
     position: absolute;
     top: 0;
     right: 0;
@@ -159,7 +159,7 @@ body{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-khtml-
     text-shadow: none;
 }
 
-.app-list .installBtn.inactive.hasIns span {
+.app-list .installBtn.inactive.hasInstalled span {
     background: rgb(245,149,13);
     color: #fff;
 }
