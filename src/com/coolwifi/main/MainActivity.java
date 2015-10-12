@@ -366,6 +366,7 @@ public class MainActivity extends AppCompatActivity {
 		Log.d("tag", "mSavePath path: " + mSavePath);
 
 		UpdateManager updateManager = new UpdateManager(MainActivity.this);
+		updateManager.channel= getChannel();
 		try {
 			updateManager.checkUpdate();
 		} catch (NotFoundException e) {
@@ -436,6 +437,12 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(webView);
 	}
 
+	// @JavascriptInterface
+	public String getChannel() {
+//		return "shenma";
+		return "";
+	}
+	
 	// @JavascriptInterface
 	public void showBackBtn(boolean isShow) {
 		Log.d(TAG, "Show back button: " + isShow);

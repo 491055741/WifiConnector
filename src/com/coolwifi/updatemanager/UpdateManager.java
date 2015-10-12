@@ -37,6 +37,7 @@ import android.widget.ProgressBar;
 
 public class UpdateManager
 {
+	public String channel = null;
     private static final int DOWNLOAD = 1;
     private static final int DOWNLOAD_FINISH = 2;
     
@@ -56,9 +57,9 @@ public class UpdateManager
             switch (msg.what)
             {
             case DOWNLOAD:
-            	if (mProgress != null) {
-                    mProgress.setProgress(msg.arg1);            		
-            	}
+	            	if (mProgress != null) {
+	                    mProgress.setProgress(msg.arg1);            		
+	            	}
                 break;
             case DOWNLOAD_FINISH:
                 if (mDownloadDialog != null) {
@@ -82,39 +83,44 @@ public class UpdateManager
 
     public void checkUpdate() throws NotFoundException, JSONException
     {
-    	HttpTask task = new HttpTask();
-    	task.setTaskHandler(new HttpTaskHandler(){
-    	    public void taskSuccessful(String json) {
-    	    JSONObject jsonObj;
-				try {
-				    if (json != "fail") {
-						jsonObj = new JSONObject(json);
-						if (jsonObj.getInt("ret_code") == 0) {
-					        mHashMap = new HashMap<String, String>();
-					        mHashMap.put("name", jsonObj.getString("name"));
-					        mHashMap.put("url", jsonObj.getString("url"));
-					        mHashMap.put("force", jsonObj.getString("force"));
-					        int versionCode = getVersionCode(mContext);
-					        int serviceCode = jsonObj.getInt("versionCode");
-					        if (serviceCode > versionCode) {
-						        showNoticeDialog();
-					        }
+	    	HttpTask task = new HttpTask();
+	    	task.setTaskHandler(new HttpTaskHandler(){
+	    	    public void taskSuccessful(String json) {
+	    	    JSONObject jsonObj;
+					try {
+					    if (json != "fail") {
+							jsonObj = new JSONObject(json);
+							if (jsonObj.getInt("ret_code") == 0) {
+						        mHashMap = new HashMap<String, String>();
+						        mHashMap.put("name", jsonObj.getString("name"));
+						        mHashMap.put("url", jsonObj.getString("url"));
+						        mHashMap.put("force", jsonObj.getString("force"));
+						        int versionCode = getVersionCode(mContext);
+						        int serviceCode = jsonObj.getInt("versionCode");
+						        if (serviceCode > versionCode) {
+							        showNoticeDialog();
+						        }
+							} else {
+								Log.d(TAG, "Get version result error.");
+							}
 						} else {
-							Log.d(TAG, "Get version result error.");
+							Log.d(TAG, "Get version failed.");
 						}
-					} else {
-						Log.d(TAG, "Get version failed.");
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-    	    }
+	    	    }
 
-    	    public void taskFailed() {
-    	    }
-    	});
-    	task.execute("http://livew.mobdsp.com/cb/klappversion?versionCode="+mVersionCode);
+	    	    public void taskFailed() {
+	    	    }
+	    	});
+	//    	task.execute("http://115.159.76.147/cb/klappversion?versionCode="+mVersionCode);
+	    	String url = "http://livew.mobdsp.com/cb/klappversion?versionCode="+mVersionCode;
+	    	if (channel != null && channel.length( ) > 0) {
+	    		url += "&channel="+channel;
+	    	}
+	    	task.execute(url);
     }
 
 	private int getVersionCode(Context context)

@@ -1,8 +1,7 @@
 var isShenMaAuth = false;
-var appServerUrl = "http://livew.mobdsp.com/cb";
+var appServerUrl = "http://livew.mobdsp.com/cb";//"http://115.159.76.147/cb";
 var callback = "callback=?";
 var localServerUrl = "http://127.0.0.1:5000";
-var milkPapaServerUrl = "http://app.milkpapa.com:5000";
 var checkNetworkInterval = 1500; // ms
 var checkNetworkUrl = "http://115.159.3.16/cb/app_test";
 var countDownTimer = null;
@@ -14,7 +13,7 @@ var version = null;
 var count = 0;
 var WifiStatus = {"disconnected" : 0, "connected" : 1, "kulian" : 2, "kulianAuthed" : 3};
 
-(function($){
+(function($) {
     $.ajaxSetup({
         timeout: 10000,
         cache: false,
@@ -50,7 +49,6 @@ var updateDownloadProgress = function (appId, progress) {
 var finishDownloadProgress = function (appId) {
     console.log('app['+appId+'] download finished.');
 
-    // 已安装的应用  包含app列表和app管理里的
     var installApps = $(".installBtn[data-appid="+appId+"]");
     $.each(installApps, function (index,el) {
 
@@ -61,7 +59,7 @@ var finishDownloadProgress = function (appId) {
             $(el).children('canvas').hide();
             $(el).text('已下载');
             $(el).attr('data-downloaded', 'YES');
-            $(el).addClass("hasInstalled inactive");
+            $(el).addClass("hasDownloaded inactive");
             $(el).after("<i class='down-symbol--t1'></i>");
         } else if ($(el).hasClass('manageTab')) { // 下载管理列表中的
             $(el).attr('data-downloaded', 'YES');
@@ -71,7 +69,7 @@ var finishDownloadProgress = function (appId) {
             $(el).children('canvas').remove();
             $(el).siblings('.app_down').hide();
             $(el).attr('data-downloaded', 'YES');
-            $(el).addClass('inactive');
+            $(el).addClass("hasDownloaded inactive");
             $(el).children('span').show().text('已下载');
         }
     });
@@ -208,6 +206,7 @@ $("#RegisterPage").on("pageshow", function () {
 
 $("#MainPage").on("pageinit", function() {
     console.log("main page init");
+    $("#logoutBtn").hide();
     // use fastClick will cause pop to home page when tap the tab on PC.
     $("#connectionBtn").click(function(e) {me.showTab(0);});
     $("#excellentBtn").click(function(e) {me.showTab(1);});
@@ -222,6 +221,10 @@ $("#MainPage").on("pageinit", function() {
     me.checkNetwork();
     if (window.android != undefined) {
         window.android.requestCheckConnection();
+        if (window.android.getChannel() == 'shenma') {
+            isShenMaAuth = true;
+        }
+        console.log("is ShenMa auth:"+isShenMaAuth);
     } else { // for debug on browser
         setTimeout("wifiStatusChanged('SuperMary')", 1000);
         setTimeout("me.autoLogin()", 10000);
@@ -265,6 +268,7 @@ $("#ExchangePage").on("pagebeforeshow", function () {
 $("#logoutBtn").fastClick(function() {
     me.isLogin = false;
     me.isChangingPassword = false;
+    $("#logoutBtn").hide();
     changePage("#RegisterPage");
 });
 
@@ -457,7 +461,11 @@ var me = {
         }
 
         if (isShenMaAuth) {
-            me.shenZhouShuMaAuth();
+            if (window.android != undefined) {
+                window.android.shenZhouShuMaAuth();
+            } else {
+                console.log("send ShenZhouShuMa auth request.");
+            }
         } else {
             var authUrl = "http://182.254.140.228/portaltt/Logon.html";
             $.ajax({
@@ -728,7 +736,7 @@ var me = {
 
     isKuLianWifi : function(ssid)
     {
-        if (ssid.startWith("Hongwifi") || ssid.indexOf("小鸿")!=-1) { //  || ssid.startWith("SuperMary")
+        if (ssid.startWith("Hongwifi") || ssid.indexOf("小鸿") != -1) { //   || ssid.startWith("SuperMary")
             console.log("isKuLianWifi match pattern: "+ssid);
             return true;
         }
@@ -1151,7 +1159,7 @@ var me = {
                 }
                 return;
             }
-            if ($(this).attr("data-downloaded") == "YES") {
+            if ($(this).attr("data-downloaded") == "YES" || $(this).hasClass("hasDownloaded")) {
                 console.log('downloaded, ignore download request...');
                 return;
             }
@@ -1374,19 +1382,21 @@ var me = {
         arrHtml.push("</div>");
         // var gaAppName = data.AppName.replace(/\"/g, "”").replace(/'/g, "’");
 
-        arrHtml.push("<div id=\"divdownarea\" class=\"down-area\">");
-        arrHtml.push("<div class=\"content-btn-con\">");
-        arrHtml.push("<a class=\"downloadBtn installBtn\" data-appurl=\""+data.AppSource+"\" data-appname=\""+data.AppName+"\" data-appid=\""+data.AppId+"\" data-pkgname=\""+data.PackageName+"\" data-applogo=\""+data.AppLogo+"\" ");
+        arrHtml.push("<div id='divdownarea' class='down-area'>");
+        arrHtml.push("<div class='content-btn-con'>");
+        arrHtml.push("<a class='downloadBtn installBtn ");
 
+        var appinfo = "data-appurl='"+data.AppSource+"' data-appname='"+data.AppName+"' data-appid='"+data.AppId+"' data-pkgname='"+data.PackageName+"' data-applogo='"+data.AppLogo+"' ";
         var status = me.getAppStatus(data.AppId);
+
         if (status == null) {
-            arrHtml.push("data-installed='NO' ><span>下载</span></a>");
+            arrHtml.push(" ' data-installed='NO' "+appinfo+"><span>下载</span></a>");
         } else if (status == 'hasInstalled') {
-            arrHtml.push("data-installed='YES' ><span>已安装</span></a>");
+            arrHtml.push(" hasInstalled' data-installed='YES' "+appinfo+"><span>已安装</span></a>");
         } else if (status == 'hasDownloaded') {
-            arrHtml.push("data-installed='NO' ><span>已下载</span></a>");
+            arrHtml.push(" hasDownloaded' data-installed='NO' "+appinfo+"><span>已下载</span></a>");
         } else if (status == 'downloading') {
-            arrHtml.push("data-installed='NO' ><span>正在下载</span></a>");
+            arrHtml.push(" ' data-installed='NO' "+appinfo+"><span>正在下载</span></a>");
         }
 
         arrHtml.push("</div>");
@@ -1498,11 +1508,6 @@ var me = {
             setTimeout("hideLoader()", 2000);
             return;
         }
-
-        // workaround the sms failure
-        // setTimeout("receivedVerifyCode('0904')", 1000);
-        // return;
-        // end
 
         var url = appServerUrl+"/appverifycode?"+callback+"&phone_number="+phone_number;
         console.log(url);
@@ -1633,6 +1638,8 @@ var me = {
                     if (me.isChangingPassword == false) {
                         me.saveToken(data.token);
                         showLoader("验证成功");
+                        me.isLogin = true;
+                        $("#logoutBtn").show();
                     } else {
                         showLoader("密码修改成功");
                         saveItem("userName", phone_number);
@@ -1668,8 +1675,10 @@ var me = {
         if (me.isLogin) {
             return;
         }
-        if (me.autoLoginRetryCount > 4) {
+        if (me.autoLoginRetryCount > 10) {
             console.log("reach max auto login retry count, abort.");
+            showLoader("无法联系服务器，请检查网络");
+            setTimeout("hideLoader()", 3000);
             me.autoLoginRetryCount = 0;
             return;
         }
@@ -1696,6 +1705,8 @@ var me = {
                             me.saveToken(data.token);
                             // changePage("#MainPage");
                             console.log("login success, coin num:" + data.coin_num);
+
+                            $("#logoutBtn").show();
                             if (data.coin_num == undefined) {
                                 data.coin_num = 0;
                             }
