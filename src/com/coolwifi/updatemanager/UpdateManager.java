@@ -115,7 +115,7 @@ public class UpdateManager
 	    	    public void taskFailed() {
 	    	    }
 	    	});
-	//    	task.execute("http://115.159.76.147/cb/klappversion?versionCode="+mVersionCode);
+
 	    	String url = "http://livew.mobdsp.com/cb/klappversion?versionCode="+mVersionCode;
 	    	if (channel != null && channel.length( ) > 0) {
 	    		url += "&channel="+channel;
