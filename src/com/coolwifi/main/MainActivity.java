@@ -58,7 +58,6 @@ import com.coolwifi.updatemanager.Downloader;
 import com.coolwifi.updatemanager.UpdateManager;
 import com.coolwifi.wifiadmin.*;
 import com.umeng.analytics.MobclickAgent;
-import com.umeng.fb.FeedbackAgent;
 import com.xiaohong.wificoolconnect.R;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
 	private HashMap<String, String> mDownloadAppInfoHashMap;
 	private HashMap<String, String> mDownloadIdHashMap;
 	private ActionBar mActionbar;
-	private FeedbackAgent feedbackAgent;
 	private boolean mIsActive = true; // 是否进入后台
 	private SmsObserver smsObserver;
 	private MyBroadcastReceiver mConnectionReceiver;
@@ -378,8 +376,6 @@ public class MainActivity extends AppCompatActivity {
 		initCustomActionBar();
 
 		checkDownloadManager();
-		feedbackAgent = new FeedbackAgent(this);
-		feedbackAgent.sync();
 		PushManager.getInstance().initialize(this.getApplicationContext());
 
 		wifiAdmin = new WifiAdmin(getBaseContext());
@@ -748,12 +744,6 @@ public class MainActivity extends AppCompatActivity {
 			e.printStackTrace();
 		}
 		return version;
-	}
-
-	// @JavascriptInterface
-	public void feedback() {
-		feedbackAgent.startFeedbackActivity();
-		return;
 	}
 
 	// @JavascriptInterface
