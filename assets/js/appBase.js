@@ -1,6 +1,3 @@
-
-var isAutoSearch = false;
-
 $(document).ready(function(){
     var url = window.location.href;
     var idx = url.indexOf("#"); // if current location is not home page, go to home page when user refresh the page.
@@ -18,75 +15,14 @@ $.ajaxSetup ({
 function init()
 {
     applicationCacheHandeler();
-
-    $("a.goBack").fastClick( function(e) {
-        $.mobile.back();
-        e.stopPropagation();
-        return false;
-    });
-    // if (typeof(document.referrer) == "undefined") {
-    //     console.log("document.referrer:" + document.referrer);
-    //     sessionStorage.referrer = document.referrer;
-    // } else {
-    //     console.log("browser not support document.referrer.");
-    // }
-    // setTimeout(function(){
-    //     $.mobile.changePage($("#appListPage"), {transition: "none"});
-    // }, 100);
 }
 
 $(document).bind("mobileinit", function() {
-
-    // $.mobile.loadingMessage = '页面载入中';
-    // $.mobile.pageLoadErrorMessage = '页面载入失败';
-    // $.mobile.transitionFallbacks.slideout = "none";
-    // jquery mobile used $.ajax() to load page for using page transition,
-    // in jquery, $.ajax() method set cache option default by true, but in Android platform this will cause some problems, if loaded from cache
-    // ajax request event will not be fired.
-    // in order to improve the speed of loading resources, HTML5 feature application cache must to be used.
-    // to fix this issue , set cache option to false before jquery mobile setting up.
-//  var agent = navigator.userAgent.toLowerCase();
-//  if (agent.match(/android/i) == "android") {
-        $.ajaxSetup({
-            cache: false,
-            headers: {"Cache-Control": "no-cache"}
-        });
-//  }
-    
+    $.ajaxSetup({
+        cache: false,
+        headers: {"Cache-Control": "no-cache"}
+    });
 });
-
-function applicationCacheHandeler() 
-{
-    applicationCache.onchecking = function(){
-        console.log(" application cache checking");
-    };
-
-    applicationCache.ondownloading = function(){
-        console.log(" application cache downloading");
-    };
-
-    applicationCache.onnoupdate = function(){
-        console.log(" application cache no update");
-    };
-
-    applicationCache.onprogress = function(){
-        console.log(" application cache progress");
-    };
-
-    applicationCache.oncached = function(){
-        console.log(" application cache cached");
-//        location.reload(true); // reload the whole web page
-    };
-
-    applicationCache.onupdateready = function(){
-        console.log(" application cache update ready");
-        location.reload(true); // reload the whole web page
-    };
-
-    applicationCache.onerror = function(){
-        console.log(" application cache error");
-    };
-}
 
 function isAndroid()
 {
@@ -185,11 +121,11 @@ function showLoader(txt) {
         onlyTxt = false;
     }
     $.mobile.loading('show', {  
-        text: txt, //加载器中显示的文字  
-        textVisible: true, //是否显示文字  
-        theme: 'b',        //加载器主题样式
-        textonly: onlyTxt,   //是否只显示文字  
-        html: ""           //要显示的html内容，如图片等  
+        text: txt,
+        textVisible: true, 
+        theme: 'b',
+        textonly: onlyTxt,  
+        html: ""
     });  
 }
 
@@ -235,9 +171,6 @@ function jsonToString(obj) {
 
 function setTitle(title) {
     console.log("setTitle："+title);
-    // if (window.android != undefined) {
-    //     window.android.setPageTitle(title);
-    // }
     $(document).attr("title",title);
 }
 
