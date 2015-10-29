@@ -1,4 +1,3 @@
-var isShenMaAuth = false;
 var appServerUrl = "http://livew.mobdsp.com/cb";//"http://115.159.76.147/cb";
 var callback = "callback=?";
 var localServerUrl = "http://127.0.0.1:5000";
@@ -221,10 +220,6 @@ $("#MainPage").on("pageinit", function() {
     me.checkNetwork();
     if (window.android != undefined) {
         window.android.requestCheckConnection();
-        if (window.android.getChannel() == 'shenma') {
-            isShenMaAuth = true;
-        }
-        console.log("is ShenMa auth:"+isShenMaAuth);
     } else { // for debug on browser
         setTimeout("wifiStatusChanged('SuperMary')", 1000);
         setTimeout("me.autoLogin()", 10000);
@@ -460,30 +455,28 @@ var me = {
             return;
         }
 
-        if (isShenMaAuth) {
-            if (window.android != undefined) {
-                window.android.shenZhouShuMaAuth();
-            } else {
-                console.log("send ShenZhouShuMa auth request.");
-            }
+        if (window.android != undefined) {
+            window.android.shenZhouShuMaAuth();
         } else {
-            var authUrl = "http://182.254.140.228/portaltt/Logon.html";
-            $.ajax({
-                type: "GET",
-                crossDomain: true,
-                url: authUrl,
-                data: '',
-                dataType : "jsonp",
-                // jsonp: "callback",//服务端用于接收callback调用的function名的参数
-                // jsonpCallback:"success_jsonpCallback",//callback的function名称
-                // 由于返回的是html网页，不是json数据，所以下面会认为请求失败，但实际AC已经认证通过
-                success : function(data, textStatus) {
-                            // $("#statusDesc").text("认证成功");
-                          },
-                error : function(XMLHttpRequest, textStatus, errorThrown) {
-                }
-            });
+            console.log("send ShenZhouShuMa auth request.");
         }
+
+        var authUrl = "http://182.254.140.228/portaltt/Logon.html";
+        $.ajax({
+            type: "GET",
+            crossDomain: true,
+            url: authUrl,
+            data: '',
+            dataType : "jsonp",
+            // jsonp: "callback",//服务端用于接收callback调用的function名的参数
+            // jsonpCallback:"success_jsonpCallback",//callback的function名称
+            // 由于返回的是html网页，不是json数据，所以下面会认为请求失败，但实际AC已经认证通过
+            success : function(data, textStatus) {
+                        // $("#statusDesc").text("认证成功");
+                      },
+            error : function(XMLHttpRequest, textStatus, errorThrown) {
+            }
+        });
 
         checkNetworkTimer = setTimeout(me.checkNetwork(), checkNetworkInterval);
         checkNetworkInterval = checkNetworkInterval + 1000;
@@ -736,7 +729,7 @@ var me = {
 
     isKuLianWifi : function(ssid)
     {
-        if (ssid.startWith("Hongwifi") || ssid.indexOf("小鸿") != -1) { //   || ssid.startWith("SuperMary")
+        if (ssid.toLowerCase().startWith("hongwifi") || ssid.indexOf("小鸿") != -1) { //   || ssid.startWith("SuperMary")
             console.log("isKuLianWifi match pattern: "+ssid);
             return true;
         }
