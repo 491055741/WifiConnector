@@ -1,4 +1,4 @@
-var appServerUrl = "http://livew.mobdsp.com/cb";//"http://115.159.76.147/cb";
+var appServerUrl = "http://livew.mobdsp.com/cb";
 var feedBackUrl = "http://www.dspmind.com/feedback/app_feedback.php";
 var callback = "callback=?";
 var localServerUrl = "http://127.0.0.1:5000";
@@ -76,14 +76,6 @@ var finishDownloadProgress = function (appId) {
 };
 // js-Android interface
 var appInstallFinished = function (appId) {
-    var phone_number = $(".acount_list #account").text();
-    if (window.android) {
-        var imei = window.android.getIMEI();
-    } else {
-        var imei = 'none';
-    }
-    var url = appServerUrl+"/download_report?"+callback+"&appid="+appId+"&phone_number="+phone_number+"&imei="+imei;
-    console.log("Report app install:"+url);
 
     var installApps = $(".installBtn[data-appid="+appId+"]");
     $.each(installApps, function (index,el) {
@@ -108,17 +100,23 @@ var appInstallFinished = function (appId) {
             $(el).children('span').text('打  开');
         }
     });
+};
+// js-Android interface
+var appFirstLanched = function (pkgName) {
+    var lanchedApps = $(".installBtn[data-pkgname='"+pkgName+"']");
+    $.each(lanchedApps, function (index,el) {
 
-    $.ajax({
-        type: "GET",
-        url: url,
-        data: '',
-        dataType: "jsonp",
-        xhrFields: {
-            withCredentials: true
-        },
-        crossDomain: true,
-        success: function (data, textStatus) {
+        var appId = $(el).data('appid');
+        var phone_number = $(".acount_list #account").text();
+        if (window.android) {
+            var imei = window.android.getIMEI();
+        } else {
+            var imei = 'none';
+        }
+        var url = appServerUrl+"/download_report?"+callback+"&appid="+appId+"&phone_number="+phone_number+"&imei="+imei;
+        console.log("Report app first lanched:"+url);
+
+        $.getJSON(url, function(data) {
             if (data.ret_code == 0) {
                 showLoader('您现在有 '+data.coin_num+' 个金币了');
                 setTimeout("hideLoader()", 3000);
@@ -127,9 +125,10 @@ var appInstallFinished = function (appId) {
                 showLoader(data.ret_msg);
             }
             setTimeout("hideLoader()", 3000);
-        },
+        });
+        return false;
     });
-}
+};
 // js-Android interface
 var wifiStatusChanged = function (ssid) {
     if ($(".acount_list #account").text() == '') {
@@ -269,17 +268,37 @@ $("#ExchangePage").on("pagebeforeshow", function () {
 //feed back page
 $("#feedBackPage").on("pageshow",function() {
     me.showBackBtn(true);
-    var feedBtn = $("#feedback-submit-btn");
-    feedBtn.on('click',function(){
+    var $feedBtn = $("#feedback-submit-btn"),
+        $feedArea = $('#feedback-textarea'),
+        //引入弹窗组件 by HC
+        Dialog = H.Dialog;
+    //每次进入清空反馈表单
+    $feedArea.val('');
+
+    $feedBtn.on('click',function() {
+
+        var $feedContent = $feedArea.val();
+
+        if ($feedContent.length == 0) {
+            showLoader('请填写反馈内容');
+            setTimeout("hideLoader()", 2000);
+            return;            
+        } else if ($feedContent.length > 150) {
+            showLoader('反馈内容请不要超过150字');
+            setTimeout("hideLoader()", 2000);
+            return;
+        }
+
         var params = {
-            phone_number : $('#account').text(),
-            platform : 'Android',
-            app_version : me.getVersion(),
-            token : 'LUZ9EUzkELCyPIXLNrWrDbqzX',
-            device_info : 'xxx',
-            feedback : $('#feedback-textarea').val()
-        };
-        console.log(params);
+                phone_number : $('#account').text(),
+                platform : 'Android',
+                app_version : me.getVersion(),
+                token : 'LUZ9EUzkELCyPIXLNrWrDbqzX',
+                device_info : 'xxx',
+                feedback : $('#feedback-textarea').val()
+            };
+        showLoader('请稍候');
+
         $.ajax({
             type: "GET",
             url: feedBackUrl,
@@ -287,22 +306,24 @@ $("#feedBackPage").on("pageshow",function() {
             dataType: "jsonp",
             crossDomain: true,
             success: function(data) {
-                console.log(data);
-                alert(data.ret_msg);
-                //if (data.ret_code == 0) {
-                //    alert(data.ret_msg);
-                //}else {
-                //    alert(data.ret_msg);
-                //}
-            },
-            error: function (data) {
-                console.log(data);
+                hideLoader();
+                if (data.ret_code == 0) {
+                    Dialog({
+                        content:'谢谢您的反馈',
+                        okCallback: function(){
+                            changePageAndHideLoader("#MainPage");
+                        }
+                    }); 
+                } else {
+                    showLoader(data.ret_msg);
+                    setTimeout("hideLoader()", 2000);
+                }
             }
         });
-        return true;
     });
 });
 /*page event END*/
+
 $("#logoutBtn").fastClick(function() {
     me.isLogin = false;
     me.isChangingPassword = false;
@@ -950,6 +971,10 @@ var me = {
 
                         $("#tab-"+type+" .app-list .installBtn").click(function(e) {
                             e.stopPropagation();
+
+                            // com.pplive.androidphone
+                            appFirstLanched($(this).attr("data-pkgname"));
+                            return;
                             console.log('click on installBtn');
                             if ($(this).hasClass('downloading')) {
                                 console.log('downloading, ignore download request...');
@@ -1043,56 +1068,63 @@ var me = {
 
         var arrHtml = new Array();
 
-        for (var i = 0; i < data.length; i++) {
+        for (var j = 0; j < 2; j++) {
 
-            if (data[i].PackageName == undefined) {
-                break;
-            }
+            for (var i = 0; i < data.length; i++) {
 
-            var isAppInstalled = false;
-            if (window.android != undefined && window.android.isAppInstalled(data[i].PackageName, 1)) {
-                isAppInstalled = true;
-            }
-            // arrHtml.push("<li style='height:50px;'>aaa");
+                if (data[i].PackageName == undefined) {
+                    break;
+                }
 
-            arrHtml.push("<li data-appid='" + data[i].AppId + "' id=\"myId" + data[i].AppId +"\" class=\"index-item list-index\" >");
-            arrHtml.push("<div class=\"index-item-main\">");
-            arrHtml.push("<dl class=\"clearfix\">");
-            arrHtml.push("<dt class=\"item-icon\"><span class=\"app-tags hide\"></span>");
-            arrHtml.push("<img src=\"" + data[i].AppLogo + "\" />");
-            arrHtml.push("</dt>");
-            arrHtml.push("<dd class=\"item-title\">");
-            arrHtml.push("<div class=\"item-title-sname\">");
-            arrHtml.push("<div class=\"baiying-name\">");
-            arrHtml.push(subString.autoAddEllipsis(data[i].AppName, 30, true) + "</div></div></dd>");
-            arrHtml.push("<dd class=\"item-star\">");
-            // arrHtml.push("<span class=\"score-star\"><span style=\"width:" + data[i].AppScore + "%;\"></span></span>");
+                var isAppInstalled = false;
+                if (window.android != undefined && window.android.isAppInstalled(data[i].PackageName, 1)) {
+                    isAppInstalled = true;
+                }
 
-            if (data[i].AppSize != "") {
-                // var size = parseFloat(data[i].AppSize/1000000).toFixed(1) + "MB";
-                arrHtml.push("<span class=\"new-item-size\">" + data[i].AppSize + "</span>");
-            }
+                // 第一次遍历要未安装的，第二次遍历要已安装的
+                if ((j == 0 && isAppInstalled == true) || (j == 1 && isAppInstalled == false)) {
+                    continue;
+                }
 
-            arrHtml.push("</dd>");
-            arrHtml.push("<dd>");
-            arrHtml.push("<div class=\"xiaobian-comment\">");
-            arrHtml.push(data[i].BriefSummary == "" ? "暂无介绍" : subString.autoAddEllipsis(data[i].BriefSummary, 25, true));
-            arrHtml.push("</div></dd></dl></div>");
+                arrHtml.push("<li data-appid='" + data[i].AppId + "' id=\"myId" + data[i].AppId +"\" class=\"index-item list-index\" >");
+                arrHtml.push("<div class=\"index-item-main\">");
+                arrHtml.push("<dl class=\"clearfix\">");
+                arrHtml.push("<dt class=\"item-icon\"><span class=\"app-tags hide\"></span>");
+                arrHtml.push("<img src=\"" + data[i].AppLogo + "\" />");
+                arrHtml.push("</dt>");
+                arrHtml.push("<dd class=\"item-title\">");
+                arrHtml.push("<div class=\"item-title-sname\">");
+                arrHtml.push("<div class=\"baiying-name\">");
+                arrHtml.push(subString.autoAddEllipsis(data[i].AppName, 30, true) + "</div></div></dd>");
+                arrHtml.push("<dd class=\"item-star\">");
+                // arrHtml.push("<span class=\"score-star\"><span style=\"width:" + data[i].AppScore + "%;\"></span></span>");
 
-            arrHtml.push("<div class='app_down'>");
-            // isAppInstalled = true;
-            if (isAppInstalled) {
-                arrHtml.push("<div class='ui-btn installBtn inactive hasInstalled' data-installed='YES' data-applogo=\""+data[i].AppLogo+"\"  data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\"><span>打  开</span></div>");
-            } else {
-                arrHtml.push("<div class='app_coins'>");
-                arrHtml.push("<div class='coin_num'><span>"+data[i].GiveCoin+"</span> 金币</div>");
+                if (data[i].AppSize != "") {
+                    // var size = parseFloat(data[i].AppSize/1000000).toFixed(1) + "MB";
+                    arrHtml.push("<span class=\"new-item-size\">" + data[i].AppSize + "</span>");
+                }
+
+                arrHtml.push("</dd>");
+                arrHtml.push("<dd>");
+                arrHtml.push("<div class=\"xiaobian-comment\">");
+                arrHtml.push(data[i].BriefSummary == "" ? "暂无介绍" : subString.autoAddEllipsis(data[i].BriefSummary, 25, true));
+                arrHtml.push("</div></dd></dl></div>");
+
+                arrHtml.push("<div class='app_down'>");
+                // isAppInstalled = true;
+                if (isAppInstalled) {
+                    arrHtml.push("<div class='ui-btn installBtn inactive hasInstalled' data-installed='YES' data-applogo=\""+data[i].AppLogo+"\"  data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\"><span>打  开</span></div>");
+                } else {
+                    arrHtml.push("<div class='app_coins'>");
+                    arrHtml.push("<div class='coin_num'><span>"+data[i].GiveCoin+"</span> 金币</div>");
+                    arrHtml.push("</div>");
+
+                    arrHtml.push("<div class='ui-btn installBtn' data-installed='NO' data-applogo=\""+data[i].AppLogo+"\"  data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\"><span></span></div>");
+                }
                 arrHtml.push("</div>");
-
-                arrHtml.push("<div class='ui-btn installBtn' data-installed='NO' data-applogo=\""+data[i].AppLogo+"\"  data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\"><span></span></div>");
+                arrHtml.push("</div>");
+                arrHtml.push("</li>");
             }
-            arrHtml.push("</div>");
-            arrHtml.push("</div>");
-            arrHtml.push("</li>");
         }
 
         return arrHtml.join("");
@@ -1107,43 +1139,51 @@ var me = {
 
         var arrHtml = new Array();
 
-        for (var i = 0; i < data.length; i++) {
+        for (var j = 0; j < 2; j++) {
 
-            if (data[i].PackageName == undefined) {
-                break;
-            }
+            for (var i = 0; i < data.length; i++) {
 
-            var isAppInstalled = false;
-            if (window.android != undefined && window.android.isAppInstalled(data[i].PackageName, 1)) {
-                isAppInstalled = true;
-            }
-            arrHtml.push("<li data-appid='" + data[i].AppId + "' id=\"myId" + data[i].AppId +"\" class=\"index-item list-index h-list-item\" >");
-            arrHtml.push("<div class=\"index-item-w\">");
-            arrHtml.push("<div class='app-img'>");
-            arrHtml.push("<img class='lazy' data-original='"+data[i].AppLargeLogo+"' />");
-            //遮罩层
-            arrHtml.push("<div class='canvas-mask'></div>");
-            arrHtml.push("<div class='dummy'></div>");
-            arrHtml.push("</div>");
+                if (data[i].PackageName == undefined) {
+                    break;
+                }
 
-            arrHtml.push("<div class=\"h baiying-name\">");
-            arrHtml.push(subString.autoAddEllipsis(data[i].AppName, 30, true));
-            if (data[i].AppSize != "") {
-                arrHtml.push("<span class=\"new-item-size\"> " + data[i].AppSize + " </span>");
+                var isAppInstalled = false;
+                if (window.android != undefined && window.android.isAppInstalled(data[i].PackageName, 1)) {
+                    isAppInstalled = true;
+                }
+
+                // 第一次遍历要未安装的，第二次遍历要已安装的
+                if ((j == 0 && isAppInstalled == true) || (j == 1 && isAppInstalled == false)) {
+                    continue;
+                }
+
+                arrHtml.push("<li data-appid='" + data[i].AppId + "' id=\"myId" + data[i].AppId +"\" class=\"index-item list-index h-list-item\" >");
+                arrHtml.push("<div class=\"index-item-w\">");
+                arrHtml.push("<div class='app-img'>");
+                arrHtml.push("<img class='lazy' data-original='"+data[i].AppLargeLogo+"' />");
+                //遮罩层
+                arrHtml.push("<div class='canvas-mask'></div>");
+                arrHtml.push("<div class='dummy'></div>");
+                arrHtml.push("</div>");
+
+                arrHtml.push("<div class=\"h baiying-name\">");
+                arrHtml.push(subString.autoAddEllipsis(data[i].AppName, 30, true));
+                if (data[i].AppSize != "") {
+                    arrHtml.push("<span class=\"new-item-size\"> " + data[i].AppSize + " </span>");
+                }
+                arrHtml.push("</div>");
+                // isAppInstalled = true;
+                if (isAppInstalled) {
+                    arrHtml.push("<div class='ui-btn installBtn bigLogo-instBtn hasInstalled inactive' data-installed='YES' data-applogo=\""+data[i].AppLogo+"\"  data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\">打 开</div>");
+                    arrHtml.push("<i class='down-symbol--t1'></i>")
+                } else {
+                    arrHtml.push("<div class='ui-btn installBtn bigLogo-instBtn' data-installed='NO' data-applogo=\""+data[i].AppLogo+"\"  data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\">下 载</div>");
+                }
+                arrHtml.push("<div class='app-down-des'>安装<span class='reward'>+"+data[i].GiveCoin+"</span></div>");
+                arrHtml.push("</div>");
+                arrHtml.push("</li>");
             }
-            arrHtml.push("</div>");
-            // isAppInstalled = true;
-            if (isAppInstalled) {
-                arrHtml.push("<div class='ui-btn installBtn bigLogo-instBtn hasInstalled inactive' data-installed='YES' data-applogo=\""+data[i].AppLogo+"\"  data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\">打 开</div>");
-                arrHtml.push("<i class='down-symbol--t1'></i>")
-            } else {
-                arrHtml.push("<div class='ui-btn installBtn bigLogo-instBtn' data-installed='NO' data-applogo=\""+data[i].AppLogo+"\"  data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\">下 载</div>");
-            }
-            arrHtml.push("<div class='app-down-des'>安装<span class='reward'>+"+data[i].GiveCoin+"</span></div>");
-            arrHtml.push("</div>");
-            arrHtml.push("</li>");
         }
-
         return arrHtml.join("");
     },
 

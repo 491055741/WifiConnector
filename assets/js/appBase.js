@@ -5,17 +5,11 @@ $(document).ready(function(){
         window.location = url.substring(0, idx);
         return;
     }
-    init();
 });
 
 $.ajaxSetup ({
     cache: false
 });
-
-function init()
-{
-    applicationCacheHandeler();
-}
 
 $(document).bind("mobileinit", function() {
     $.ajaxSetup({
@@ -84,15 +78,6 @@ function isEmail(str)
         return true;
     }
     return false;
-}
-
-function makePostData(para)
-{
-    var para2 = commonPara();
-    for( var i in para2) {
-        para[i] = para2[i];
-    }
-    return para;
 }
 
 function dateDiff(date1Str, date2Str)

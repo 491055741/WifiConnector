@@ -180,7 +180,7 @@ li { list-style: none; }
 .questions-area textarea {
 
 }
-.feedBackPage .feedSub-btn {
+#feedback-submit-btn {
     margin: 0 5%;
     border-radius: 8px;
     letter-spacing: 30px;
@@ -188,5 +188,6 @@ li { list-style: none; }
     text-align: center;
     font-weight: normal;
     color: #fff;
-    background: #FF8800;
+    background-color: #FF8800;
+    text-shadow: 0 0 0;
 }

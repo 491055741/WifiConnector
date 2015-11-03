@@ -207,32 +207,48 @@ public class MainActivity extends AppCompatActivity {
 
 			String packageName = null;
 			if (intent.getAction().equals(Intent.ACTION_PACKAGE_ADDED)
-					|| intent.getAction()
-							.equals(Intent.ACTION_PACKAGE_REPLACED)) {
+					|| intent.getAction().equals(Intent.ACTION_PACKAGE_REPLACED)) {
 				packageName = intent.getData().getSchemeSpecificPart();
-			}
-
-			ApplicationInfo applicationInfo = null;
-			PackageManager packageManager = null;
-			try {
-				packageManager = context.getPackageManager();
-				applicationInfo = packageManager.getApplicationInfo(
-						packageName, 0);
-				String applicationName = (String) packageManager
-						.getApplicationLabel(applicationInfo);
-				Log.d(TAG, "installed [" + applicationName + "] pkg-name: "
-						+ applicationInfo.packageName);
-				String appId = mDownloadAppInfoHashMap
-						.get(applicationInfo.packageName);
-				if (appId != null) {
-					Toast.makeText(context, "安装成功: " + applicationName,
-							Toast.LENGTH_LONG).show();
-					webView.loadUrl("javascript: appInstallFinished(" + appId
-							+ ")");
-					mDownloadAppInfoHashMap.remove(applicationName);
+				ApplicationInfo applicationInfo = null;
+				PackageManager packageManager = null;
+				try {
+					packageManager = context.getPackageManager();
+					applicationInfo = packageManager.getApplicationInfo(packageName, 0);
+					String applicationName = (String) packageManager.getApplicationLabel(applicationInfo);
+					Log.d(TAG, "installed [" + applicationName + "] pkg-name: "	+ applicationInfo.packageName);
+					String appId = mDownloadAppInfoHashMap.get(applicationInfo.packageName);
+					if (appId != null) {
+						Toast.makeText(context, "安装成功: " + applicationName, Toast.LENGTH_LONG).show();
+						webView.loadUrl("javascript: appInstallFinished(" + appId + ")");
+						mDownloadAppInfoHashMap.remove(applicationName);
+					}
+				} catch (PackageManager.NameNotFoundException e) {
+					e.printStackTrace();
 				}
-			} catch (PackageManager.NameNotFoundException e) {
-				e.printStackTrace();
+			}
+		}
+	};
+
+	private BroadcastReceiver mAppLanchReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+			String packageName = null;
+			if (intent.getAction().equals(Intent.ACTION_PACKAGE_FIRST_LAUNCH)) {
+				packageName = intent.getData().getSchemeSpecificPart();
+
+				ApplicationInfo applicationInfo = null;
+				PackageManager packageManager = null;
+				try {
+					packageManager = context.getPackageManager();
+					applicationInfo = packageManager.getApplicationInfo(packageName, 0);
+					String applicationName = (String) packageManager.getApplicationLabel(applicationInfo);
+					Log.d(TAG, "Lanched [" + applicationName + "] pkg-name: "	+ applicationInfo.packageName);
+					Toast.makeText(context, "运行成功: " + applicationName, Toast.LENGTH_LONG).show();
+					webView.loadUrl("javascript: appFirstLanched('" + applicationInfo.packageName + "')");
+				} catch (PackageManager.NameNotFoundException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	};
@@ -385,6 +401,7 @@ public class MainActivity extends AppCompatActivity {
 
 		registerConnection();
 		registerAppInstall();
+		registerAppLanch();
 		
 		boolean open = wifiAdmin.openWifi();
 		Log.i(TAG, "wifi open:" + open);
@@ -404,16 +421,13 @@ public class MainActivity extends AppCompatActivity {
 		webSettings.setAllowFileAccess(true);
 		webSettings.setAppCacheEnabled(true);
 		webSettings.setDatabaseEnabled(true);
-		webSettings.setDatabasePath("/data/data/"
-				+ webView.getContext().getPackageName() + "/databases/");
+		webSettings.setDatabasePath("/data/data/" + webView.getContext().getPackageName() + "/databases/");
 		String ua = webSettings.getUserAgentString();
 		webSettings.setUserAgentString(ua + ";WIFICoolConnect;");
 
 		webView.setWebChromeClient(new WebChromeClient() {
 			public boolean onConsoleMessage(ConsoleMessage cm) {
-				Log.d("MyApplication",
-						cm.message() + " -- From line " + cm.lineNumber()
-								+ " of " + cm.sourceId());
+				Log.d("MyApplication", cm.message() + " -- From line " + cm.lineNumber() + " of " + cm.sourceId());
 				return true;
 			}
 
@@ -717,6 +731,13 @@ public class MainActivity extends AppCompatActivity {
 		filter.addAction(Intent.ACTION_PACKAGE_REPLACED);
 		filter.addDataScheme("package");
 		registerReceiver(mAppInstallReceiver, filter);
+	}
+
+	private void registerAppLanch() {
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(Intent.ACTION_PACKAGE_FIRST_LAUNCH);
+		filter.addDataScheme("package");
+		registerReceiver(mAppLanchReceiver, filter);
 	}
 
 	// @JavascriptInterface
