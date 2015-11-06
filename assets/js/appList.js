@@ -76,10 +76,30 @@ var finishDownloadProgress = function (appId) {
 };
 // js-Android interface
 var appInstallFinished = function (appId) {
+    // report
+    var appId = $(el).data('appid');
+    var phone_number = $(".acount_list #account").text();
+    if (window.android) {
+        var imei = window.android.getIMEI();
+    } else {
+        var imei = 'none';
+    }
+    var url = appServerUrl+"/download_report?"+callback+"&appid="+appId+"&phone_number="+phone_number+"&imei="+imei;
+    console.log("Report app downloaded:"+url);
 
+    $.getJSON(url, function(data) {
+        if (data.ret_code == 0) {
+            showLoader('您获得了 '+data.added_coin+' 个金币');
+            setTimeout("hideLoader()", 3000);
+            $("#coin").text(data.coin_num);
+        } else {
+            showLoader(data.ret_msg);
+        }
+        setTimeout("hideLoader()", 3000);
+    });
+    // update button status
     var installApps = $(".installBtn[data-appid="+appId+"]");
     $.each(installApps, function (index,el) {
-
         if ($(el).hasClass('bigLogo-instBtn')) { // 推荐中的
             //如果遮罩层存在就在遮罩层上获取对应的raobj对象
             $(el).siblings('.app-img').children('.canvas-mask').hide();
@@ -102,32 +122,37 @@ var appInstallFinished = function (appId) {
     });
 };
 // js-Android interface
-var appFirstLanched = function (pkgName) {
+var appLanched = function (pkgName) {
     var lanchedApps = $(".installBtn[data-pkgname='"+pkgName+"']");
-    $.each(lanchedApps, function (index,el) {
+    if (lanchedApps.length > 0) {
+        var appId = $(lanchedApps[0]).data('appid');
+    }
 
-        var appId = $(el).data('appid');
-        var phone_number = $(".acount_list #account").text();
-        if (window.android) {
-            var imei = window.android.getIMEI();
-        } else {
-            var imei = 'none';
-        }
-        var url = appServerUrl+"/download_report?"+callback+"&appid="+appId+"&phone_number="+phone_number+"&imei="+imei;
-        console.log("Report app first lanched:"+url);
+    var phone_number = $(".acount_list #account").text();
+    if (window.android) {
+        var imei = window.android.getIMEI();
+    } else {
+        var imei = 'none';
+    }
+    var url = appServerUrl+"/applanch_report?"+callback+"&phone_number="+phone_number+"&imei="+imei;
+    if (appId == undefined) {
+        url = url+"&pkgname="+pkgName;
+    } else {
+        url = url+"&appid="+appId;
+    }
+    console.log("Report app lanched:"+url);
 
-        $.getJSON(url, function(data) {
-            if (data.ret_code == 0) {
-                showLoader('您现在有 '+data.coin_num+' 个金币了');
-                setTimeout("hideLoader()", 3000);
-                $("#coin").text(data.coin_num);
-            } else {
-                showLoader(data.ret_msg);
-            }
+    $.getJSON(url, function(data) {
+        if (data.ret_code == 0) {
+            showLoader('您获得了 '+data.added_coin+' 个金币'); // 现在有 '+data.coin_num+' 个金币了
             setTimeout("hideLoader()", 3000);
-        });
-        return false;
+            $("#coin").text(data.coin_num);
+        } else {
+            showLoader(data.ret_msg);
+        }
+        setTimeout("hideLoader()", 3000);
     });
+
 };
 // js-Android interface
 var wifiStatusChanged = function (ssid) {
@@ -289,12 +314,17 @@ $("#feedBackPage").on("pageshow",function() {
             return;
         }
 
+        if (window.android) {
+            var deviceInfo = window.android.getMobileInfo();
+        } else {
+            var deviceInfo = '';
+        }
         var params = {
                 phone_number : $('#account').text(),
                 platform : 'Android',
                 app_version : me.getVersion(),
                 token : 'LUZ9EUzkELCyPIXLNrWrDbqzX',
-                device_info : 'xxx',
+                device_info : deviceInfo,
                 feedback : $('#feedback-textarea').val()
             };
         showLoader('请稍候');
@@ -972,9 +1002,9 @@ var me = {
                         $("#tab-"+type+" .app-list .installBtn").click(function(e) {
                             e.stopPropagation();
 
-                            // com.pplive.androidphone
-                            appFirstLanched($(this).attr("data-pkgname"));
-                            return;
+                            // for test lanch report
+                            // appLanched($(this).attr("data-pkgname")+".a");
+                            // return;
                             console.log('click on installBtn');
                             if ($(this).hasClass('downloading')) {
                                 console.log('downloading, ignore download request...');
@@ -1820,11 +1850,18 @@ var me = {
         if (window.android == undefined || phone_number == undefined) {
             return;
         }
-        // data内容，utf8，json编码， 
-        // mm，手机mac 
-        // wm，wifimac 
-        // mn，手机号码 
+        // data内容，utf8，json编码
+        // mm，手机mac
+        // wm，wifimac
+        // mn，手机号码
         // tm，时间戳
+
+        // 20151105 add
+        // ver, app版本号
+        // imei
+        // imsi
+        // loc 经纬度
+        // mi, mobile info
         var macAddr = window.android.getMacAddress();
         var BSSID = window.android.getBSSID();
         if (macAddr == undefined || BSSID == undefined) {
@@ -1832,12 +1869,25 @@ var me = {
             return;
         }
         var time = parseInt(new Date().getTime()/1000);
-        var data = {"mm":macAddr, "mn":phone_number, "tm":time, "wm":BSSID};
-        var url = "http://115.159.89.152:1220/?name=appmm&opt=put&data="+jsonToString(data)+"&auth=hongkulian&"+callback;
+        var data = {
+            "mm":macAddr,
+            "mn":phone_number,
+            "tm":time,
+            "wm":BSSID,
+            "opt":"put",
+            "name":"appmm",
+            "auth":"hongkulian",
+            "mi":window.android.getMobileInfo(),
+            "imei":window.android.getIMEI(),
+            "imsi":window.android.getIMSI(),
+            "ver": version
+        };
+        var url = "http://115.159.89.152:1220";
         console.log(url);
         $.ajax({
             type: "GET",
             url: url,
+            data : data,
             dataType : "jsonp",
             jsonp: "callback",
             success : function(data) {},

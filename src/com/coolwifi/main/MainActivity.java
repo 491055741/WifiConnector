@@ -245,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
 					String applicationName = (String) packageManager.getApplicationLabel(applicationInfo);
 					Log.d(TAG, "Lanched [" + applicationName + "] pkg-name: "	+ applicationInfo.packageName);
 					Toast.makeText(context, "运行成功: " + applicationName, Toast.LENGTH_LONG).show();
-					webView.loadUrl("javascript: appFirstLanched('" + applicationInfo.packageName + "')");
+					webView.loadUrl("javascript: appLanched('" + applicationInfo.packageName + "')");
 				} catch (PackageManager.NameNotFoundException e) {
 					e.printStackTrace();
 				}
@@ -677,6 +677,16 @@ public class MainActivity extends AppCompatActivity {
 		JSONObject jsonObject3 = new JSONObject();
 		jsonObject3.put("wifilist", jsonArray);
 		return jsonObject3.toString();
+	}
+	// @JavascriptInterface
+	public String getMobileInfo() {
+		return "model:"+android.os.Build.MODEL + ",manufacturer:" + android.os.Build.MANUFACTURER + ",os:" + android.os.Build.VERSION.RELEASE;
+	}
+	// @JavascriptInterface
+	public String getIMSI() {
+		TelephonyManager telManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+		String imsi = telManager.getSubscriberId();
+		return imsi;
 	}
 
 	private String wifiEncryptType(String capabilities) {
