@@ -77,7 +77,6 @@ var finishDownloadProgress = function (appId) {
 // js-Android interface
 var appInstallFinished = function (appId) {
     // report
-    var appId = $(el).data('appid');
     var phone_number = $(".acount_list #account").text();
     if (window.android) {
         var imei = window.android.getIMEI();
@@ -147,12 +146,13 @@ var appLanched = function (pkgName) {
             showLoader('您获得了 '+data.added_coin+' 个金币'); // 现在有 '+data.coin_num+' 个金币了
             setTimeout("hideLoader()", 3000);
             $("#coin").text(data.coin_num);
+        } else if (data.ret_code == 3001) {  // not first time lanch
+            // do nothing
         } else {
             showLoader(data.ret_msg);
         }
         setTimeout("hideLoader()", 3000);
     });
-
 };
 // js-Android interface
 var wifiStatusChanged = function (ssid) {
@@ -291,16 +291,13 @@ $("#ExchangePage").on("pagebeforeshow", function () {
 });
 
 //feed back page
-$("#feedBackPage").on("pageshow",function() {
-    me.showBackBtn(true);
+$("#feedBackPage").on("pageinit",function() {
     var $feedBtn = $("#feedback-submit-btn"),
         $feedArea = $('#feedback-textarea'),
         //引入弹窗组件 by HC
         Dialog = H.Dialog;
-    //每次进入清空反馈表单
-    $feedArea.val('');
 
-    $feedBtn.on('click',function() {
+    $feedBtn.fastClick(function() {
 
         var $feedContent = $feedArea.val();
 
@@ -328,7 +325,7 @@ $("#feedBackPage").on("pageshow",function() {
                 feedback : $('#feedback-textarea').val()
             };
         showLoader('请稍候');
-
+        console.log("feedback:"+feedBackUrl);
         $.ajax({
             type: "GET",
             url: feedBackUrl,
@@ -351,6 +348,11 @@ $("#feedBackPage").on("pageshow",function() {
             }
         });
     });
+});
+
+$("#feedBackPage").on("pageshow",function() {
+    me.showBackBtn(true);
+    $('#feedback-textarea').val('');
 });
 /*page event END*/
 
@@ -409,10 +411,6 @@ $(".qqBtn").fastClick(function() {
 });
 
 $(".feedbackBtn").fastClick(function() {
-    console.log("feedback");
-    // if (window.android != undefined) {
-    //     window.android.feedback();
-    // }else 
     if (!me.isLogin) {
         showLoader("还未登录");
         setTimeout("hideLoader()", 2000);
@@ -597,6 +595,7 @@ var me = {
                 html += "<div class='modalViewText'>今日消耗金币</div>";
                 html += "<div class='modalViewBigText'>"+data.dec_coin_num+"</div>"
                 html += "<div class='modalViewText'>您还有"+data.coin_num+"金币</div>";
+                html += "<div class='modalViewText'>可以通过签到、下载并运行APP来获得金币</div>";
                 $("#dialog_message").append(html);
                 me.showTab(0);
                 $("#dialog").jqmShow();
@@ -609,6 +608,7 @@ var me = {
     },
 
     signIn : function() {
+
         console.log("sign in.");
         if (!me.isLogin) {
             return;
@@ -955,7 +955,12 @@ var me = {
     // type : 1 ~ 3
     requestAppTypePage : function(type, page)
     {
-        var url = appServerUrl+"/applist_page?apptype="+type+"&page="+page+"&"+callback;
+        if (me.isLogin) {
+            var phone_number = $(".acount_list #account").text();
+        } else {
+            var phone_number = getItem('userName');
+        }
+        var url = appServerUrl+"/applist_page?apptype="+type+"&page="+page+"&phone_number="+phone_number+"&"+callback;
         console.log("requestAppList:" + url);
 
         $("#tab-"+type+" .refresh-app-list").hide();
@@ -1002,9 +1007,6 @@ var me = {
                         $("#tab-"+type+" .app-list .installBtn").click(function(e) {
                             e.stopPropagation();
 
-                            // for test lanch report
-                            // appLanched($(this).attr("data-pkgname")+".a");
-                            // return;
                             console.log('click on installBtn');
                             if ($(this).hasClass('downloading')) {
                                 console.log('downloading, ignore download request...');
@@ -1265,6 +1267,7 @@ var me = {
                     setTimeout("hideLoader()", 2000);
                     console.log('start app '+$(this).data("pkgname"));
                     window.android.startAPP($(this).data("pkgname"));
+                    appLanched($(this).data("pkgname"));
                 } else {
                     showLoader("只能在手机中打开");
                     setTimeout("hideLoader()", 2000);

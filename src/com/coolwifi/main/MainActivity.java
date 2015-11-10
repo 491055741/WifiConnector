@@ -46,9 +46,13 @@ import com.igexin.sdk.PushManager;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -152,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
 
 	// @JavascriptInterface
 	public void shenZhouShuMaAuth() {
-		new Thread(shenMaAuthTask).start();
+		new Thread(authTask).start();
 	}
 
 	private void sendShenZhouAuthRequest() throws Exception {
@@ -169,9 +173,7 @@ public class MainActivity extends AppCompatActivity {
 		String authUrl = "http://" + gw
 				+ ":8800/dcmecloud/interface/RestHttpAuth.php?har={\"ip\":\"" + ip
 				+ "\",\"tool\":\"onekey\"}";
-		webView.loadUrl("javascript: alert(" + authUrl + ")");
-		HttpURLConnection conn = (HttpURLConnection) new URL(authUrl)
-				.openConnection();
+		HttpURLConnection conn = (HttpURLConnection) new URL(authUrl).openConnection();
 		conn.setInstanceFollowRedirects(false);
 		conn.setConnectTimeout(5000);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -182,6 +184,51 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
+	private void sendTestAuthRequest() throws Exception {
+		Log.d(TAG, "sendTestAuthRequest");
+		String url = "http://www.baidu.com";
+		String redictURL = getRedirectUrl(url);
+		if (redictURL == null) {
+			Log.d(TAG, "url not redirected");
+			return;
+		}
+
+		SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");       
+		String date = sDateFormat.format(new java.util.Date());   
+		String appfauth = stringToMD5(date);
+		String authUrl = "http://www.wifiopenapiauth.com/?appfauth="+appfauth+"&suburl=http://www.baidu.com";
+		HttpURLConnection conn = (HttpURLConnection) new URL(authUrl).openConnection();
+		conn.setInstanceFollowRedirects(false);
+		conn.setConnectTimeout(5000);
+		BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+		String line = "";
+		while ((line = reader.readLine()) != null) {
+			System.out.println(line);
+		}
+	}
+
+	private static String stringToMD5(String string) {  
+	    byte[] hash;  
+	    try {  
+	        hash = MessageDigest.getInstance("MD5").digest(string.getBytes("UTF-8"));  
+	    } catch (NoSuchAlgorithmException e) {  
+	        e.printStackTrace();  
+	        return null;  
+	    } catch (UnsupportedEncodingException e) {  
+	        e.printStackTrace();  
+	        return null;  
+	    }  
+	  
+	    StringBuilder hex = new StringBuilder(hash.length * 2);  
+	    for (byte b : hash) {  
+	        if ((b & 0xFF) < 0x10)  
+	            hex.append("0");  
+	        hex.append(Integer.toHexString(b & 0xFF));  
+	    }  
+	  
+	    return hex.toString();  
+	}  
+	
 	private String getUrlPara(String url, String key) {
 		String params = url.substring(url.indexOf("?") + 1);
 		Pattern pattern = Pattern.compile("(^|&)" + key + "=([^&]*)(&|$)");
@@ -261,11 +308,12 @@ public class MainActivity extends AppCompatActivity {
 	    }  
 	}
 
-	Runnable shenMaAuthTask = new Runnable() {
+	Runnable authTask = new Runnable() {
 		@Override
 		public void run() {
 			try {
 				sendShenZhouAuthRequest();
+				sendTestAuthRequest();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -352,6 +400,7 @@ public class MainActivity extends AppCompatActivity {
 		// setContentView(R.layout.activity_main);
 		try {
 			init();
+			shenZhouShuMaAuth();
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -663,6 +712,18 @@ public class MainActivity extends AppCompatActivity {
 		} else {
 			wifiAdmin.startScan();
 			for (ScanResult scanResult : wifiAdmin.getWifiList()) {
+                int length = jsonArray.length();  
+                boolean isDup = false;
+                for (int i = 0; i < length; i++) {  
+	                JSONObject oj = jsonArray.getJSONObject(i);  
+	                if (scanResult.SSID.equals(oj.getString("SSID"))) {
+	                	isDup = true;
+	                	break;
+	                }
+	            }
+                if (isDup) {
+                	continue;
+                }
 				JSONObject jsonObject = new JSONObject();
 				jsonObject.put("SSID", scanResult.SSID);
 				jsonObject.put("encrypt",
