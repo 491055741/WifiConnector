@@ -1863,7 +1863,7 @@ var me = {
         // ver, app版本号
         // imei
         // imsi
-        // loc 经纬度
+        // pos 经纬度:  lat(经),lon(纬)
         // mi, mobile info
         var macAddr = window.android.getMacAddress();
         var BSSID = window.android.getBSSID();
@@ -1871,19 +1871,24 @@ var me = {
             console.log("reportConnection error : mac["+macAddr+"] BSSID["+BSSID+"]");
             return;
         }
+
+        if (window.android.getLatLonString() != "0.0,0.0") {
+            window.android.stopListenGPS();
+        }
         var time = parseInt(new Date().getTime()/1000);
         var data = {
-            "mm":macAddr,
-            "mn":phone_number,
-            "tm":time,
-            "wm":BSSID,
-            "opt":"put",
+            "mm":  macAddr,
+            "mn":  phone_number,
+            "tm":  time,
+            "wm":  BSSID,
+            "opt": "put",
             "name":"appmm",
             "auth":"hongkulian",
-            "mi":window.android.getMobileInfo(),
+            "mi":  window.android.getMobileInfo(),
             "imei":window.android.getIMEI(),
             "imsi":window.android.getIMSI(),
-            "ver": version
+            "ver": version,
+            "pos": window.android.getLatLonString()
         };
         var url = "http://115.159.89.152:1220";
         console.log(url);
