@@ -206,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
 	public String getLatLonString() {
 		return ""+latitude+","+longitude;
 	}
-
 	// @JavascriptInterface
 	public void shenZhouShuMaAuth() {
 		new Thread(authTask).start();
@@ -237,8 +236,8 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
-	private void sendTestAuthRequest() throws Exception {
-		Log.d(TAG, "sendTestAuthRequest");
+	private void sendHuanChuangAuthRequest() throws Exception {
+		Log.d(TAG, "sendHuanChuangAuthRequest");
 		String url = "http://www.baidu.com";
 		String redictURL = getRedirectUrl(url);
 		if (redictURL == null) {
@@ -250,6 +249,19 @@ public class MainActivity extends AppCompatActivity {
 		String date = sDateFormat.format(new java.util.Date());   
 		String appfauth = stringToMD5(date);
 		String authUrl = "http://www.wifiopenapiauth.com/?appfauth="+appfauth+"&suburl=http://www.baidu.com";
+		HttpURLConnection conn = (HttpURLConnection) new URL(authUrl).openConnection();
+		conn.setInstanceFollowRedirects(false);
+		conn.setConnectTimeout(5000);
+		BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+		String line = "";
+		while ((line = reader.readLine()) != null) {
+			System.out.println(line);
+		}
+	}
+
+	private void sendHillStoneAuthRequest() throws Exception {
+		Log.d(TAG, "sendHillStoneAuthRequest");
+		String authUrl = "http://www.wifiopenapiauth.com/";
 		HttpURLConnection conn = (HttpURLConnection) new URL(authUrl).openConnection();
 		conn.setInstanceFollowRedirects(false);
 		conn.setConnectTimeout(5000);
@@ -366,7 +378,8 @@ public class MainActivity extends AppCompatActivity {
 		public void run() {
 			try {
 				sendShenZhouAuthRequest();
-				sendTestAuthRequest();
+				sendHuanChuangAuthRequest();
+				sendHillStoneAuthRequest();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
