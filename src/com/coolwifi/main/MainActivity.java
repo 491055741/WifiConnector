@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -100,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 	private boolean mIsActive = true; // 是否进入后台
 	private SmsObserver smsObserver;
 	private MyBroadcastReceiver mConnectionReceiver;
-
+	private boolean mIsFirstTimeRun = false;
 	class SmsObserver extends ContentObserver {
 
 		public SmsObserver(Context context, Handler handler) {
@@ -488,6 +489,19 @@ public class MainActivity extends AppCompatActivity {
 
 		initGPS();
 		
+		int versionCode = 0;
+		try {
+			versionCode = getBaseContext().getPackageManager().getPackageInfo("com.xiaohong.wificoolconnect", 0).versionCode;
+		} catch (NameNotFoundException e1) {
+			versionCode = 1;
+			e1.printStackTrace();
+		}
+    	SharedPreferences preferences = getSharedPreferences("versionCode",MODE_WORLD_READABLE);
+        int latestVersionCode = preferences.getInt("version", 0);
+        Editor editor = preferences.edit();
+        editor.putInt("version", versionCode);
+        editor.commit();
+        mIsFirstTimeRun = (latestVersionCode < versionCode);		
 		String path = Environment.getExternalStoragePublicDirectory(
 				Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
 		Log.d("tag", "download path: " + path);
@@ -593,7 +607,7 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	// @JavascriptInterface
-	public void httpRequst(String url, String method, String data) {
+	public void httpRequest(String url, String method, String data) {
 		Log.d(TAG, "httpRequest:[" + method + "]" + url + "?" + data);
 		HttpRequest.post(url, data);
 	}
@@ -613,7 +627,10 @@ public class MainActivity extends AppCompatActivity {
 		Log.d(TAG, "getItem:" + key + " val:" + val);
 		return val;
 	}
-
+	// @JavascriptInterface
+	public boolean getIsFirstTimeRun() {
+		return mIsFirstTimeRun;
+	}
 	private boolean initCustomActionBar() {
 
 		if (mActionbar == null) {

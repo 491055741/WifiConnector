@@ -1,0 +1,110 @@
+@charset "utf-8";
+
+/* 全局CSS定义 */
+ #FAQPage.section-FAQ {font-family:Microsoft YaHei,Arial,Helvetica,sans-serif;background:none;text-align:center;margin:0 auto;padding:0;font-size:100%;color:#000;}
+
+#FAQPage h1,
+#FAQPage h2,
+#FAQPage h3,
+#FAQPage h4,
+#FAQPage h5,
+#FAQPage h6{font-size:100%;font-weight:bold;}
+#FAQPage strong {font-weight: bold;font-size: 1rem;font-family: Microsoft YaHei;}
+ul,ol,li{list-style:none;}
+
+/* 默认链接颜色 */
+#FAQPage a{outline-style:none; color:#000;text-decoration:none}
+#FAQPage a:hover{color:#000;text-decoration:underline;}
+
+#FAQPage ul li {font-family: Microsoft YaHei;font-size: 1rem;}
+/* 通用属性 */
+.clear{clear:both;}
+
+/*常用方法*/
+.hidden{display:none;} 
+.hidden div{border-bottom:solid 1px #EFEFEF;}
+.hand{cursor:pointer;}
+.fontArial{font-family:'Arial';}
+
+#FAQPage header{margin:0 auto;width:100%;max-width:960px;_width:expression((document.documentElement.clientWidth||document.body.clientWidth)>960?"960px":"");}
+#FAQPage .loc_logo_nav{width:100%;color:#FFF;
+background: #C23434;
+background-image: -khtml-linear-gradient(top, #AB3030, #C23434);
+background-image: -rim-linear-gradient(top, #AB3030, #C23434);
+background-image: -ms-linear-gradient(top, #AB3030, #C23434);
+background-image: -o-linear-gradient(top, #AB3030, #C23434);
+background-image: -moz-linear-gradient(top, #AB3030, #C23434);
+background-image: -webkit-linear-gradient(top, #AB3030, #C23434);
+background-image: linear-gradient(top, #AB3030, #C23434);
+}
+#FAQPage .loc_logo_navbtn{width:100%;height:50px;line-height:50px;border-bottom:solid 1px #A0141D;color:#FFF;font-weight:bold;cursor:pointer;}
+#FAQPage .loc_logo{float:left;}
+#FAQPage .loc{float:left;width:50px;height:50px;border-right:solid 1px #A0141D;overflow:hidden;}
+#FAQPage .loc img{width:50px;height:50px;}
+#FAQPage .logo{float:left;padding-left:10px;}
+#FAQPage .logo h1 a{font-size:1.25em;color:#FFFFFF;height:50px;line-height:50px;font-family: Microsoft YaHei;letter-spacing: 2px;font-weight: normal;}
+#FAQPage .logo h1 a:hover{text-decoration:none;color:#FFCC00;}
+#FAQPage .navbtn{float:right;width:80px;height:50px;overflow:hidden;background:url(../../../images/2014/m/icon_5F25x20.png) center 15px no-repeat;overflow:hidden;border-left:solid 1px #A0141D;
+-khtml-box-shadow:-1px 0 #C3464F;	/* Konqueror */
+-rim-box-shadow:-1px 0 #C3464F;	/* RIM */
+-ms-box-shadow:-1px 0 #C3464F;	/* Microsoft */
+-o-box-shadow:-1px 0 #C3464F; 	/* Opera */
+-moz-box-shadow:-1px 0 #C3464F; /* Mozilla(如 Firefox) */
+-webkit-box-shadow:-1px 0 #C3464F;	/* Webkit（如 Safari 和 Chrome） */
+box-shadow:-1px 0 #C3464F;	/* W3C */
+}
+
+#FAQPage nav{margin:0 auto;padding:0 10px;border-top:solid 1px #C3464F;display:block;}			
+#FAQPage nav ul{padding:10px 0;}
+#FAQPage nav ul li{float:left;width:16.6666666%;line-height:2.0em;text-align:left;}
+#FAQPage nav ul li a:link {color:#FFF;}
+#FAQPage nav ul li a:visited{color:#FFF;}
+#FAQPage nav ul li a:hover{color:#FFF;text-decoration:underline;}
+#FAQPage nav ul li a:active{color:#FFF;}
+
+#FAQPage section{margin:0 auto;width:100%;max-width:960px;_width:expression((document.documentElement.clientWidth||document.body.clientWidth)>960?"960px":"");}
+
+/* 滑动门通用样式*/
+/* tabbed_content */
+#FAQPage .tabbed_content{background-color:none;max-width:960px;_width:expression((document.documentElement.clientWidth||document.body.clientWidth)>960?"960px":"");}
+#FAQPage  .tabs{width:100%;height:45px;line-height:45px;position:relative;background:#F3F3F3;border-bottom:solid 1px #CCC;overflow:hidden;}
+#FAQPage .tabs h2{padding-left:10px;float:left;}
+#FAQPage .tabs .moving_bg{width:25%;_width:15%;height:43px;border-bottom:solid 2px #B52232;background-color:#FFF;position:absolute;z-index:190;left:0;background-position:bottom left;background-repeat:no-repeat;font-weight:bold;overflow:hidden;}
+#FAQPage .tabs2 .moving_bg{width:20%}
+#FAQPage .tabs3 .moving_bg{width:16.6666666%;}
+#FAQPage .tabs .tab_item{display:block;float:left;width:25%;color:#ffffff;text-align:center;z-index:200;position:relative;cursor:pointer;color:#000;font-weight:bold;overflow:hidden;}
+#FAQPage .tabs2 .tab_item{width:20%;}
+
+#FAQPage .tabs3 .tab_item{width:16.6666666%;}
+#FAQPage .tabs .tab_item:hover{color:#B52232;font-weight:bold;}
+#FAQPage .tabbed_content .slide_content{overflow:hidden;background-color:none;position:relative;width:100%;}
+#FAQPage .tabslider{width:400%}
+#FAQPage .tabslider2{width:500%}
+#FAQPage .tabslider3{width:600%}
+#FAQPage .tabslider ul{float:left;margin:0px;width:25%;text-align:left;-ms-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;/* padding和border被包含在定义的width和height之内 */background:none;}
+#FAQPage .tabslider2 ul{width:20%}
+#FAQPage .tabslider3 ul{width:16.6666666%;}
+#FAQPage .tabslider ul a{margin-bottom:10px;display:block;color:#000;text-decoration:none;}
+#FAQPage .tabslider ul a:hover{color:#00;text-decoration:underline;}
+#FAQPage .tabslider .hidden div{padding:10px 10px;_padding:10px 0;*padding:10px 0;font-size:16px;}
+#FAQPage .tabslider ul li span,.tabslider .hidden div span{display:block;width:100%;color:#C5C5C5;text-align:right;font-size:0.875em;}
+#FAQPage .tabslider ul li span em,.tabslider .hidden div em{float:left;font-style:normal;}
+#FAQPage .tabslider ul li{padding:10px;border-bottom:solid 1px #EFEFEF;}
+
+#FAQPage .more,#FAQPage .computer{margin:20px auto;width:auto;max-width:960px;_width:expression((document.documentElement.clientWidth||document.body.clientWidth)>960?"960px":"");height:40px;line-height:40px;background:#F3F3F3;border:solid 1px #EFEFEF;text-align:center;cursor:pointer;overflow:hidden;}
+
+/* 文章页 */
+#FAQPage article{margin:0 auto;padding:25px 10px;width:auto;max-width:940px;_width:expression((document.documentElement.clientWidth||document.body.clientWidth)>940?"940px":"");text-align:left;}
+#FAQPage article h2{font-size:1.25em;}
+#FAQPage article .time_source{margin:10px 0;color:#999;text-align:left;}
+#FAQPage article .time_source span{margin-right:20px;}
+#FAQPage article .editor p{text-align:left;font-size:0.8em;line-height:2.0em;color:#696969;}
+#FAQPage article .editor p em{font-style:normal;font-weight:bold;}
+#FAQPage article .content{padding:10px 0;word-wrap:break-word;overflow:hidden;}
+#FAQPage article .content p{margin-bottom:10px;line-height:1.8em;text-align:left;}
+
+#FAQPage .comment{padding:20px 0;}
+#FAQPage .commentbox{padding:20px 0;border-bottom:solid 1px #EFEFEF;text-align:left;}
+#FAQPage .name_time{margin-bottom:10px;padding-left:15px;width:100%;background:url(../../../images/2014/m/icon_9x16.png) left 2px no-repeat;text-align:left;color:#A7ABAC;-moz-box-sizing: border-box;box-sizing: border-box;}
+#FAQPage .name_time span{float:right;font-size:0.75em;}
+footer{margin:0 auto;margin-top:10px;width:auto;max-width:960px;_width:expression((document.documentElement.clientWidth||document.body.clientWidth)>960?"960px":"");padding:10px;background:#F3F3F3;border-top:solid 1px #E3E3E3;font-size:0.75em;color:#666;}

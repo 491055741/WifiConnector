@@ -194,6 +194,7 @@ var checkLogin = function() {
         me.autoLogin();
     }
 };
+
 /*page event  Start*/
 $("#WelcomPage").on("pageshow", function () {
     console.log("welcome page show");
@@ -254,6 +255,11 @@ $("#MainPage").on("pageinit", function() {
         setTimeout("wifiStatusChanged('SuperMary')", 1000);
         setTimeout("me.autoLogin()", 10000);
     }
+
+    if (window.android && window.android.getIsFirstTimeRun()) {
+        setTimeout("me.showGuide()", 2000);
+    }
+
 });
 
 $("#MainPage").on("pagebeforeshow", function () {
@@ -354,6 +360,11 @@ $("#feedBackPage").on("pageshow",function() {
     me.showBackBtn(true);
     $('#feedback-textarea').val('');
 });
+
+$("#FAQPage").on("pageshow",function() {
+    me.showBackBtn(true);
+});
+
 /*page event END*/
 
 $("#logoutBtn").fastClick(function() {
@@ -393,6 +404,11 @@ $(".verifyCodeBtn").fastClick(function() {
     me.requestVerifyCode();
 });
 
+/*[2015-11-17] get more coin link*/
+$('#getMoreCoin').fastClick(function(){
+    me.showGuide();
+});
+
 $(".changePwdBtn").fastClick(function() {
     if (!me.isLogin) {
         showLoader("还未登录");
@@ -417,6 +433,10 @@ $(".feedbackBtn").fastClick(function() {
         return;
     }
     changePage("#feedBackPage");
+});
+/*[2015-11-18]*/
+$(".FAQ").fastClick(function(){
+    changePage("#FAQPage");
 });
 
 $(".socialShareBtn").fastClick(function() {
@@ -2018,5 +2038,16 @@ var me = {
             }
         });
         setTimeout(me.myScroll[idx].refresh(), 300);
+    },
+
+    showGuide : function() {
+        $('#connectionBtn').trigger('click');
+      //创建mask，传入图片提示图片的地址,提示文字可传可不传
+        H.GuideMask({
+            signImgSrc:"images/tl.png",
+            signText:"每日签到赚取金币",
+            downloadImgSrc:"images/dc.png",
+            downloadText:"下载App获取更多金币"
+        });
     }
 }; // end of var me

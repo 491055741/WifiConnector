@@ -13,14 +13,13 @@
 	Function.prototype.method = function(name,fn){
 		this.prototype[name] = fn;
 		return this;
-	}
+	};
 
 	var dialog = function(option){
 		//定义dialog对象
 		var D = function(option){
-			this.a = 'a';
 			this.init(option);
-		}
+		};
 		//定义dialog的方法
 		D.method('init',function(option){
 			var _this = this,
@@ -55,7 +54,7 @@
 						'<div class="dialog-content" style="width: 96%; height: '+(settings.height-75)+'px;;padding: 2%;color: #666;overflow: auto;word-break: break-all;">'+settings.content+'</div>'+
 						'<div class="dialog-btn-group" style="text-align: center;padding: 5px;">'+
 							'<button id="dialog-ok" class="dialog-ok" style="display: '+(settings.ok?'inline-block':'none')+';border: 0; padding: 3px 10px;color:#666;">确定</button>'+
-						'</div>'+0
+						'</div>'+
 					'</div>';
 			//append到页面
 			$('body')
@@ -77,7 +76,45 @@
 
 		return new D(option);
 	};
+
+	var guideMask = function(option){
+		//创建guidemask对象
+		var GM = function(option){
+			this.init(option);
+		};
+		//声明guidemask对象的方法
+		GM.method('init',function(option){
+			var settings = option;
+			this.render(settings);
+		});
+		GM.method('render',function(settings){
+			var _this = this;
+				_this.createDom(settings);
+
+			$('#guideMask').on('click', function(event) {
+				_this.destroy();
+			});
+		});
+		GM.method('createDom',function(settings){
+			var dom = '<div id="guideMask" class="mask-c" style="position: fixed;width: 100%;height: 100%; background-color: rgba(0,0,0,0.75);z-index: 9999;">' +
+						'<div class="tl-h">' +
+							'<img src="' + ( settings.signImgSrc || '' ) + '">' +
+						'</div>' +
+						'<div class="dc-h">' +
+							'<img src="' + ( settings.downloadImgSrc || '' ) + '">' +
+						'</div>' + 
+					'</div>';
+			$('body').prepend(dom);
+		});
+		GM.method('destroy',function(){
+			$('#guideMask').length && $('#guideMask').remove();
+		});
+
+		return new GM(option);
+	};
+
 	window.H = {
-		Dialog : dialog
+		Dialog : dialog,
+		GuideMask : guideMask 
 	};
 })(jQuery,window);

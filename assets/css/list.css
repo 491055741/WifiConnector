@@ -332,3 +332,36 @@ div { position: relative; z-index: 998; }
 .annexWifi .annexWifi_box li:hover a{
 	color: #1962D3;
 }
+/* guide mask style */
+.mask-c p {
+	color: #fff;
+	font-weight: bold;
+	font-family: "微软雅黑";
+	font-size: 16px;
+	letter-spacing: 2px;
+}
+.tl-h,
+.dc-h{
+	position: absolute;
+	font-size: 18px;
+}
+.tl-h {
+	width: 100%;
+	top: 0;
+	left: 0;
+}
+.tl-h img {
+	float: left;
+	margin-left: -10px;
+	margin-top: 10px;
+}
+.tl-h p {
+	float: left;
+	padding-top: 100px;
+	margin-left: -20px;
+}
+.dc-h {
+	width: 100%;
+	bottom: 25px;
+	text-align: center;
+}

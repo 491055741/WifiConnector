@@ -23,10 +23,10 @@ public class SplashActivity extends Activity {
 				int versionCode = getBaseContext().getPackageManager().getPackageInfo("com.xiaohong.wificoolconnect", 0).versionCode;
 	        	SharedPreferences preferences = getSharedPreferences("versionCode",MODE_WORLD_READABLE);
 	            int latestVersionCode = preferences.getInt("version", 0);
-
-	            Editor editor = preferences.edit();
-                editor.putInt("version", versionCode);
-                editor.commit();
+//  move to mainActivity
+//	            Editor editor = preferences.edit();
+//                editor.putInt("version", versionCode);
+//                editor.commit();
 
 	            if (latestVersionCode < versionCode) {  // first time run for the current version
 	            	Intent intent = new Intent(Intent.ACTION_MAIN);
