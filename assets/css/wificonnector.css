@@ -101,7 +101,7 @@ body{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-khtml-
 #mineView dd {right: 10px; text-align: right; /*height: 30px; *//*padding-top: 10px;*/ }
 #mineView dt div { font-size: 18px; color: #45484d; float: right; padding-left: 5px; }
 #mineView dd div, #mineView dd a { font-size: 18px; color: #999; width: 100%;}
-#logoutBtn {background-color: #FF4952; border-radius: 12px; letter-spacing: 2px; text-shadow: 0 0 0; color: white; }
+#logoutBtn {background-color: #FF8800; border-radius: 12px; letter-spacing: 2px; text-shadow: 0 0 0; color: white; }
 
 #mineView dt img {width: 28px; vertical-align: middle;}
 #mineView dd {text-align: left;}
@@ -117,7 +117,7 @@ body{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-khtml-
 /*#mineView .acount_list dt + dd + dd > span{padding-left: 5px;color: #666;}*/
 #mineView .acount_list .account_item  span {padding-left:5px; color: #666;}
 
-#mineView .account_coin {padding-top: 15px;}
+#mineView .account_coin {padding-top: 15px;   border-bottom: 1px solid #ccc;}
 #mineView .account_coin dt {padding-left: 25px; height: 85px; margin-right: 30px;}
 #mineView .account_coin dt img {width: 70px; height: 70px;}
 #mineView .account_coin dd {text-align:left; padding-top: 5px;}
@@ -198,7 +198,6 @@ li { list-style: none; }
     display: inline-block;
     color: #999999;
     font-size: 14px;
-    border-bottom: 1px solid #ccc;
 }
 /* .moreCoinLink:after {
     content: "";

@@ -257,7 +257,7 @@ $("#MainPage").on("pageinit", function() {
     }
 
     if (window.android && window.android.getIsFirstTimeRun()) {
-        setTimeout("me.showGuide()", 2000);
+        setTimeout("me.showGuide()", 1000);
     }
 
 });

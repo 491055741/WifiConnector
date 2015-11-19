@@ -96,7 +96,7 @@
 
         <div id="connectionView">
 
-            <div class="user_signin">签到领金币</div>
+            <div class="user_signin">每天领金币</div>
 
             <div class="jqmWindow" id="dialog" style="display:none;">
                 <hr />
@@ -280,12 +280,18 @@
                     <dd><span class="nick_name" id="nick_name">WIFI酷连</span></dd>
                     <dd><span>账&nbsp;号: </span><div class="account_item account_w" id="account">未登录</div></dd>
                     <dd><span>邀请码: </span><div class="account_item account_w" id="myInviteCode">000000</div></dd>
+                    <dd style="height:40px"><span style="color:#999999; ">使用邀请码邀请您的朋友注册，您和您的朋友都会获得金币奖励！</span></dd>
                 </dl>
 
                 <dl class="account_coin">
                     <dt><img src="images/coin.png"></dt>
-                    <dd><div>&nbsp;当前金币数：</div><div class="account_item" id="coin">0</div></dd>
-                    <dd><a id="getMoreCoin" class="moreCoinLink" href="javascrpt:;">如何获取更多金币？</a></dd>
+                    <dd>
+                        <div>&nbsp;当前金币数：</div>
+                        <div class="account_item" id="coin">0</div>
+                    </dd>
+                    <dd style="height: 40px;">
+                        <div style="text-align:right;"><a id="getMoreCoin" class="moreCoinLink" href="javascrpt:;">如何获取更多金币？</a></div>
+                    </dd>
                 </dl>
 
                 <dl class="account_passModify">
@@ -306,11 +312,6 @@
                 <dl class="account_socialShare">
                     <dt><img src="images/contact.png"></dt>
                     <dd><div class="account_item socialShareBtn">分享<i class="icon-arrow"></i></div></dd>
-                </dl>
-
-                <dl class="account_help">
-                    <dt><img src="images/help.png"></dt>
-                    <dd><div class="account_item" id="version">帮助<i class="icon-arrow"></i></div></dd>
                 </dl>
  -->
                 <dl class="account_version">
@@ -399,53 +400,18 @@
                 <div class="tabslider" >
                     <div>&nbsp;</div>
                     <ul>
-                        <li><p style="color: red"><strong>Q：酷连WIFI是什么？</strong></p><br>
-                            A：酷连WIFI是提供员工宿舍区免费网络服务的应用平台，使用酷连WIFI可以一键链接宿舍免费WIFI。
-                        </li>
-                        <li><p style="color: red"><strong>Q：如何下载使用酷连WIFI？</strong></p><br>
-                           A：1.在wifi环境下，点开手机设置中WLAN一项<br>
-                               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.点击连接“hongwifi_您所在的工厂名”的wifi<br>
-                               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.打开浏览器的任一网址，在弹出的页面上点击“安装酷连wifi”按钮，如果没有页面显示，则更换浏览器<br>
-                               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.下载安装完毕，打开“wifi酷连”软件<br>
-                               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.进入验证页面，输入手机号，获取验证码并输入，完成注册<br>
-                               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <li><p style="color: red"><strong>Q：我们是谁？</strong></p><br>
+                            A：Hongwifi致力于为广大用户提供免费的无线上网服务，未来更有娱乐、生活、便捷服务等一站式服务。
                         </li>
                         <li><p style="color: red"><strong>Q：金币是什么？</strong></p><br>
-                            A：金币是可以用来兑换免费上网时间的，完成任务就可以赚取金币，有了金币就能免费上网。
+                            A：Wifi是免费使用的，不会扣话费，但每天连接网络需要扣除一定数量的虚拟金币，可以通过下载app、使用邀请码邀请新用户注册来获得金币，点击“每天领金币”也可以获得一定数量的金币，多余的金币还可以兑换话费，以后还可以兑换其他实物。
                         </li>
-                        <li><p style="color: red"><strong> Q：金币如何换取上网时间？</strong></p><br>
-                            A：每天上网需要扣除指定额度的金币，时效为00：00-23：59。
+                        <li><p style="color: red"><strong>Q：网速很慢、有时会自动断开是怎么回事？</strong></p><br>
+                             A：可能是信号不好引起的，请在更靠近无线WiFi的地方尝试；在上网高峰期，上网人数过多也会造成网速降低。<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果尝试多次仍无法正常上网，请在酷连WiFi QQ群内跟管理员反映情况，QQ群1：227306629，QQ群2：516766607。
                         </li>
-                        <li><p style="color: red"><strong>Q：如何获取金币？</strong></p><br>
-                                A：1.每日签到<br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.下载酷连里边的应用，获取相应金币<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </li>
-                        <li><p style="color: red"><strong>Q：提示金币不足怎么办？</strong></p><br>
-                            A：金币不足则无法上网，需要完成任务赚取金币。<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </li>
-                        <li><p style="color: red"><strong>Q：免费WIFI为什么还要扣金币？</strong></p><br>
-                             A：我们承诺：用户永远可以免费上网！<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;为了给大家提供优质免费的上网服务，我们每月不仅需要向运营商支付昂贵的宽带费用，更要投入大量的人力物力支撑此平台。这些费用都来自酷连WIFI上的广告和应用下载，您的每一次下载，都将会帮助我们获取收益，以用来提供更好的免费上网服务；您的每一次安装，都是对我们最大的支持，使我们将会有更大的动力，为您带来更好的用户体验！
-                        </li>
-                        <li><p style="color: red"><strong>Q：我有足够金币，却无法链接上网，怎么回事？</strong></p><br>
-                            A：这种情况可能是信号不好引起的，可以移动位置（靠门或者走廊）进行再次尝试。<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;尝试多次仍无法连接，请联系酷连WiFiQQ群，QQ群1：227306629，QQ群2：516766607。
-                        </li>
-                        <li><p style="color: red"><strong>Q：链接网络时提示金币不足怎么办？</strong></p><br>
-                            A：金币不足表示无法上网，需要完成任务赚取金币<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </li>
-                        <li><p style="color: red"><strong>Q：网速很慢，电影都看不了怎么办？</strong></p><br>
-                            A：Hongwifi网络属于公共网络，大家共享的资源，因此在高峰期间，大量工友同时进行如下载、在线观看电影等行为，会加大流量使用，造成用户体验的下降。<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们建议，大家可以在白天以及睡觉前在线观看电影（选择高清、标清）。夜间休息时下载大容量文件及电影。这样不仅可以提高使用体验，也可以更迅速的完成下载任务。<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;为了更优质的网络使用体验，希望大家多多支持！
-                        </li>
-                        <li><p style="color: red"><strong>Q：下载使用了酷连WIFI推荐的软件游戏在不知情的情况下扣话费了怎么办？</strong></p><br>
-                            A：我们明确反对任何应用软件乱扣费行为，我们的免费网络也不会扣取用户任何话费，如果我们平台上的软件在使用过程中出现未经允许的扣费行为，您可以通过以下方式进行处理：<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;拨打10086或10000或10010电话，咨询人工客服，投诉扣费情况，要求运营商返还扣除的话费。<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;联系客服QQ群的管理员，将扣费截图反馈给管理员，管理员即刻会进行处理。酷连WiFiQQ群，QQ群1:227306629，QQ群2:516766607<br>
+                        <li><p style="color: red"><strong>Q：为什么要用手机号码注册？</strong></p><br>
+                            A：根据《互联网用户账号名称管理规定》等相关法规，网络账号需要实名制，我们采用跟手机号绑定的办法来简化用户注册过程，但注册及使用免费Wifi的过程都不会扣话费。
                         </li>
                     </ul>
                 </div>
