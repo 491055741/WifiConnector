@@ -249,6 +249,7 @@ $("#MainPage").on("pageinit", function() {
     me.requestKulianWifi();
     me.requestWifiList();
     me.checkNetwork();
+    me.initExchangePage();
     if (window.android != undefined) {
         window.android.requestCheckConnection();
     } else { // for debug on browser
@@ -469,10 +470,6 @@ $("#connectWifiBtn").fastClick(function() {
         default:
             break;
     }
-});
-
-$(".exchange_item").fastClick(function() {
-    me.requestExchange(this);
 });
 
 $(".refresh-app-list").fastClick(function() {
@@ -750,6 +747,17 @@ var me = {
         $.getJSON(url, function(data) {
             if (data.broadcastlist != undefined && data.broadcastlist.length > 0) {
                 me.parseMessages(data);
+                var clickableMessage = $("#twitter div");
+                $.each(clickableMessage, function (index,el) {
+                    if ($(this).hasClass("clickable")) {
+                        $(el).fastClick(function () {
+                            if ($(this).data("url") != undefined) {
+                                console.log("click on message, jump to url:"+$(this).data("url"));
+                                window.location = $(this).data("url"); // jump to url
+                            }
+                        });                        
+                    }
+                });
                 me.showMessage();
             }
         });        
@@ -1604,7 +1612,11 @@ var me = {
         }
 
         for (var i = 0; i < data.length; i++) {
-            arrHtml.push("<li><p>"+data[i].broadcast_item+"</p></li>");
+            arrHtml.push("<li><div ");
+            if (data[i].click_url != undefined) {
+                arrHtml.push("class=clickable  data-url='"+data[i].click_url+"'");
+            }
+            arrHtml.push("><p>"+data[i].broadcast_item+"</p></div></li>");
         }
         var html = arrHtml.join('');
         $("#twitter").append(html);
@@ -2049,5 +2061,50 @@ var me = {
             downloadImgSrc:"images/dc.png",
             downloadText:"下载App获取更多金币"
         });
+    },
+
+    initExchangePage : function () {
+        var data = {  
+          exchangelist:[
+            {coin:  10000, type: 1, text:"10元话费"},
+            {coin:  20000, type: 2, text:"20元话费"},
+            {coin:  30000, type: 3, text:"30元话费"},
+            {coin:  50000, type: 4, text:"50元话费"},
+            {coin: 100000, type: 5, text:"100元话费"}
+          ]
+        };  
+        var html = me.exchangeTemplate(data);
+        $("div .exchange_list").append(html);
+        $(".exchange_item").fastClick(function() {
+            me.requestExchange(this);
+        });
+    },
+
+    exchangeTemplate : function (res) {
+
+        var data = res.exchangelist;
+        if (data == null || data == undefined) {
+            return;
+        }
+
+        var arrHtml = new Array();
+
+        for (var i = 0; i < data.length; i++) {
+
+            arrHtml.push("<li data-exchangetype='" + data[i].type + "' data-coin="+data[i].coin+" class='exchange_item index-item list-index h-list-item' >");
+            arrHtml.push("<div class=\"index-item-w\">");
+            arrHtml.push("<div class='app-img'>");
+            arrHtml.push("<img class='lazy' data-original='images/exchange_"+data[i].type+".png' />");
+            arrHtml.push("<div class='dummy'></div>");
+            arrHtml.push("</div>");
+
+            arrHtml.push("<div class='ui-btn installBtn bigLogo-instBtn' >兑 换</div>");
+            arrHtml.push("<div class='app-down-des'>需要金币<span class='reward'>"+data[i].coin+"</span></div>");
+            arrHtml.push("</div>");
+            arrHtml.push("</li>");
+        }
+
+        return arrHtml.join("");
     }
+
 }; // end of var me

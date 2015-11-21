@@ -65,17 +65,28 @@ body{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-khtml-
 .app-list .bigLogo-instBtn.inactive { background: #ccc; color:#fff; }
 .app-list .hasInstalled.bigLogo-instBtn.inactive { background: rgb(245,149,13); text-align: center; letter-spacing: 1px; font-weight: normal; font-family: '微软雅黑'; }
 .app-list .hasInstalled + .down-symbol--t1 { position: absolute; top: 0; right: 0; width: 40px; height: 40px; background: transparent url("../images/down-icon.png") no-repeat center; }
-.app-list .installBtn.inactive canvas {
-/*    border-radius: 50%;
-    background: rgba(0,0,0,0.6);
-    padding: 1%;*/
-}
 .app-list .bigLogo-instBtn.inactive canvas{ background: none; }
 .app-list .installBtn.inactive span { border-radius: 10px; font-size: 14px; background: #bebebe; color: #fff; display: inline-block; padding: 3px 5px 1px 6px; margin-top: 10px; text-shadow: none; }
-
 .app-list .installBtn.inactive.hasInstalled span { background: rgb(245,149,13); color: #fff; }
-
 .app-list .installBtn.app-downing--t3 { background: #fff; }
+
+
+.exchange_list .coin_icon {position: absolute; width: 20px; top:30px; right: 75px;}
+.exchange_list .coin_num { position: absolute; width: 55px; bottom: 10px; right: 10px; padding-left: 16px; color: #4d4d4d; font-size: 12px; background: url("../images/coins.png") no-repeat left center; background-size: 14px; }
+.exchange_list .coin_num span { color: #ff8800; vertical-align: bottom; }
+.exchange_list .installBtn { position: absolute; width: 65px; height: 45px; line-height: 25px; top: 0; right: 0; background: url("../images/app_download.png") no-repeat 50% 25%; background-size: 25px; border-radius: 0; border: 0; border-left: 1px solid #ccc; }
+.exchange_list .reward { padding-left: 17px; color: red; }
+.exchange_list .installBtn.inactive { background: transparent; }
+.exchange_list .bigLogo-instBtn { /*width: 100%; height: 100%;*/ width: 43px; height: 24px; padding: 0; margin-top: 0; top: auto; bottom: -5px; border-radius: 3px; background: #0A94D7; font: 300 12px/24px 'STHeiti'; color:#fff; text-align: center; letter-spacing: 1px; }
+.app-list li .bigLogo-instBtn:hover {}
+.exchange_list .h.baiying-name {font-size: 16px;height: 22px;padding-top: 2px;}
+.exchange_list .app-down-des { text-align: left; padding: 0; padding-left: 12px; margin-top: 5px; color: #0A94D7; background: url("../images/coins.png") no-repeat 62px 40%; background-size: 14px; border: 0; font: 100 12px '微软雅黑'; }
+.exchange_list .bigLogo-instBtn.inactive { background: #ccc; color:#fff; }
+.exchange_list .bigLogo-instBtn.inactive canvas{ background: none; }
+.exchange_list .installBtn.inactive span { border-radius: 10px; font-size: 14px; background: #bebebe; color: #fff; display: inline-block; padding: 3px 5px 1px 6px; margin-top: 10px; text-shadow: none; }
+.exchange_list .installBtn {background-image: none; text-shadow:none; border: none; }
+
+
 #tab-1 .app-list .installBtn {background-image: none; text-shadow:none; border: none; }
 #tab-4 .app-list li {overflow: hidden;}
 #tab-4 .app-list .downloading h5, #tab-4 .app-list .hasDownloaded h5, #tab-4 .app-list .hasInstalled h5 { background: #f2f2f2; padding: 7px 0 5px 10px; font-weight: bold; color: #000; border-style:solid; border-top: 1px solid #ccc; }
@@ -100,7 +111,7 @@ body{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-khtml-
 #mineView dt {float: left; /*height: 30px;*/ height: 45px; line-height: 45px; margin-right: 25px; padding-left: 5px;}
 #mineView dd {right: 10px; text-align: right; /*height: 30px; *//*padding-top: 10px;*/ }
 #mineView dt div { font-size: 18px; color: #45484d; float: right; padding-left: 5px; }
-#mineView dd div, #mineView dd a { font-size: 18px; color: #999; width: 100%;}
+#mineView dd div, #mineView dd a { font-size: 18px; color: #5d5d5d; width: 100%;}
 #logoutBtn {background-color: #FF8800; border-radius: 12px; letter-spacing: 2px; text-shadow: 0 0 0; color: white; }
 
 #mineView dt img {width: 28px; vertical-align: middle;}
@@ -128,13 +139,13 @@ body{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-khtml-
 #mineView .account_passModify dd,#mineView .account_feedback dd,#mineView .account_socialShare dd,#mineView .account_help dd,#mineView .account_version dd {height:45px; line-height:55px; }
 #mineView #version {position: absolute; text-align:right; height: 24px; top:0; color: #999; right:0; background-size: contain;}
 .exchange_list {padding: 10px; }
-.exchange_item {font-size: 16px; }
+/*.exchange_item {font-size: 16px; }
 .exchange_list dt {float: left; height: 30px; padding-top: 10px; }
 .exchange_list dd {right: 10px; text-align: right; height: 30px; padding-top: 10px; border-bottom: 1px #d4d5d6 solid; }
 .exchange_list dt div { font-size: 18px; color: #45484d; float: right; padding-left: 5px; }
 .exchange_list dd div, .exchange_list dd a { font-size: 18px; color: #999; width: 100%;}
 
-
+*/
 .ui-footer .ui-navbar .ui-btn {font-size: 14px; color: gray; }
 .ui-footer .ui-navbar .ui-btn.ui-btn-active {background-color: #f6f6f6; font-size: 14px; color: #38E; text-shadow:0 0 0 ;}
 
@@ -148,7 +159,7 @@ body{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-khtml-
 .exchangeHeader {height: 70px; margin: 10px; box-shadow: 0 1px 1px rgba(0,0,0,0.5);}
 .exchangeHeader .coinIcon {float: left; width: 30%; padding: 10px; }
 .exchangeHeader .coin_desc {color: gray; }
-.exchangeHeader .coin_num {font-size: 30px; color: #45484d; }
+.exchangeHeader .coin_num {font-size: 30px; color: #ff8800; }
 
 .comboSprite li a {border-left-width:0; border-right-width:0; }
 
