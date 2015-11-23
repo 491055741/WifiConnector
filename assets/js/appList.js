@@ -379,7 +379,7 @@ $("#registBtn").fastClick(function() {
     me.register();
 });
 
-$("#coin").fastClick(function() {
+$(".account_coin").fastClick(function() {
     changePage("#ExchangePage");
 });
 
@@ -742,7 +742,12 @@ var me = {
 
     requestMessage : function()
     {
-        var url = appServerUrl+"/app_broadcast?"+callback;
+        if (me.isLogin) {
+            var phone_number = $(".acount_list #account").text();
+        } else {
+            var phone_number = getItem('userName');
+        }
+        var url = appServerUrl+"/app_broadcast?phone_number="+phone_number+"&"+callback;
         console.log("requestAppMessage:"+url);
         $.getJSON(url, function(data) {
             if (data.broadcastlist != undefined && data.broadcastlist.length > 0) {
@@ -2072,9 +2077,10 @@ var me = {
             {coin:  50000, type: 4, text:"50元话费"},
             {coin: 100000, type: 5, text:"100元话费"}
           ]
-        };  
+        };
         var html = me.exchangeTemplate(data);
         $("div .exchange_list").append(html);
+        $("div .exchange_list img.lazy").lazyload({threshold:300, placeholder:null });
         $(".exchange_item").fastClick(function() {
             me.requestExchange(this);
         });
@@ -2099,7 +2105,7 @@ var me = {
             arrHtml.push("</div>");
 
             arrHtml.push("<div class='ui-btn installBtn bigLogo-instBtn' >兑 换</div>");
-            arrHtml.push("<div class='app-down-des'>需要金币<span class='reward'>"+data[i].coin+"</span></div>");
+            arrHtml.push("<div class='app-down-des'>需金币<span class='reward'>"+data[i].coin+"</span></div>");
             arrHtml.push("</div>");
             arrHtml.push("</li>");
         }

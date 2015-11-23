@@ -39,7 +39,7 @@ public class Downloader
         mContext.getContentResolver().registerContentObserver(CONTENT_URI, true, downloadObserver);  
     }
     
-    public long downloadApk(String url, String appName) throws MalformedURLException
+    public synchronized long downloadApk(String url, String appName) throws MalformedURLException
     {
         Uri uri = Uri.parse(url);  
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).mkdir();  
@@ -86,7 +86,7 @@ public class Downloader
 //            }
 //        };
 
-    private void queryDownloadStatus() {     
+    private synchronized void queryDownloadStatus() {     
         DownloadManager.Query query = new DownloadManager.Query();     
 
         for (String downloadIdStr : mDownloadIds) {
@@ -145,7 +145,7 @@ public class Downloader
         }
     }
 
-    public void cancelDownload(long downloadId) // todo: consider concurrent modification
+    public synchronized void cancelDownload(long downloadId) // todo: consider concurrent modification
     {
         Log.d("tag", "cancelDownload");
         downloadmanager.remove(downloadId);
