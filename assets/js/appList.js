@@ -1051,6 +1051,7 @@ var me = {
                                     setTimeout("hideLoader()", 2000);
                                     console.log('start app '+$(this).data("pkgname"));
                                     window.android.startAPP($(this).data("pkgname"));
+                                    appLanched($(this).data("pkgname"));
                                 } else {
                                     showLoader("只能在手机中打开");
                                     setTimeout("hideLoader()", 2000);
@@ -1483,6 +1484,7 @@ var me = {
                     setTimeout("hideLoader()", 2000);
                     console.log('start app '+$(this).data("pkgname"));
                     window.android.startAPP($(this).data("pkgname"));
+                    appLanched($(this).data("pkgname"));
                 } else {
                     showLoader("只能在手机中打开");
                     setTimeout("hideLoader()", 2000);
