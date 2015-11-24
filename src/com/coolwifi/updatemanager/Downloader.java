@@ -88,60 +88,63 @@ public class Downloader
 
     private synchronized void queryDownloadStatus() {     
         DownloadManager.Query query = new DownloadManager.Query();     
-
-        for (String downloadIdStr : mDownloadIds) {
-        	Long downloadId = Long.parseLong(downloadIdStr);
-            query.setFilterById(downloadId);
-            Cursor c = downloadmanager.query(query);
-            if (c != null && c.moveToFirst()) {
-                int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));     
-                int titleIdx = c.getColumnIndex(DownloadManager.COLUMN_TITLE);    
-                int fileSizeIdx = c.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES);        
-                int bytesDLIdx = c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR);
-                int pathIdx = c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
-
-                String title = c.getString(titleIdx);
-                String path = c.getString(pathIdx);
-                int fileSize = c.getInt(fileSizeIdx);
-                int bytesDL = c.getInt(bytesDLIdx);
-                int progress = (int)((float)bytesDL/(float)fileSize * 100);
-
-                switch(status) {
-                    case DownloadManager.STATUS_PAUSED:     
-//                        Log.v("tag", "STATUS_PAUSED");
-                    case DownloadManager.STATUS_PENDING:     
-//                        Log.v("tag", "STATUS_PENDING");
-                    case DownloadManager.STATUS_RUNNING:     
-//                        Log.v("tag", "STATUS_RUNNING");
-                        break;
-                    case DownloadManager.STATUS_SUCCESSFUL:
-                        Log.v("tag", title+" 下载完成");
-                        installApk(path);
-                        break;
-                    case DownloadManager.STATUS_FAILED:
-                        Log.v("tag", "STATUS_FAILED");
-//                        downloadmanager.remove(downloadId);     ????? 下载失败怎么办？
-                        break;
-                    default:
-                    	break;
-                }
-                c.close();
-
-                Message msg = new Message();
-                if (progress == 100 || status == DownloadManager.STATUS_SUCCESSFUL) {
-                    msg.what = DOWNLOAD_FINISH;
-                } else {
-                    msg.what = DOWNLOAD;
-                }
-                msg.arg1 = downloadId.intValue();
-                msg.arg2 = progress;
-                mHandler.sendMessage(msg);
-
-                if (status == DownloadManager.STATUS_SUCCESSFUL) {
-                    mDownloadIds.remove(String.valueOf(downloadId));
-                    break;
-                }
-            }
+        try {
+	        for (String downloadIdStr : mDownloadIds) {
+	        	Long downloadId = Long.parseLong(downloadIdStr);
+	            query.setFilterById(downloadId);
+	            Cursor c = downloadmanager.query(query);
+	            if (c != null && c.moveToFirst()) {
+	                int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));     
+	                int titleIdx = c.getColumnIndex(DownloadManager.COLUMN_TITLE);    
+	                int fileSizeIdx = c.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES);        
+	                int bytesDLIdx = c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR);
+	                int pathIdx = c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
+	
+	                String title = c.getString(titleIdx);
+	                String path = c.getString(pathIdx);
+	                int fileSize = c.getInt(fileSizeIdx);
+	                int bytesDL = c.getInt(bytesDLIdx);
+	                int progress = (int)((float)bytesDL/(float)fileSize * 100);
+	
+	                switch(status) {
+	                    case DownloadManager.STATUS_PAUSED:     
+	//                        Log.v("tag", "STATUS_PAUSED");
+	                    case DownloadManager.STATUS_PENDING:     
+	//                        Log.v("tag", "STATUS_PENDING");
+	                    case DownloadManager.STATUS_RUNNING:     
+	//                        Log.v("tag", "STATUS_RUNNING");
+	                        break;
+	                    case DownloadManager.STATUS_SUCCESSFUL:
+	                        Log.v("tag", title+" 下载完成");
+	                        installApk(path);
+	                        break;
+	                    case DownloadManager.STATUS_FAILED:
+	                        Log.v("tag", "STATUS_FAILED");
+	//                        downloadmanager.remove(downloadId);     ????? 下载失败怎么办？
+	                        break;
+	                    default:
+	                    	break;
+	                }
+	                c.close();
+	
+	                Message msg = new Message();
+	                if (progress == 100 || status == DownloadManager.STATUS_SUCCESSFUL) {
+	                    msg.what = DOWNLOAD_FINISH;
+	                } else {
+	                    msg.what = DOWNLOAD;
+	                }
+	                msg.arg1 = downloadId.intValue();
+	                msg.arg2 = progress;
+	                mHandler.sendMessage(msg);
+	
+	                if (status == DownloadManager.STATUS_SUCCESSFUL) {
+	                    mDownloadIds.remove(String.valueOf(downloadId));
+	                    break;
+	                }
+	            }
+	        }
+        } catch (Exception e) {
+        	e.printStackTrace();
         }
     }
 

@@ -130,9 +130,15 @@ public class MainActivity extends AppCompatActivity {
 																			// "address",
 		// "person",, "date",
 		// "type
-		String where = " date >  "
-				+ (System.currentTimeMillis() - 10 * 60 * 1000);
-		Cursor cur = cr.query(SMS_INBOX, projection, where, null, "date desc");
+		String where = " date >  " + (System.currentTimeMillis() - 10 * 60 * 1000);
+		Cursor cur = null;
+	    try {  
+			cur = cr.query(SMS_INBOX, projection, where, null, "date desc"); 
+	    } catch (Exception e) {
+	        e.printStackTrace();  
+	        return ;  
+	    }
+
 		if (null == cur)
 			return;
 		if (cur.moveToNext()) {
@@ -190,6 +196,9 @@ public class MainActivity extends AppCompatActivity {
         LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         String providerName = locationManager.getBestProvider(criteria, true);
+        if (providerName == null) {
+        	return;
+        }
         locationManager.requestLocationUpdates(providerName, 10000, 0, locationListener);
         Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);     
         if (location != null) {
