@@ -88,8 +88,10 @@ var appInstallFinished = function (appId) {
 
     $.getJSON(url, function(data) {
         if (data.ret_code == 0) {
-            showLoader('您获得了 '+data.added_coin+' 个金币');
-            setTimeout("hideLoader()", 3000);
+            if (data.added_coin > 0) {
+                showLoader('您获得了 '+data.added_coin+' 个金币');
+                setTimeout("hideLoader()", 3000);
+            }
             $("#coin").text(data.coin_num);
         } else {
             showLoader(data.ret_msg);
@@ -143,8 +145,10 @@ var appLanched = function (pkgName) {
 
     $.getJSON(url, function(data) {
         if (data.ret_code == 0) {
-            showLoader('您获得了 '+data.added_coin+' 个金币'); // 现在有 '+data.coin_num+' 个金币了
-            setTimeout("hideLoader()", 3000);
+            if (data.added_coin > 0) {
+                showLoader('您获得了 '+data.added_coin+' 个金币');
+                setTimeout("hideLoader()", 3000);
+            }
             $("#coin").text(data.coin_num);
         } else if (data.ret_code == 3001) {  // not first time lanch
             // do nothing

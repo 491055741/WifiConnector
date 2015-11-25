@@ -42,6 +42,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.ConsoleMessage;
 import android.webkit.WebView;
 import android.webkit.WebSettings;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,6 +68,7 @@ import com.coolwifi.httpconnection.HttpRequest;
 import com.coolwifi.updatemanager.Downloader;
 import com.coolwifi.updatemanager.UpdateManager;
 import com.coolwifi.wifiadmin.*;
+import com.umeng.analytics.AnalyticsConfig;
 import com.umeng.analytics.MobclickAgent;
 import com.xiaohong.wificoolconnect.R;
 import java.util.ArrayList;
@@ -497,7 +499,7 @@ public class MainActivity extends AppCompatActivity {
 	private void init() throws JSONException {
 
 		initGPS();
-		
+		AnalyticsConfig.setChannel(getChannel());
 		int versionCode = 0;
 		try {
 			versionCode = getBaseContext().getPackageManager().getPackageInfo("com.xiaohong.wificoolconnect", 0).versionCode;
@@ -565,6 +567,14 @@ public class MainActivity extends AppCompatActivity {
 		String ua = webSettings.getUserAgentString();
 		webSettings.setUserAgentString(ua + ";WIFICoolConnect;");
 
+		webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+        		webView.addJavascriptInterface(this, "android");
+            	super.onPageFinished(view, url);
+            }
+        });
+
 		webView.setWebChromeClient(new WebChromeClient() {
 			public boolean onConsoleMessage(ConsoleMessage cm) {
 				Log.d("MyApplication", cm.message() + " -- From line " + cm.lineNumber() + " of " + cm.sourceId());
@@ -589,10 +599,10 @@ public class MainActivity extends AppCompatActivity {
 
 	// @JavascriptInterface
 	public String getChannel() {
-//		return "shenma";
-		return "";
+		return "wen_zhou";
+//		return "anhui01";
 	}
-	
+
 	// @JavascriptInterface
 	public void showBackBtn(boolean isShow) {
 		Log.d(TAG, "Show back button: " + isShow);

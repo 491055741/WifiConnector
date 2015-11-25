@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.xiaohong.wificoolconnect"
-    android:versionCode="58"
+    android:versionCode="59"
     android:versionName="1.3"
     >
 
@@ -225,8 +225,8 @@
         
         <!-- 友盟  -->
         <meta-data android:value="55877b8067e58e1674004760" android:name="UMENG_APPKEY"></meta-data>
-<!--         <meta-data android:value="an_hui" android:name="UMENG_CHANNEL"></meta-data> -->
-        <meta-data android:value="wen_zhou" android:name="UMENG_CHANNEL"></meta-data>
+        <!-- <meta-data android:value="anhui01" android:name="UMENG_CHANNEL"></meta-data> -->
+        <!-- <meta-data android:value="wen_zhou" android:name="UMENG_CHANNEL"></meta-data> -->
     </application>
 
 </manifest>
