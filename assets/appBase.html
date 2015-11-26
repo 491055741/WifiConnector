@@ -144,7 +144,7 @@
 
         <div id="choiceView">
 
-            <div data-role="header" data-position="fixed" >
+            <div id="appListHeader" data-role="header" data-position="fixed" >
                 <div data-role="tabs" onactivechanged="changeTabs">
                     <ul>
                         <li><a href="#tab-1" class="" data-idx='1'>推荐</a></li>
@@ -181,10 +181,10 @@
                                 <ul class="app-list h-pt">
                                 </ul>
                             </div>
-<!--                             <div class="scroller-pullUp">
+                            <div class="scroller-pullUp">
                                 <span class="up-icon" class="icon-double-angle-up pull-up-icon"></span>
                                 <span class="pullUp-msg" class="pull-up-msg">上拉加载更多</span>
-                            </div> -->
+                            </div>
                         </div>
                     </div>
 
@@ -208,10 +208,10 @@
                                 <ul class="app-list">
                                 </ul>
                             </div>
-<!--                             <div class="scroller-pullUp">
+                            <div class="scroller-pullUp">
                                 <span class="up-icon icon-double-angle-up pull-up-icon"></span>
                                 <span class="pullUp-msg pull-up-msg">上拉加载更多</span>
-                            </div> -->
+                            </div>
                         </div>
                     </div>
                     <div class="refresh-app-list" style="display:none;">
@@ -235,10 +235,10 @@
                                 <ul class="app-list">
                                 </ul>
                             </div>
-<!--                             <div class="scroller-pullUp">
+                            <div class="scroller-pullUp">
                                 <span class="up-icon icon-double-angle-up pull-up-icon"></span>
                                 <span class="pullUp-msg pull-up-msg">上拉加载更多</span>
-                            </div> -->
+                            </div>
                         </div>
                     </div>
                     <div class="refresh-app-list" style="display:none;">
@@ -383,7 +383,7 @@
                 </div>
             </div>
         </div>  
-        <div class="clear"></div>   
+        <div class="clear"></div>
     </header>
     <section class="clear">
         <div class="tabbed_content">
@@ -417,13 +417,6 @@
         <p class="fontArial">使用过程中，如遇到其他任何问题，可以通过以下方式跟我们联系。酷连WiFi QQ群，QQ群1:227306629，QQ群2:516766607</p>
     </footer>
 </div>
-
-<iframe style="display:none">
-    <form name="loginform" id="loginform" action="./logon.cgi" method="post">
-        <input type="hidden" name="PtUser" id="username" value="gaopeng"> 
-        <input type="hidden" name="PtPwd" id="password" value="gaopeng"> 
-    </form>
-</iframe>
 
 <script src="js/common.js"></script>
 <script src="js/appBase.js"></script>

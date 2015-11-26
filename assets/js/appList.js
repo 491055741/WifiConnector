@@ -550,17 +550,21 @@ var me = {
             return;
         }
         console.log("authentication.");
-        var phone_number = $(".acount_list #account").text();
-        var url = appServerUrl+"/query_coin?phone_number="+phone_number;
-        $.getJSON(url, function(data) {
-
-            if (data.ret_code == 0 || data.ret_code == 3001) {  // 3001 means already deduction coin today
-                me.sendAuthenticationRequest();
-            } else {
-                showLoader(data.ret_msg);
-                setTimeout("hideLoader()", 2000);
-            }
-        });
+        // check coin only when connected to HongWifi
+        if (me.isKuLianWifi(connectedSSID)) {
+            var phone_number = $(".acount_list #account").text();
+            var url = appServerUrl+"/query_coin?phone_number="+phone_number;
+            $.getJSON(url, function(data) {
+                if (data.ret_code == 0 || data.ret_code == 3001) {  // 3001 means already deduction coin today
+                    me.sendAuthenticationRequest();
+                } else {
+                    showLoader(data.ret_msg);
+                    setTimeout("hideLoader()", 2000);
+                }
+            });
+        } else {
+            me.sendAuthenticationRequest();
+        }
     },
 
     sendAuthenticationRequest : function() {
@@ -708,6 +712,13 @@ var me = {
         me.currentTabIdx = idx;
         if (idx == 1 && slide.isInited == true) { // app tab
             slide.show();
+
+            me.curAppTabIdx = tabIdx;
+            var headerHeight = $("#appListHeader").height();
+            var footerHeight = $("#mainFooter").height();
+            console.log("header:"+headerHeight+" footerHeight:"+footerHeight+" screenHeight:"+document.body.clientHeight);
+            $("#tab-1 .wrapper").css('height', (document.body.clientHeight-headerHeight-footerHeight)+'px');// screenHeight - topNavbarHeight-bottomNavbarHeight
+
         } else {
             slide.hide();
         }
@@ -866,7 +877,7 @@ var me = {
 
     isKuLianWifi : function(ssid)
     {
-        if (ssid.toLowerCase().startWith("hongwifi") || ssid.indexOf("小鸿") != -1) { //   || ssid.startWith("SuperMary")
+        if (ssid.toLowerCase().startWith("hongwifi") || ssid.toLowerCase().endWith("hongwifi") || ssid.indexOf("小鸿") != -1) { //   || ssid.startWith("SuperMary")
             console.log("isKuLianWifi match pattern: "+ssid);
             return true;
         }
@@ -1015,7 +1026,6 @@ var me = {
                             return;
                         }
                         $("#tab-"+type+" .wrapper").show();
-
                         me.curAppPageIdx[type] = page + 1;
                         me.appList = data;
                         var html;
@@ -1997,6 +2007,10 @@ var me = {
 
     showAppTab : function (tabIdx) {
         me.curAppTabIdx = tabIdx;
+        var headerHeight = $("#appListHeader").height();
+        var footerHeight = $("#mainFooter").height();
+        console.log("header:"+headerHeight+" footerHeight:"+footerHeight+" screenHeight:"+document.body.clientHeight);
+        $("#tab-"+tabIdx+" .wrapper").css('height', (document.body.clientHeight-headerHeight-footerHeight)+'px');// screenHeight - topNavbarHeight-bottomNavbarHeight
     },
 
     refreshScroll : function (idx) {
@@ -2056,7 +2070,7 @@ var me = {
         
         me.myScroll[idx].on("slideUp",function(){
             if (this.maxScrollY - this.y > 40) {
-                // me.requestAppTypePage(me.curAppTabIdx, me.curAppPageIdx[me.curAppTabIdx]);
+                me.requestAppTypePage(me.curAppTabIdx, me.curAppPageIdx[me.curAppTabIdx]);
                 upIcon.removeClass("reverse_icon");
             }
         });
@@ -2065,7 +2079,7 @@ var me = {
 
     showGuide : function() {
         $('#connectionBtn').trigger('click');
-      //创建mask，传入图片提示图片的地址,提示文字可传可不传
+        //创建mask，传入图片提示图片的地址,提示文字可传可不传
         H.GuideMask({
             signImgSrc:"images/tl.png",
             signText:"每日签到赚取金币",
