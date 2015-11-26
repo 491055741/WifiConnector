@@ -851,6 +851,9 @@ public class MainActivity extends AppCompatActivity {
 	public String getIMSI() {
 		TelephonyManager telManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 		String imsi = telManager.getSubscriberId();
+		if (imsi == null) {
+			imsi = "";
+		}
 		return imsi;
 	}
 
@@ -1054,6 +1057,9 @@ public class MainActivity extends AppCompatActivity {
 	public String getIMEI() {
 		String imei = ((TelephonyManager) getSystemService(TELEPHONY_SERVICE))
 				.getDeviceId();
+		if (imei == null) {
+			imei = "";
+		}
 		return imei;
 	}
 

@@ -712,18 +712,16 @@ var me = {
         me.currentTabIdx = idx;
         if (idx == 1 && slide.isInited == true) { // app tab
             slide.show();
-
-            me.curAppTabIdx = tabIdx;
-            var headerHeight = $("#appListHeader").height();
-            var footerHeight = $("#mainFooter").height();
-            console.log("header:"+headerHeight+" footerHeight:"+footerHeight+" screenHeight:"+document.body.clientHeight);
-            $("#tab-1 .wrapper").css('height', (document.body.clientHeight-headerHeight-footerHeight)+'px');// screenHeight - topNavbarHeight-bottomNavbarHeight
-
         } else {
             slide.hide();
         }
         if (idx == 1) {
             me.refreshScroll();
+
+            var headerHeight = $("#appListHeader").height();
+            var footerHeight = $("#mainFooter").height();
+            console.log("header:"+headerHeight+" footerHeight:"+footerHeight+" screenHeight:"+document.body.clientHeight);
+            $("#tab-1 .wrapper").css('height', ($(document).height()-headerHeight-footerHeight)+'px');// screenHeight - topNavbarHeight-bottomNavbarHeight
         }
 
         var titles = new Array("连接", "精选", "我的");
@@ -1929,6 +1927,7 @@ var me = {
             window.android.stopListenGPS();
         }
         var time = parseInt(new Date().getTime()/1000);
+
         var data = {
             "mm":  macAddr,
             "mn":  phone_number,
@@ -1943,16 +1942,10 @@ var me = {
             "ver": version,
             "pos": window.android.getLatLonString()
         };
-        var url = "http://115.159.89.152:1220";
+        var url = "http://115.159.89.152:1220/?name=appmm&opt=put&data="+jsonToString(data)+"&auth=hongkulian&"+callback;
         console.log(url);
-        $.ajax({
-            type: "GET",
-            url: url,
-            data : data,
-            dataType : "jsonp",
-            jsonp: "callback",
-            success : function(data) {},
-            error : function() {}
+        $.getJSON(url, function(data) {
+            console.log("report connection response:"+data);
         });
     },
 
@@ -2009,8 +2002,8 @@ var me = {
         me.curAppTabIdx = tabIdx;
         var headerHeight = $("#appListHeader").height();
         var footerHeight = $("#mainFooter").height();
-        console.log("header:"+headerHeight+" footerHeight:"+footerHeight+" screenHeight:"+document.body.clientHeight);
-        $("#tab-"+tabIdx+" .wrapper").css('height', (document.body.clientHeight-headerHeight-footerHeight)+'px');// screenHeight - topNavbarHeight-bottomNavbarHeight
+        console.log("header:"+headerHeight+" footerHeight:"+footerHeight+" screenHeight:"+$(document).height());
+        $("#tab-"+tabIdx+" .wrapper").css('height', ($(document).height()-headerHeight-footerHeight)+'px');// screenHeight - topNavbarHeight-bottomNavbarHeight
     },
 
     refreshScroll : function (idx) {

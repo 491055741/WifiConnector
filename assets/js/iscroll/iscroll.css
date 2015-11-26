@@ -6,6 +6,7 @@
 	left: 0;
 	width: 100%;
 	background: #f9f9f9;
+	/*background: red;*/
 	overflow: hidden;
 }
 
@@ -47,10 +48,10 @@
 	width:100%;
 }
 .scroller-pullDown{
-	top:-40px;
+	top:-50px;
 }
 .scroller-pullUp{
-	bottom:-40px;
+	bottom:-50px;
 }
 
 .scroller-pullDown .pull-up-msg,#scroller-pullUp .pull-down-msg {
