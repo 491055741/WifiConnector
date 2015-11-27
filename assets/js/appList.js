@@ -1506,7 +1506,10 @@ var me = {
             if ($(this).attr("data-downloaded") == "YES") {
                 console.log('downloaded, try to install again');
                 if (window.android) {
-                    window.android.installDownloadedAPP($(this).data("appid"));
+                    if (window.android.installDownloadedAPP($(this).data("appid")) == false) {
+                        showLoader("请重新下载"); // todo: change status to not downloaded
+                        setTimeout("hideLoader()", 2000);
+                    }
                 }
                 return;
             }
