@@ -3,6 +3,7 @@ package com.coolwifi.updatemanager;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import android.app.DownloadManager;
@@ -27,12 +28,19 @@ public class Downloader
     private Context mContext;
     private Handler mHandler;
     private ArrayList<String> mDownloadIds;
+	private HashMap<String, String> mDownloadFinishedMap; // key:id, value:apk path
 
-    public Downloader(Context context, Handler handler)
+	public synchronized String getDownloadPath(String downloadId)
+	{
+		return mDownloadFinishedMap.get(downloadId);
+	}
+
+	public Downloader(Context context, Handler handler)
     {
         mHandler = handler;
         mContext = context;
         mDownloadIds = new ArrayList<String>();
+        mDownloadFinishedMap = new HashMap<String, String>();
         downloadmanager = (DownloadManager)mContext.getSystemService(Context.DOWNLOAD_SERVICE);  
 //        mContext.registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));   
         downloadObserver = new DownloadChangeObserver(null);
@@ -99,13 +107,13 @@ public class Downloader
 	                int fileSizeIdx = c.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES);        
 	                int bytesDLIdx = c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR);
 	                int pathIdx = c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
-	
+
 	                String title = c.getString(titleIdx);
 	                String path = c.getString(pathIdx);
 	                int fileSize = c.getInt(fileSizeIdx);
 	                int bytesDL = c.getInt(bytesDLIdx);
 	                int progress = (int)((float)bytesDL/(float)fileSize * 100);
-	
+
 	                switch(status) {
 	                    case DownloadManager.STATUS_PAUSED:     
 	//                        Log.v("tag", "STATUS_PAUSED");
@@ -116,6 +124,7 @@ public class Downloader
 	                        break;
 	                    case DownloadManager.STATUS_SUCCESSFUL:
 	                        Log.v("tag", title+" 下载完成");
+	                        mDownloadFinishedMap.put(String.valueOf(downloadId), path);
 	                        installApk(path);
 	                        break;
 	                    case DownloadManager.STATUS_FAILED:

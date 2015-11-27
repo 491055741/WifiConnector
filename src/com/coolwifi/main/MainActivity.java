@@ -74,6 +74,7 @@ import com.xiaohong.wificoolconnect.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -97,8 +98,8 @@ public class MainActivity extends AppCompatActivity {
 	private WebView webView;
 	private Downloader mDownloader;
 	private WifiAdmin wifiAdmin;
-	private HashMap<String, String> mDownloadAppInfoHashMap;
-	private HashMap<String, String> mDownloadIdHashMap;
+	private HashMap<String, String> mDownloadAppInfoHashMap;  // pkgName, appId
+	private HashMap<String, String> mDownloadIdHashMap;       // downloadId, appId
 	private ActionBar mActionbar;
 	private boolean mIsActive = true; // 是否进入后台
 	private SmsObserver smsObserver;
@@ -453,17 +454,15 @@ public class MainActivity extends AppCompatActivity {
 				String downloadIdStr = String.valueOf(msg.arg1);
 				String appId = mDownloadIdHashMap.get(downloadIdStr);
 				String progressStr = String.valueOf(msg.arg2);
-				webView.loadUrl("javascript: updateDownloadProgress(" + appId
-						+ "," + progressStr + ")");
+				webView.loadUrl("javascript: updateDownloadProgress(" + appId + "," + progressStr + ")");
 				break;
 			}
 			case DOWNLOAD_FINISH: {
 				Log.i(TAG, "download finished.");
 				String downloadIdStr = String.valueOf(msg.arg1);
 				String appId = mDownloadIdHashMap.get(downloadIdStr);
-				webView.loadUrl("javascript: finishDownloadProgress('" + appId
-						+ "')");
-				mDownloadIdHashMap.remove(downloadIdStr);
+				webView.loadUrl("javascript: finishDownloadProgress('" + appId + "')");
+//				mDownloadIdHashMap.remove(downloadIdStr);
 				break;
 			}
 			default:
@@ -752,7 +751,7 @@ public class MainActivity extends AppCompatActivity {
 		Log.d(TAG, "download app");
 		mDownloadAppInfoHashMap.put(pkgName, appId);
 		try {
-			Long downloadId = mDownloader.downloadApk(appUrl, appName); // "_"+(int)(Math.random()*100000)
+			Long downloadId = mDownloader.downloadApk(appUrl, appName);
 			mDownloadIdHashMap.put(String.valueOf(downloadId), appId);
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
@@ -970,6 +969,28 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	// @JavascriptInterface
+	public boolean installDownloadedAPP(String appId) {
+		Log.d(TAG, "installDownloadedApp:" + appId);
+		String downloadId = null;
+		for (Entry<String, String> entry : mDownloadIdHashMap.entrySet()) {
+			if (entry.getValue().equals(appId)) {
+				downloadId = entry.getKey(); 
+			}
+		}
+		if (downloadId == null) {
+			Log.d(TAG, "installDownloadedApp:" + appId + " downloadId not found.");
+			return false;
+		}
+		String path = mDownloader.getDownloadPath(downloadId);
+		if (path == null) {
+			Log.d(TAG, "installDownloadedApp:" + appId + " filepath not found.");
+			return false;
+		}
+		mDownloader.installApk(path);
+		return true;
+	}
+
+	// @JavascriptInterface
 	public void socialShare() {
 
 		ShareSDK.initSDK(this);
@@ -1001,8 +1022,7 @@ public class MainActivity extends AppCompatActivity {
 		oks.show(this);
 	}
 
-	private static final boolean isApkInstalled(Context context,
-			String packageName) {
+	private static final boolean isApkInstalled(Context context, String packageName) {
 		try {
 			context.getPackageManager().getApplicationInfo(packageName,
 					PackageManager.GET_UNINSTALLED_PACKAGES);

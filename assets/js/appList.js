@@ -1504,7 +1504,10 @@ var me = {
                 return;
             }
             if ($(this).attr("data-downloaded") == "YES") {
-                console.log('downloaded, ignore download request...');
+                console.log('downloaded, try to install again');
+                if (window.android) {
+                    window.android.installDownloadedAPP($(this).data("appid"));
+                }
                 return;
             }
         });
