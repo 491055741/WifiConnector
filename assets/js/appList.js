@@ -244,7 +244,8 @@ $("#MainPage").on("pageinit", function() {
     // use fastClick will cause pop to home page when tap the tab on PC.
     $("#connectionBtn").click(function(e) {me.showTab(0);});
     $("#excellentBtn").click(function(e) {me.showTab(1);});
-    $("#mineBtn").click(function(e) {me.showTab(2);});
+    $("#contentBtn").click(function(e) {me.showTab(2);});
+    $("#mineBtn").click(function(e) {me.showTab(3);});
     $("#connectWifiBtn").attr("data-wifiStatus", WifiStatus.disconnected);
     me.requestAppList();
     me.requestMessage();
@@ -699,7 +700,7 @@ var me = {
     },
 
     showTab : function(idx) {
-        var tabs = new Array("connectionView", "choiceView", "mineView");
+        var tabs = new Array("connectionView", "choiceView", "contentView", "mineView");
         for (var i = 0; i < tabs.length; i++) {
             if (i == idx) {
                 $("#" + tabs[i]).show();
@@ -715,16 +716,17 @@ var me = {
         } else {
             slide.hide();
         }
-        if (idx == 1) {
+        if (idx == 1) { // choice page
             me.refreshScroll();
 
             var headerHeight = $("#appListHeader").height();
             var footerHeight = $("#mainFooter").height();
-            console.log("header:"+headerHeight+" footerHeight:"+footerHeight+" screenHeight:"+document.body.clientHeight);
+            console.log("header:"+headerHeight+" footerHeight:"+footerHeight+" screenHeight:"+$(document).height());
             $("#tab-1 .wrapper").css('height', ($(document).height()-headerHeight-footerHeight)+'px');// screenHeight - topNavbarHeight-bottomNavbarHeight
+        } else if (idx == 2) {// iframe page
+            $("#contentIFrame").css('height', $(document).height());
         }
-
-        var titles = new Array("连接", "精选", "我的");
+        var titles = new Array("连接", "精选", "搞笑", "我的");
         setTitle(titles[idx]);
     },
 
