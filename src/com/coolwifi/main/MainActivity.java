@@ -41,7 +41,6 @@ import android.webkit.WebChromeClient;
 import android.webkit.ConsoleMessage;
 import android.webkit.WebView;
 import android.webkit.WebSettings;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -565,14 +564,6 @@ public class MainActivity extends AppCompatActivity {
 		webSettings.setDatabasePath("/data/data/" + webView.getContext().getPackageName() + "/databases/");
 		String ua = webSettings.getUserAgentString();
 		webSettings.setUserAgentString(ua + ";WIFICoolConnect;");
-
-		webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-        		webView.addJavascriptInterface(this, "android");
-            	super.onPageFinished(view, url);
-            }
-        });
 
 		webView.setWebChromeClient(new WebChromeClient() {
 			public boolean onConsoleMessage(ConsoleMessage cm) {
