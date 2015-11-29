@@ -30,6 +30,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -420,8 +421,10 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
+	// 定义一个Handler，用于处理webview线程与UI间通讯,因webview不能直接更新UI，所以发消息出来，主线程更新UI
+	// 或者比较耗时的操作，开新线程处理，处理结束后调用webview接口返回数据给webview
 	private Handler mWebviewHandler = new Handler() {
-		public void handleMessage(Message msg) {// 定义一个Handler，用于处理webview线程与UI间通讯
+		public void handleMessage(Message msg) {
 			if (!Thread.currentThread().isInterrupted()) {
 				switch (msg.what) {
 				case 0:
@@ -438,7 +441,7 @@ public class MainActivity extends AppCompatActivity {
 					checkConnection();
 					break;
 				case 2:
-
+					webView.loadUrl("javascript: wifiListChanged(" + msg.obj + ")");
 					break;
 				}
 			}
@@ -474,10 +477,10 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
-		// setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_main);
+		initCustomActionBar();
 		try {
 			init();
-//			shenZhouShuMaAuth();  // for test
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -530,8 +533,6 @@ public class MainActivity extends AppCompatActivity {
 			e.printStackTrace();
 		}
 
-		initCustomActionBar();
-
 		checkDownloadManager();
 		PushManager.getInstance().initialize(this.getApplicationContext());
 
@@ -548,7 +549,10 @@ public class MainActivity extends AppCompatActivity {
 		Log.i(TAG, "wifi open:" + open);
 		wifiAdmin.startScan();
 		smsObserver = new SmsObserver(this, smsHandler);
-		webView = new WebView(this);
+
+        webView = (WebView) findViewById(R.id.webview);
+        webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+//		webView = new WebView(this);
 		webView.setVerticalScrollBarEnabled(false);
 		WebSettings webSettings = webView.getSettings();
 		webSettings.setJavaScriptEnabled(true);
@@ -593,7 +597,7 @@ public class MainActivity extends AppCompatActivity {
 		webView.loadUrl("file:///android_asset/appBase.html");
 		CookieManager.getInstance().setAcceptCookie(true);
 		webView.addJavascriptInterface(this, "android");
-		setContentView(webView);
+
 	}
 
 	// @JavascriptInterface
@@ -652,6 +656,9 @@ public class MainActivity extends AppCompatActivity {
 	private boolean initCustomActionBar() {
 
 		if (mActionbar == null) {
+//		    Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+//		    setSupportActionBar(myToolbar);
+ 
 			mActionbar = getSupportActionBar();
 			if (mActionbar == null) {
 				return false;
@@ -796,52 +803,69 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	// @JavascriptInterface
-	public String wifiListJsonString() throws JSONException {
-		JSONArray jsonArray = new JSONArray();
+	public void requestWifiList() {
+		new Thread(wifiListTask).start();
+	}
 
-		if (MainActivity.isEmulator(getBaseContext())) {
-			// test data
-			JSONObject jsonObject = new JSONObject();
-			jsonObject.put("SSID", "Mary");
-			jsonObject.put("level", 10);
-			jsonObject.put("encrypt",
-					wifiEncryptType("[WPA-PSK-CCMP][WPA2-PSK-CCMP][ESS]"));
-			jsonArray.put(jsonObject);
-			JSONObject jsonObject2 = new JSONObject();
-			jsonObject2.put("SSID", "@小鸿科技");
-			jsonObject2.put("level", 90);
-			jsonObject.put("encrypt", wifiEncryptType("[ESS]"));
-			jsonArray.put(jsonObject2);
-		} else {
-			wifiAdmin.startScan();
-			for (ScanResult scanResult : wifiAdmin.getWifiList()) {
-                int length = jsonArray.length();  
-                boolean isDup = false;
-                for (int i = 0; i < length; i++) {  
-	                JSONObject oj = jsonArray.getJSONObject(i);  
-	                if (scanResult.SSID.equals(oj.getString("SSID"))) {
-	                	isDup = true;
-	                	break;
-	                }
-	            }
-                if (isDup) {
-                	continue;
-                }
-				JSONObject jsonObject = new JSONObject();
-				jsonObject.put("SSID", scanResult.SSID);
-				jsonObject.put("encrypt",
-						wifiEncryptType(scanResult.capabilities));
-				jsonObject.put("level", scanResult.level);
-				// Log.d(TAG,
-				// "SSID["+scanResult.SSID+"] cap: "+scanResult.capabilities);
-				jsonArray.put(jsonObject);
+	Runnable wifiListTask = new Runnable() {
+		@Override
+		public void run() {
+			try {
+				JSONArray jsonArray = new JSONArray();
+
+				if (MainActivity.isEmulator(getBaseContext())) {
+					// test data
+					JSONObject jsonObject = new JSONObject();
+					jsonObject.put("SSID", "Mary");
+					jsonObject.put("level", 10);
+					jsonObject.put("encrypt",
+							wifiEncryptType("[WPA-PSK-CCMP][WPA2-PSK-CCMP][ESS]"));
+					jsonArray.put(jsonObject);
+					JSONObject jsonObject2 = new JSONObject();
+					jsonObject2.put("SSID", "@小鸿科技");
+					jsonObject2.put("level", 90);
+					jsonObject.put("encrypt", wifiEncryptType("[ESS]"));
+					jsonArray.put(jsonObject2);
+				} else {
+					wifiAdmin.startScan();
+					for (ScanResult scanResult : wifiAdmin.getWifiList()) {
+		                int length = jsonArray.length();  
+		                boolean isDup = false;
+		                for (int i = 0; i < length; i++) {  
+			                JSONObject oj = jsonArray.getJSONObject(i);  
+			                if (scanResult.SSID.equals(oj.getString("SSID"))) {
+			                	isDup = true;
+			                	break;
+			                }
+			            }
+		                if (isDup) {
+		                	continue;
+		                }
+						JSONObject jsonObject = new JSONObject();
+						jsonObject.put("SSID", scanResult.SSID);
+						jsonObject.put("encrypt",
+								wifiEncryptType(scanResult.capabilities));
+						jsonObject.put("level", scanResult.level);
+						// Log.d(TAG,
+						// "SSID["+scanResult.SSID+"] cap: "+scanResult.capabilities);
+						jsonArray.put(jsonObject);
+					}
+				}
+
+				JSONObject jsonObject3 = new JSONObject();
+				jsonObject3.put("wifilist", jsonArray);
+//				return jsonObject3.toString();
+				Message msg = new Message();
+				msg.what = 2;
+				msg.obj = jsonObject3.toString();
+				mWebviewHandler.sendMessage(msg);
+
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
+	};
 
-		JSONObject jsonObject3 = new JSONObject();
-		jsonObject3.put("wifilist", jsonArray);
-		return jsonObject3.toString();
-	}
 	// @JavascriptInterface
 	public String getMobileInfo() {
 		return "model:"+android.os.Build.MODEL + ",manufacturer:" + android.os.Build.MANUFACTURER + ",os:" + android.os.Build.VERSION.RELEASE;

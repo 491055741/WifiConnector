@@ -198,7 +198,19 @@ var checkLogin = function() {
         me.autoLogin();
     }
 };
-
+// js-android interface
+var wifiListChanged = function(wifiList) {
+    console.log("wifiListChanged");
+    if (typeof wifiList == "string") {
+        var obj = eval("(" + jsonString +")");
+        me.parseWifiList(obj);
+    } else if (typeof wifiList == "object") {
+        me.parseWifiList(wifiList);
+    } else {
+        console.log("unknown wifilist type:"+wifiList);
+    }
+    
+}
 /*page event  Start*/
 $("#WelcomPage").on("pageshow", function () {
     console.log("welcome page show");
@@ -247,25 +259,22 @@ $("#MainPage").on("pageinit", function() {
     $("#contentBtn").click(function(e) {me.showTab(2);});
     $("#mineBtn").click(function(e) {me.showTab(3);});
     $("#connectWifiBtn").attr("data-wifiStatus", WifiStatus.disconnected);
-    me.requestAppList();
-    me.requestMessage();
-    // me.requestAppAds();
     me.fillVersion();
-    me.requestKulianWifi();
-    me.requestWifiList();
-    me.checkNetwork();
+    setTimeout("me.requestKulianWifi()", 100);
+    setTimeout("me.requestWifiList()",   300);
+    setTimeout("me.checkNetwork()",     1500);
+    setTimeout("me.requestMessage()",   2000);
+    setTimeout("me.requestAppList()",   3000);
     me.initExchangePage();
     if (window.android != undefined) {
-        window.android.requestCheckConnection();
+        setTimeout("window.android.requestCheckConnection()", 500);
+        if (window.android.getIsFirstTimeRun()) {
+            setTimeout("me.showGuide()", 1000);
+        }
     } else { // for debug on browser
         setTimeout("wifiStatusChanged('SuperMary')", 1000);
         setTimeout("me.autoLogin()", 10000);
     }
-
-    if (window.android && window.android.getIsFirstTimeRun()) {
-        setTimeout("me.showGuide()", 1000);
-    }
-
 });
 
 $("#MainPage").on("pagebeforeshow", function () {
@@ -339,11 +348,9 @@ $("#feedBackPage").on("pageinit",function() {
         showLoader('请稍候');
         console.log("feedback:"+feedBackUrl);
         $.ajax({
-            type: "GET",
             url: feedBackUrl,
             data: params,
             dataType: "jsonp",
-            crossDomain: true,
             success: function(data) {
                 hideLoader();
                 if (data.ret_code == 0) {
@@ -511,7 +518,6 @@ var me = {
         console.log("checkNetwork: "+checkNetworkUrl);
         // $("#statusDesc").text("检查网络...");
         $.ajax({
-            type: "GET",
             url: url,
             dataType : "jsonp",
             jsonp: "callback",//"callname",//服务端用于接收callback调用的function名的参数
@@ -587,7 +593,6 @@ var me = {
 
         var authUrl = "http://182.254.140.228/portaltt/Logon.html";
         $.ajax({
-            type: "GET",
             crossDomain: true,
             url: authUrl,
             data: '',
@@ -721,12 +726,12 @@ var me = {
 
             var headerHeight = $("#appListHeader").height();
             var footerHeight = $("#mainFooter").height();
-            console.log("header:"+headerHeight+" footerHeight:"+footerHeight+" screenHeight:"+$(document).height());
+            // console.log("header:"+headerHeight+" footerHeight:"+footerHeight+" screenHeight:"+$(document).height());
             $("#tab-1 .wrapper").css('height', ($(document).height()-headerHeight-footerHeight)+'px');// screenHeight - topNavbarHeight-bottomNavbarHeight
         } else if (idx == 2) {// iframe page
             $("#contentIFrame").css('height', $(document).height());
         }
-        var titles = new Array("连接", "精选", "搞笑", "我的");
+        var titles = new Array("连Wifi", "赚金币", "幽默搞笑", "我的");
         setTitle(titles[idx]);
     },
 
@@ -737,7 +742,6 @@ var me = {
         me.kuLianWifi = {"ssidlist": [ {"ssid":"@小鸿科技","ssid_passwd":""},{"ssid":"test","ssid_passwd":""}]};
 
         $.ajax({
-            type: "GET",
             url: url,
             dataType : "jsonp",
             jsonp: "callback",
@@ -783,52 +787,6 @@ var me = {
         });        
     },
 
-    requestAppAds : function()
-    {
-        var url = appServerUrl+"/appad?"+callback;
-        console.log("requestAppAds:"+url);
-        $.getJSON(url, function(data) {
-            if (data.adlist != undefined && data.adlist.length > 0) {
-                me.parseAppAds(data);
-                slide.init();
-                $("#olSlideNum").hide();
-                // $("#tab-1 .wrapper").css("top", 200);
-                // if (me.currentTabIdx == 0) {
-                    $(".fouce").show();
-                // }
-                if (me.myScroll[1] != null) {
-                    setTimeout(me.myScroll[1].refresh(), 1000);
-                }
-            }
-        });
-    },
-
-    parseAppAds : function(data)
-    {
-        var html = me.appAdsTemplate(data);
-        $("#adlist").empty();
-        $("#adlist").append(html);
-    },
-
-    appAdsTemplate : function(data)
-    {
-        var ads = data.adlist;
-        var arrHtml = new Array();
-
-        for (var i = 0; i < ads.length; i++) {
-            arrHtml.push("<li>");
-            var url = ads[i].click_url;
-            if (url.length == 0) {
-                url = "#";
-            }
-            arrHtml.push("<a href=\"" + url + "\">");
-            arrHtml.push("<img src=\"" + ads[i].image_url + "\" />");
-            arrHtml.push("</a>");
-            arrHtml.push("</li>");
-        }
-        return arrHtml.join("");
-    },
-
     requestWifiList : function()
     {
         console.log("requestWifiList");
@@ -836,14 +794,14 @@ var me = {
             var url = localServerUrl + "/wifilist?"+callback;
             // console.log("requestWifiList:" + url);
             $.getJSON(url, function(data) {
-                me.parseWifiList(data);
+                wifiListChanged(data);
             });
         } else {
-            var jsonStr= window.android.wifiListJsonString();
-            var obj = eval("(" + jsonStr +")");
-            me.parseWifiList(obj);
+            window.android.requestWifiList();
         }
-        setTimeout("me.requestWifiList()", 15000);
+        if (window.android) {
+            setTimeout("me.requestWifiList()", 20000);
+        }
     },
 
     parseWifiList : function(data)
@@ -996,7 +954,7 @@ var me = {
         showLoader();
         for (var type = 1; type <= 3; type++) {
             $("#tab-"+type+" .app-list").empty();
-            me.requestAppTypePage(type, 1);
+            setTimeout("me.requestAppTypePage("+type+", 1)" , 1000);
         }
     },
 
@@ -1014,7 +972,6 @@ var me = {
         $("#tab-"+type+" .refresh-app-list").hide();
 
         $.ajax({
-            type: "GET",
             url: url,
             dataType : "jsonp",
             jsonp: "callback",//"callname",//服务端用于接收callback调用的function名的参数
@@ -1037,7 +994,7 @@ var me = {
 
                         $("#tab-"+type+" .app-list").append(html);
                         if (type == 1) {
-                            $("img.lazy").lazyload({threshold:300, effect:"fadeIn", placeholder:null });
+                            $(".app-list img.lazy").lazyload({threshold:300, effect:"fadeIn", placeholder:null });
                             $(window).trigger("scroll");
                         }
 
@@ -1868,7 +1825,6 @@ var me = {
         console.log(url);
 
         $.ajax({
-            type: "GET",
             url: url,
             dataType : "jsonp",
             jsonp: "callback",//"callname",//服务端用于接收callback调用的function名的参数
@@ -1952,8 +1908,11 @@ var me = {
         };
         var url = "http://115.159.89.152:1220/?name=appmm&opt=put&data="+jsonToString(data)+"&auth=hongkulian&"+callback;
         console.log(url);
-        $.getJSON(url, function(data) {
-            console.log("report connection response:"+data);
+        $.ajax({
+            url: url,
+            dataType : "text",
+            success : function(data) {},
+            error : function() {}
         });
     },
 
@@ -2010,7 +1969,7 @@ var me = {
         me.curAppTabIdx = tabIdx;
         var headerHeight = $("#appListHeader").height();
         var footerHeight = $("#mainFooter").height();
-        console.log("header:"+headerHeight+" footerHeight:"+footerHeight+" screenHeight:"+$(document).height());
+        // console.log("header:"+headerHeight+" footerHeight:"+footerHeight+" screenHeight:"+$(document).height());
         $("#tab-"+tabIdx+" .wrapper").css('height', ($(document).height()-headerHeight-footerHeight)+'px');// screenHeight - topNavbarHeight-bottomNavbarHeight
     },
 

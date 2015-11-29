@@ -9,12 +9,8 @@
     <link rel="stylesheet" href="css/reset.css" />
     <link rel="stylesheet" href="js/jquery.mobile/jquery.mobile-1.4.5.min.css" />
     <link rel="stylesheet" href="css/list.css" />
-    <link rel="stylesheet" href="css/comment.css" />
-    <link rel="stylesheet" href="css/content.css" />
     <link rel="stylesheet" href="css/swiper.min.css" />
     <link rel="stylesheet" href="css/wificonnector.css" />
-    <!--<link rel="stylesheet" href="js/gallery/idangerous.swiper.css">-->
-    <!--<link rel="stylesheet" href="js/gallery/gallery-app.css">-->
     <link rel="stylesheet" href="js/tabs/jquery.mobile.tabs.css" />
     <link rel="stylesheet" href="js/iscroll/iscroll.css" />
     <link rel="stylesheet" href="js/jqModal/jqModal.css" />
@@ -90,13 +86,13 @@
     </div>
 </div>
 
-<div data-role="page" id="MainPage" data-title="精选">
+<div data-role="page" id="MainPage" data-title="连Wifi">
 
     <div role="main" class="ui-content main-content">
 
         <div id="connectionView">
 
-            <div class="user_signin">每天领金币</div>
+            <div style="height:30px"><span class="user_signin">每天领金币</span></div>
 
             <div class="jqmWindow" id="dialog" style="display:none;">
                 <hr />
@@ -161,23 +157,6 @@
                     <div class="wrapper">
                         <div style="transition-timing-function: cubic-bezier(0.1, 0.57, 0.1, 1); transition-duration: 0ms; transform: translate(0px, -1047px) translateZ(0px);" class="scroller">
                             <div class="scroller-content">
-                                <!-- ads -->
-                                <div class="fouce" style="display: none;">
-                                    <div id="divSlidePanle" style="overflow: hidden;">
-                                        <div id="slidebox" class="img_box" style="width: 13153px; -webkit-transition-property: -webkit-transform; transition-property: -webkit-transform; -webkit-transform-origin: 0px 0px 0px; -webkit-transform: translate3d(-5637px, 0px, 0px) scale(1);">
-                                            <ul id="adlist">
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <ol id="olSlideNum">
-                                        <li class=""></li>
-                                        <li class=""></li>
-                                        <li class="cur"></li>
-                                        <li class=""></li>
-                                        <li class=""></li>
-                                    </ol>
-                                </div>
-
                                 <ul class="app-list h-pt">
                                 </ul>
                             </div>
@@ -199,11 +178,6 @@
                 <div id="tab-2">
                     <div class="wrapper">
                         <div style="transition-timing-function: cubic-bezier(0.1, 0.57, 0.1, 1); transition-duration: 0ms; transform: translate(0px, -1047px) translateZ(0px);" class="scroller">
-<!--                             <div class="scroller-pullDown">
-                                <span class="down-icon icon-double-angle-down pull-down-icon reverse_icon"></span>
-                                <span class="pullDown-msg pull-down-msg">下拉刷新</span>
-                            </div>
- -->                        
                             <div class="scroller-content">
                                 <ul class="app-list">
                                 </ul>
@@ -226,11 +200,6 @@
                 <div id="tab-3">
                     <div class="wrapper">
                         <div style="transition-timing-function: cubic-bezier(0.1, 0.57, 0.1, 1); transition-duration: 0ms; transform: translate(0px, -1047px) translateZ(0px);" class="scroller">
-<!--                             <div class="scroller-pullDown">
-                                <span class="down-icon icon-double-angle-down pull-down-icon reverse_icon"></span>
-                                <span class="pullDown-msg pull-down-msg">下拉刷新</span>
-                            </div>
- -->
                             <div class="scroller-content">
                                 <ul class="app-list">
                                 </ul>
@@ -336,9 +305,9 @@
         <div data-role="navbar" id="mainFooter" >
 
             <ul class="apple-navbar-ui comboSprite">
-                <li><a href="#" id="connectionBtn" data-icon="wifi" class="ui-btn-icon-top ui-btn-active">连接</a></li>
-                <li><a href="#" id="excellentBtn" data-icon="choice" class="ui-btn-icon-top">精选</a></li>
-                <li><a href="#" id="contentBtn" data-icon="choice" class="ui-btn-icon-top">搞笑</a></li>
+                <li><a href="#" id="connectionBtn" data-icon="wifi" class="ui-btn-icon-top ui-btn-active">连Wifi</a></li>
+                <li><a href="#" id="excellentBtn" data-icon="choice" class="ui-btn-icon-top">赚金币</a></li>
+                <li><a href="#" id="contentBtn" data-icon="humor" class="ui-btn-icon-top">搞笑</a></li>
                 <li><a href="#" id="mineBtn" data-icon="mine" class="ui-btn-icon-top">我的</a></li>
             </ul>
         </div>
