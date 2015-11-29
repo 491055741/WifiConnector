@@ -840,7 +840,7 @@ var me = {
             return true;
         }
         var ssidMD5 = CryptoJS.MD5(ssid, { asString: true });
-        console.log("my wifi ssid:"+ssid+"  MD5:"+ssidMD5);
+        // console.log("my wifi ssid:"+ssid+"  MD5:"+ssidMD5);
         var isKuLian = false;
         // var passwd = "";
         var arrKuLianWifi = me.kuLianWifi;

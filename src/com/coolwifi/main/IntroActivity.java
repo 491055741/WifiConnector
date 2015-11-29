@@ -24,8 +24,6 @@ public class IntroActivity extends AppCompatActivity implements OnClickListener,
 	private ViewPagerAdapter vpAdapter;
 	private ArrayList<View> views;
 	private static final int[] pics = { R.drawable.guide1, R.drawable.guide2};
-	private ImageView[] points;
-	private int currentIndex;
 	private ImageButton button; 
 	
 	@Override
@@ -61,7 +59,6 @@ public class IntroActivity extends AppCompatActivity implements OnClickListener,
 
 		viewPager.setAdapter(vpAdapter);
 		viewPager.setOnPageChangeListener(this);
-//		initPoint();
 		
         button = (ImageButton)findViewById(R.id.intro_button);
         button.setVisibility(View.INVISIBLE);
@@ -76,22 +73,6 @@ public class IntroActivity extends AppCompatActivity implements OnClickListener,
             }
         });
 	}
-
-//	private void initPoint() {
-//		LinearLayout linearLayout = (LinearLayout) findViewById(R.id.ll);
-//
-//		points = new ImageView[pics.length];
-//
-//		for (int i = 0; i < pics.length; i++) {
-//			points[i] = (ImageView) linearLayout.getChildAt(i);
-//			points[i].setEnabled(true);
-//			points[i].setOnClickListener(this);
-//			points[i].setTag(i);
-//		}
-//
-//		currentIndex = 0;
-//		points[currentIndex].setEnabled(false);
-//	}
 
 	@Override
 	public void onPageScrollStateChanged(int arg0) {

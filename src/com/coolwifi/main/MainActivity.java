@@ -15,7 +15,6 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
@@ -30,7 +29,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -80,8 +78,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import junit.framework.Assert;
 
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -636,8 +632,7 @@ public class MainActivity extends AppCompatActivity {
 
 	// @JavascriptInterface
 	public void saveItem(String key, String value) {
-		SharedPreferences.Editor editor = getSharedPreferences("xiaohong",
-				MODE_WORLD_WRITEABLE).edit();
+		SharedPreferences.Editor editor = getSharedPreferences("xiaohong", MODE_WORLD_WRITEABLE).edit();
 		editor.putString(key, value);
 		editor.commit();
 	}
@@ -710,7 +705,7 @@ public class MainActivity extends AppCompatActivity {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
+//		int id = item.getItemId();
 		// if (id == R.id.action_settings) {
 		// return true;
 		// }
@@ -793,9 +788,9 @@ public class MainActivity extends AppCompatActivity {
 	public boolean isWifiAvailable() {
 		ConnectivityManager conMan = (ConnectivityManager) (getBaseContext())
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		State wifi = conMan.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+		State state = conMan.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
 				.getState();
-		if (State.CONNECTED == wifi) {
+		if (State.CONNECTED == state) {
 			return true;
 		} else {
 			return false;
@@ -1132,5 +1127,4 @@ public class MainActivity extends AppCompatActivity {
 		}
 		return false;
 	}
-
 }
