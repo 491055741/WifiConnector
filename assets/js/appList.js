@@ -835,7 +835,7 @@ var me = {
 
     isKuLianWifi : function(ssid)
     {
-        if (ssid.toLowerCase().startWith("hongwifi") || ssid.toLowerCase().endWith("hongwifi") || ssid.indexOf("小鸿") != -1) { //   || ssid.startWith("SuperMary")
+        if (ssid.toLowerCase().startWith("ruijie") || ssid.toLowerCase().startWith("hongwifi") || ssid.toLowerCase().endWith("hongwifi") || ssid.indexOf("小鸿") != -1) { //   || ssid.startWith("SuperMary")
             console.log("isKuLianWifi match pattern: "+ssid);
             return true;
         }
@@ -1005,7 +1005,6 @@ var me = {
 
                         $("#tab-"+type+" .app-list li").click(function() {  // don't use fastclick, it will eat 'touchbegin' event
                              me.clickOnApp(this);
-                            // me.downloadApp(todo);
                         });
 
                         $("#tab-"+type+" .app-list .installBtn").click(function(e) {
@@ -1030,7 +1029,15 @@ var me = {
                                 return;
                             }
                             if ($(this).attr("data-downloaded") == "YES") {
-                                console.log('downloaded, ignore download request...');
+                                console.log('downloaded, install again...');
+                                if (window.android) {
+                                    if (window.android.installDownloadedAPP($(this).data("appid")) == false) {
+                                        showLoader("请重新下载"); // todo: change status to not downloaded
+                                        setTimeout("hideLoader()", 2000);
+                                    }
+                                } else {
+                                    console.log('reinstall app...');
+                                }
                                 return;
                             }
 
@@ -1153,7 +1160,7 @@ var me = {
                     arrHtml.push("<div class='ui-btn installBtn inactive hasInstalled' data-installed='YES' data-applogo=\""+data[i].AppLogo+"\"  data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\"><span>打  开</span></div>");
                 } else {
                     arrHtml.push("<div class='app_coins'>");
-                    arrHtml.push("<div class='coin_num'><span>"+data[i].GiveCoin+"</span> 金币</div>");
+                    arrHtml.push("<div class='coin_num'><span>+"+data[i].GiveCoin+"</span> 金币</div>");
                     arrHtml.push("</div>");
 
                     arrHtml.push("<div class='ui-btn installBtn' data-installed='NO' data-applogo=\""+data[i].AppLogo+"\"  data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\"><span></span></div>");
@@ -1216,7 +1223,7 @@ var me = {
                 } else {
                     arrHtml.push("<div class='ui-btn installBtn bigLogo-instBtn' data-installed='NO' data-applogo=\""+data[i].AppLogo+"\"  data-appname=\""+data[i].AppName+"\" data-appurl=\""+data[i].AppSource+"\" data-appid="+data[i].AppId+" data-pkgname=\""+data[i].PackageName+"\">下 载</div>");
                 }
-                arrHtml.push("<div class='app-down-des'>安装<span class='reward'>+"+data[i].GiveCoin+"</span></div>");
+                arrHtml.push("<div class='app-down-des'>打开才能获金币<span class='reward'>+"+data[i].GiveCoin+"</span></div>");
                 arrHtml.push("</div>");
                 arrHtml.push("</li>");
             }

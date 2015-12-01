@@ -50,6 +50,7 @@ import cn.sharesdk.onekeyshare.OnekeyShare;
 import com.igexin.sdk.PushManager;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -66,6 +67,8 @@ import com.coolwifi.httpconnection.HttpRequest;
 import com.coolwifi.updatemanager.Downloader;
 import com.coolwifi.updatemanager.UpdateManager;
 import com.coolwifi.wifiadmin.*;
+import com.ruijie.wmc.open.ClientHelper;
+import com.ruijie.wmc.open.JsonUtil;
 import com.umeng.analytics.AnalyticsConfig;
 import com.umeng.analytics.MobclickAgent;
 import com.xiaohong.wificoolconnect.R;
@@ -246,42 +249,111 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void sendHuanChuangAuthRequest() throws Exception {
-		Log.d(TAG, "sendHuanChuangAuthRequest");
-		String url = "http://www.baidu.com";
-		String redictURL = getRedirectUrl(url);
-		if (redictURL == null) {
-			Log.d(TAG, "url not redirected");
-			return;
-		}
+        try {
+    	    Log.d(TAG, "sendHuanChuangAuthRequest");
+    		String url = "http://www.baidu.com";
+    		String redictURL = getRedirectUrl(url);
+    		if (redictURL == null) {
+    			Log.d(TAG, "url not redirected");
+    			return;
+    		}
 
-		SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");       
-		String date = sDateFormat.format(new java.util.Date());   
-		String appfauth = stringToMD5(date);
-		String authUrl = "http://www.wifiopenapiauth.com/?appfauth="+appfauth+"&suburl=http://www.baidu.com";
-		HttpURLConnection conn = (HttpURLConnection) new URL(authUrl).openConnection();
-		conn.setInstanceFollowRedirects(false);
-		conn.setConnectTimeout(5000);
-		BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
-		String line = "";
-		while ((line = reader.readLine()) != null) {
-			System.out.println(line);
-		}
-	}
+    		SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");       
+    		String date = sDateFormat.format(new java.util.Date());   
+    		String appfauth = stringToMD5(date);
+    		String authUrl = "http://www.wifiopenapiauth.com/?appfauth="+appfauth+"&suburl=http://www.baidu.com";
+    		HttpURLConnection conn = (HttpURLConnection) new URL(authUrl).openConnection();
+    		conn.setInstanceFollowRedirects(false);
+    		conn.setConnectTimeout(5000);
+    		BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+    		String line = "";
+    		while ((line = reader.readLine()) != null) {
+    			System.out.println(line);
+    		}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 	private void sendHillStoneAuthRequest() throws Exception {
 		Log.d(TAG, "sendHillStoneAuthRequest");
-		String authUrl = "http://www.wifiopenapiauth.com/";
-		HttpURLConnection conn = (HttpURLConnection) new URL(authUrl).openConnection();
-		conn.setInstanceFollowRedirects(false);
-		conn.setConnectTimeout(5000);
-		BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
-		String line = "";
-		while ((line = reader.readLine()) != null) {
-			System.out.println(line);
-		}
+        try {
+            String authUrl = "http://www.wifiopenapiauth.com/";
+            HttpURLConnection conn = (HttpURLConnection) new URL(authUrl).openConnection();
+            conn.setInstanceFollowRedirects(false);
+            conn.setConnectTimeout(5000);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 	}
 
-	private static String stringToMD5(String string) {  
+	private void sendRuijieAuthRequest() throws Exception {
+        Log.d(TAG, "sendRuijieAuthRequest");
+        try {
+            String content = getWebContent("http://www.baidu.com");
+            if (content == null || content.length() == 0) {
+                Log.d(TAG, "url not redirected");
+                return;
+            }
+            String redictURL = content.replaceAll("<script>self.location.href='","");
+            redictURL = redictURL.replaceAll("'</script>","");
+            String ip       = getUrlPara(redictURL, "ip");
+            String userId   = getUrlPara(redictURL, "id");
+            String username = "mac";
+            String mac      = getUrlPara(redictURL, "mac");
+            String serialno = getUrlPara(redictURL, "serialno");
+    
+            HashMap<String,String> params = new HashMap<String,String>();
+            params.put("method", "auth.userOnlineWithDecrypt");
+            params.put("ip", ip);
+            params.put("userId", userId);
+            params.put("username", username);
+            params.put("mac", mac);
+            params.put("serialno", serialno);
+    
+            String resultJson = ClientHelper.sendRequest("http://wmc.ruijieyun.com/open/service","Q1OF5SB3HIVD","7F4981MBZXBOSV53VVX5FJ2V","614634",JsonUtil.toJsonString(params));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        }
+	
+	private String getWebContent(String urlStr) {
+        try
+        {
+            return "<script>self.location.href='http://112.124.31.88/auth/servlet/authServlet?s=f202313df1f99f2af542a9073a50811c&mac=9807f5c39b0245c82c04859938fb2d0e&port=29316c3960ee95d8&url=709db9dc9ce334aaea3d4fa878826efd5d8c15802016713e&ip=81b0dc1f1e4c5effd8c557e77a2986ae&id=8e47f33396baf6de&serialno=db1ebcf32ebd0305e016e2afc5767922'</script>";
+//
+//            URL url = new URL(urlStr);  
+//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();  
+//            conn.setDoInput(true);  
+//            conn.setConnectTimeout(10000);  
+//            conn.setRequestMethod("GET");
+//            conn.setRequestProperty("accept", "*/*");  
+//            String location = conn.getRequestProperty("location");  
+//            int resCode = conn.getResponseCode();  
+//            conn.connect();  
+//            InputStream stream = conn.getInputStream();  
+//            byte[] data=new byte[102400];  
+//            int length=stream.read(data);  
+//            String str=new String(data,0,length);   
+//            conn.disconnect();
+//            stream.close();
+//            return str;
+
+        }  
+        catch(Exception ee)  
+        {  
+            System.out.print("ee:"+ee.getMessage());   
+        }
+        return null;  
+	}
+	
+	private static String stringToMD5(String string) {
 	    byte[] hash;  
 	    try {  
 	        hash = MessageDigest.getInstance("MD5").digest(string.getBytes("UTF-8"));  
@@ -389,6 +461,7 @@ public class MainActivity extends AppCompatActivity {
 				sendShenZhouAuthRequest();
 				sendHuanChuangAuthRequest();
 				sendHillStoneAuthRequest();
+				sendRuijieAuthRequest();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -460,7 +533,6 @@ public class MainActivity extends AppCompatActivity {
 				String downloadIdStr = String.valueOf(msg.arg1);
 				String appId = mDownloadIdHashMap.get(downloadIdStr);
 				webView.loadUrl("javascript: finishDownloadProgress('" + appId + "')");
-//				mDownloadIdHashMap.remove(downloadIdStr);
 				break;
 			}
 			default:
@@ -475,9 +547,14 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main);
 		initCustomActionBar();
 		try {
+            sendRuijieAuthRequest();
+        } catch (Exception e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+		try {
 			init();
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

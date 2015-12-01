@@ -7,7 +7,7 @@ body{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-khtml-
 .goBack {height: 12px;}
 .ui-content {padding: 0;}
 .ui-page-theme-a .ui-btn {background-color: #f0f0f0; color: #555; }
-.ui-page-theme-a .ui-btn.ui-btn-active {background-color: #f0f0f0; color: #38E; text-shadow:none; }
+.ui-page-theme-a .ui-btn.ui-btn-active {background-color: #f0f0f0; color: #0A94D7; text-shadow:none; }
 
 #twitter p {font-size: 16px;}
 .account-wrapper { padding:15px; padding-top: 0;}
@@ -19,7 +19,7 @@ body{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-khtml-
 #LoginPage .changePwdBtn {float: right; padding-top: 20px; }
 #LoginPage .licenseLink {margin-top: 120px; }
 .licenseLink p {font-size: 13px; color: gray; }
-.licenseLink a {font-size: 13px; color: #38E; }
+.licenseLink a {font-size: 13px; color: #0A94D7; }
 .licenseWrapper {padding-top: 10px;color:#2e2e2e;}
 .licenseWrapper section {margin: 15px; font-size:14px;}
 .licenseWrapper h1 {color:#2e2e2e; font-size:24px; text-align: center; font-weight:100;}
@@ -29,18 +29,18 @@ body{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-khtml-
 #connectionView .user_signin {background-color: #FF8800; color: white; text-shadow:0 0 0; font-size: 100%; position: absolute; top:10px; left: 10px; width: 80px; border-radius: 3px; text-align: center;}
 #connectionView .message_grid {padding-top: 10px; color: gray; min-height: 50px; }
 #connectionView .message_grid img {width: 18px; height: 18px; margin-left: 10px; }
-#connectWifiBtn {background-color: #38E; color: white; text-align: center; border-radius: 6px; width: 80%; height: 25px; line-height: 25px; font-size: 14px; border: 0; text-shadow:0 0 0;}
+#connectWifiBtn {background-color: #0A94D7; color: white; text-align: center; border-radius: 6px; width: 80%; height: 25px; line-height: 25px; font-size: 14px; border: 0; text-shadow:0 0 0;}
 .connection_bg {height: 230px; background: url(../images/night.png) no-repeat; background-size: contain;}
 .wifiStatus {height: 100%; min-height: 500px; }
 .wifiStatus img {margin-top: 20px; width: 250px; height: 250px; }
-.wifiStatus div.statusOn, #statusDesc {width: 100%; color: #38E; text-shadow:0 0 0; border-width:0; padding-top: 5px;}
+.wifiStatus div.statusOn, #statusDesc {width: 100%; color: #0A94D7; text-shadow:0 0 0; border-width:0; padding-top: 5px;}
 
 .text_disabled {color:gray;}
 
 .wifiList .lock-icon {position: absolute; right: 20px; width: 10px;}
-.recomWifi_txtspan {background: #38E; color: white; position: absolute; right: 20px; width: 40px; border-radius: 3px; text-shadow: 0 0 0; text-align: center;}
+.recomWifi_txtspan {background: #0A94D7; color: white; position: absolute; right: 20px; width: 40px; border-radius: 3px; text-shadow: 0 0 0; text-align: center;}
 
-.modalViewTitle {text-align:center; color: #38E; font-size: 22px; padding-top: 30px; padding-bottom: 20px; }
+.modalViewTitle {text-align:center; color: #0A94D7; font-size: 22px; padding-top: 30px; padding-bottom: 20px; }
 .modalViewText  {text-align:center; color: black; font-size: 16px; }
 .modalViewBigText {text-align: center; color: red; font-size: 40px; }
 #close_dialog_btn {font-size: 16px; color: black; border-radius: 6px; color: white; background-color: #FF8800; text-shadow:0 0 0; width: 70%; left: 10%; }
@@ -56,13 +56,13 @@ body{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-khtml-
 .app-list .coin_num { position: absolute; width: 55px; bottom: 10px; right: 10px; padding-left: 16px; color: #4d4d4d; font-size: 12px; background: url("../images/coins.png") no-repeat left center; background-size: 14px; }
 .app-list .coin_num span { color: #ff8800; vertical-align: bottom; }
 .app-list .installBtn { position: absolute; width: 65px; height: 45px; line-height: 25px; top: 0; right: 0; background: url("../images/app_download.png") no-repeat 50% 25%; background-size: 25px; border-radius: 0; border: 0; border-left: 1px solid #ccc; }
-.app-list .reward { padding-left: 6px; color: red; }
+.app-list .reward { /*padding-left: 6px; */color: red; }
 .app-list .installBtn.inactive { background: transparent; }
 .app-list .installBtn.manageTab { background: transparent; }
 .app-list .bigLogo-instBtn { /*width: 100%; height: 100%;*/ width: 50px; height: 24px; padding: 0; margin-top: 0; top: auto; bottom: -5px; border-radius: 3px; background: #0A94D7; font: 300 12px/24px 'STHeiti'; color:#fff; text-align: center; letter-spacing: 1px; }
 .app-list li .bigLogo-instBtn:hover { background: rgba(0,0,0,0.5); }
 .app-list .h.baiying-name {font-size: 16px;height: 22px;padding-top: 2px;}
-.app-list .app-down-des { text-align: left; padding: 0; margin-top: 5px; color: #0A94D7; background: url("../images/coins.png") no-repeat 60px 40%; background-size: 14px; border: 0; font: 100 12px '微软雅黑'; }
+.app-list .app-down-des { text-align: left; padding: 0; margin-top: 5px; color: #0A94D7; /*background: url("../images/coins.png") no-repeat 60px 40%;*/ background-size: 14px; border: 0; font: 100 10px '微软雅黑'; }
 .app-list .bigLogo-instBtn.inactive { background: #ccc; color:#fff; }
 .app-list .hasInstalled.bigLogo-instBtn.inactive { background: rgb(245,149,13); text-align: center; letter-spacing: 1px; font-weight: normal; font-family: '微软雅黑'; }
 .app-list .hasInstalled + .down-symbol--t1 { position: absolute; top: 0; right: 0; width: 40px; height: 40px; background: transparent url("../images/down-icon.png") no-repeat center; }
@@ -151,7 +151,7 @@ body{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-khtml-
 
 */
 .ui-footer .ui-navbar .ui-btn {font-size: 14px; color: gray; }
-.ui-footer .ui-navbar .ui-btn.ui-btn-active {background-color: #f6f6f6; font-size: 14px; color: #38E; text-shadow:0 0 0 ;}
+.ui-footer .ui-navbar .ui-btn.ui-btn-active {background-color: #f6f6f6; font-size: 14px; color: #0A94D7; text-shadow:0 0 0 ;}
 
 .ui-icon-choice:after {background: url(../images/tab_choice.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }
 .ui-icon-mine:after {background: url(../images/tab_mine.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }

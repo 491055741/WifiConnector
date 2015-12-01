@@ -21,7 +21,6 @@ import android.widget.ImageView;
 public class ViewPagerAdapter extends PagerAdapter{
 	//界面列表  
     private ArrayList<View> views;  
-    private Activity activity;
     
     public ViewPagerAdapter(ArrayList<View> views)
     {
