@@ -146,7 +146,7 @@
                         <li><a href="#tab-1" class="" data-idx='1'>推荐</a></li>
                         <li><a href="#tab-2" class="" data-idx='2'>应用</a></li>
                         <li><a href="#tab-3" class="" data-idx='3'>游戏</a></li>
-                        <li><a href="#tab-4" class="" data-idx='4'>管理</a></li>
+                        <li><a href="#tab-4" class="" data-idx='4'>任务</a></li>
                     </ul>
                 </div>
             </div>
@@ -219,11 +219,11 @@
                 </div>
                 
                 <div id="tab-4">
-                    <div class="wrapper">
+                    <div class="wrapper" style="display:none;">
                         <div style="transition-timing-function: cubic-bezier(0.1, 0.57, 0.1, 1); transition-duration: 0ms; transform: translate(0px, -1047px) translateZ(0px);" class="scroller">
 
                             <div class="scroller-content">
-                                <div class="app-list">
+<!--                            <div class="app-list">
                                     <div class="section downloading hide">
                                         <h5>下载中</h5>
                                     </div>
@@ -233,16 +233,31 @@
                                     <div class="section hasInstalled hide">
                                         <h5>已安装</h5>
                                     </div>
+                                </div> -->
+
+                                <div class="task-list">
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="refresh-task-list">
+                        <center>
+                            <img class="refresh-image" src="images/refresh.png">
+                            <p>点击重新加载</p>
+                        </center>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="contentView">
-            <iframe id="contentIFrame" width='100%' src="http://xh.come11.com">
+        <div id="humorView">
+            <div class="noNetwork">
+                <center>
+                    <img class="humor-image" src="images/tab_humor.png">
+                    <p>请检查网络</p>
+                </center>
+            </div>
+            <iframe id="humorIFrame" width='100%' style="display:none;">
             </iframe>
         </div>
 
@@ -320,6 +335,11 @@
     </div>
 </div>
 
+<!-- <div data-role="page" id="taskWebPage" data-title="任务">
+    <iframe id="taskIFrame" width="100%">
+    </iframe>
+</div>
+ -->
 <div data-role="page" id="ExchangePage" data-title="兑换">
     <div role="main" class="ui-content">
 

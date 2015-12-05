@@ -219,34 +219,38 @@ public class MainActivity extends AppCompatActivity {
 		return ""+latitude+","+longitude;
 	}
 	// @JavascriptInterface
-	public void shenZhouShuMaAuth() {
+	public void appAuth() {
 		new Thread(authTask).start();
 	}
 
 	private void sendShenZhouAuthRequest() throws Exception {
 		Log.d(TAG, "sendShenZhouAuthRequest");
-		String url = "http://www.baidu.com";
-		String redictURL = getRedirectUrl(url);
-		if (redictURL == null) {
-			Log.d(TAG, "url not redirected");
-			return;
-		}
-		String ip = getUrlPara(redictURL, "ip");
-		String gw = getUrlPara(redictURL, "gw");
+        try {
+    		String url = "http://www.baidu.com";
+    		String redictURL = getRedirectUrl(url);
+    		if (redictURL == null) {
+    			Log.d(TAG, "url not redirected");
+    			return;
+    		}
+    		String ip = getUrlPara(redictURL, "ip");
+    		String gw = getUrlPara(redictURL, "gw");
 
-		String authUrl = "http://" + gw
-				+ ":8800/dcmecloud/interface/RestHttpAuth.php?har={\"ip\":\"" + ip
-				+ "\",\"tool\":\"onekey\"}";
-		HttpURLConnection conn = (HttpURLConnection) new URL(authUrl).openConnection();
-		conn.setInstanceFollowRedirects(false);
-		conn.setConnectTimeout(5000);
-		BufferedReader reader = new BufferedReader(new InputStreamReader(
-				conn.getInputStream(), "utf-8"));
-		String line = "";
-		while ((line = reader.readLine()) != null) {
-			System.out.println(line);
-		}
-	}
+    		String authUrl = "http://" + gw
+    				+ ":8800/dcmecloud/interface/RestHttpAuth.php?har={\"ip\":\"" + ip
+    				+ "\",\"tool\":\"onekey\"}";
+    		HttpURLConnection conn = (HttpURLConnection) new URL(authUrl).openConnection();
+    		conn.setInstanceFollowRedirects(false);
+    		conn.setConnectTimeout(5000);
+    		BufferedReader reader = new BufferedReader(new InputStreamReader(
+    				conn.getInputStream(), "utf-8"));
+    		String line = "";
+    		while ((line = reader.readLine()) != null) {
+    			System.out.println(line);
+    		}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 	private void sendHuanChuangAuthRequest() throws Exception {
         try {
@@ -304,10 +308,10 @@ public class MainActivity extends AppCompatActivity {
             redictURL = redictURL.replaceAll("'</script>","");
             String ip       = getUrlPara(redictURL, "ip");
             String userId   = getUrlPara(redictURL, "id");
-            String username = "mac";
             String mac      = getUrlPara(redictURL, "mac");
+            String username = mac;
             String serialno = getUrlPara(redictURL, "serialno");
-    
+
             HashMap<String,String> params = new HashMap<String,String>();
             params.put("method", "auth.userOnlineWithDecrypt");
             params.put("ip", ip);
@@ -320,31 +324,29 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        }
+    }
 	
 	private String getWebContent(String urlStr) {
         try
         {
-            return "<script>self.location.href='http://112.124.31.88/auth/servlet/authServlet?s=f202313df1f99f2af542a9073a50811c&mac=9807f5c39b0245c82c04859938fb2d0e&port=29316c3960ee95d8&url=709db9dc9ce334aaea3d4fa878826efd5d8c15802016713e&ip=81b0dc1f1e4c5effd8c557e77a2986ae&id=8e47f33396baf6de&serialno=db1ebcf32ebd0305e016e2afc5767922'</script>";
+//            return "<script>self.location.href='http://112.124.31.88/auth/servlet/authServlet?s=f202313df1f99f2af542a9073a50811c&mac=9807f5c39b0245c82c04859938fb2d0e&port=29316c3960ee95d8&url=709db9dc9ce334aaea3d4fa878826efd5d8c15802016713e&ip=81b0dc1f1e4c5effd8c557e77a2986ae&id=8e47f33396baf6de&serialno=db1ebcf32ebd0305e016e2afc5767922'</script>";
 //
-//            URL url = new URL(urlStr);  
-//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();  
-//            conn.setDoInput(true);  
-//            conn.setConnectTimeout(10000);  
-//            conn.setRequestMethod("GET");
-//            conn.setRequestProperty("accept", "*/*");  
-//            String location = conn.getRequestProperty("location");  
-//            int resCode = conn.getResponseCode();  
-//            conn.connect();  
-//            InputStream stream = conn.getInputStream();  
-//            byte[] data=new byte[102400];  
-//            int length=stream.read(data);  
-//            String str=new String(data,0,length);   
-//            conn.disconnect();
-//            stream.close();
-//            return str;
-
+            URL url = new URL(urlStr);  
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();  
+            conn.setDoInput(true);  
+            conn.setConnectTimeout(10000);  
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("accept", "*/*");  
+            String location = conn.getRequestProperty("location");  
+            int resCode = conn.getResponseCode();  
+            conn.connect();  
+            InputStream stream = conn.getInputStream();  
+            byte[] data=new byte[102400];  
+            int length=stream.read(data);  
+            String str=new String(data,0,length);   
+            conn.disconnect();
+            stream.close();
+            return str;
         }  
         catch(Exception ee)  
         {  
@@ -546,12 +548,6 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(bundle);
 		setContentView(R.layout.activity_main);
 		initCustomActionBar();
-		try {
-            sendRuijieAuthRequest();
-        } catch (Exception e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
 		try {
 			init();
 		} catch (JSONException e) {

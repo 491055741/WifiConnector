@@ -61,10 +61,10 @@ var finishDownloadProgress = function (appId) {
             $(el).attr('data-downloaded', 'YES');
             $(el).addClass("hasDownloaded inactive");
             $(el).after("<i class='down-symbol--t1'></i>");
-        } else if ($(el).hasClass('manageTab')) { // 下载管理列表中的
-            $(el).attr('data-downloaded', 'YES');
-            me.removeFromAppManageTab(el);
-            me.addToAppManageTab(el);
+        // } else if ($(el).hasClass('manageTab')) { // 下载管理列表中的
+        //     $(el).attr('data-downloaded', 'YES');
+        //     me.removeFromAppManageTab(el);
+            // me.addToAppManageTab(el);
         } else { // 软件列表和详情中的
             $(el).children('canvas').remove();
             $(el).siblings('.app_down').hide();
@@ -108,11 +108,10 @@ var appInstallFinished = function (appId) {
             $(el).text('打  开');
             $(el).attr('data-installed', 'YES');
             $(el).addClass("hasInstalled inactive");
-            // $(el).after("<i class='down-symbol--t1'></i>");
-        } else if ($(el).hasClass('manageTab')) { // 下载管理列表中的
-            $(el).attr('data-installed', 'YES');
-            me.removeFromAppManageTab(el);
-            me.addToAppManageTab(el);
+        // } else if ($(el).hasClass('manageTab')) { // 下载管理列表中的
+            // $(el).attr('data-installed', 'YES');
+            // me.removeFromAppManageTab(el);
+            // me.addToAppManageTab(el);
         } else { // 软件列表中的
             $(el).children('canvas').remove();
             $(el).siblings('.app_down').hide();
@@ -265,6 +264,7 @@ $("#MainPage").on("pageinit", function() {
     setTimeout("me.checkNetwork()",     1500);
     setTimeout("me.requestMessage()",   2000);
     setTimeout("me.requestAppList()",   3000);
+    setTimeout("me.requestTaskList()",   3500);
     me.initExchangePage();
     if (window.android != undefined) {
         setTimeout("window.android.requestCheckConnection()", 500);
@@ -403,7 +403,7 @@ $("input").bind("focus", function() {
 
 $("#shenmaBtn").fastClick(function () {
     if (window.android != undefined) {
-        window.android.shenZhouShuMaAuth();
+        window.android.appAuth();
     }
     showLoader("发送认证请求");
     setTimeout("hideLoader()", 2000);
@@ -488,6 +488,10 @@ $(".refresh-app-list").fastClick(function() {
     me.requestAppTypePage(me.curAppTabIdx, 1);
 });
 
+$(".refresh-task-list").fastClick(function() {
+    me.requestTaskList();
+});
+
 var me = {
     countDownSeconds : 0, 
     isChangingPassword : false,
@@ -538,6 +542,7 @@ var me = {
                         if (!me.isLogin) {
                             me.autoLogin();
                         }
+                        setTimeout("me.loadHumorPage()", 1000);
                     },
             error : function() {
                         console.log("checkNetwork fail.");
@@ -586,9 +591,9 @@ var me = {
         }
 
         if (window.android != undefined) {
-            window.android.shenZhouShuMaAuth();
+            window.android.appAuth();
         } else {
-            console.log("send ShenZhouShuMa auth request.");
+            console.log("send app auth request.");
         }
 
         var authUrl = "http://182.254.140.228/portaltt/Logon.html";
@@ -705,7 +710,7 @@ var me = {
     },
 
     showTab : function(idx) {
-        var tabs = new Array("connectionView", "choiceView", "contentView", "mineView");
+        var tabs = new Array("connectionView", "choiceView", "humorView", "mineView");
         for (var i = 0; i < tabs.length; i++) {
             if (i == idx) {
                 $("#" + tabs[i]).show();
@@ -729,7 +734,7 @@ var me = {
             // console.log("header:"+headerHeight+" footerHeight:"+footerHeight+" screenHeight:"+$(document).height());
             $("#tab-1 .wrapper").css('height', ($(document).height()-headerHeight-footerHeight)+'px');// screenHeight - topNavbarHeight-bottomNavbarHeight
         } else if (idx == 2) {// iframe page
-            $("#contentIFrame").css('height', $(document).height());
+            $("#humorIFrame").css('height', $(document).height());
         }
         var titles = new Array("连Wifi", "赚金币", "幽默搞笑", "我的");
         setTitle(titles[idx]);
@@ -777,7 +782,7 @@ var me = {
                         $(el).fastClick(function () {
                             if ($(this).data("url") != undefined) {
                                 console.log("click on message, jump to url:"+$(this).data("url"));
-                                window.location = $(this).data("url"); // jump to url
+                                window.location.href = $(this).data("url"); // jump to url
                             }
                         });                        
                     }
@@ -929,7 +934,6 @@ var me = {
         if (ssid == undefined) {
             showLoader("没有搜索到小鸿Wifi");
             setTimeout("hideLoader()", 2000);
-            // me.requestWifiList();
             return;
         }
         if (encrypt != "") {
@@ -949,6 +953,50 @@ var me = {
         }
     },
 
+    requestTaskList : function()
+    {
+        var phone_number = me.getPhoneNumber();
+        var url = appServerUrl+"/get_tasklist?phone_number="+phone_number+"&"+callback;
+        console.log("requestTaskList:" + url);
+        $.getJSON(url, function(data) {
+            if (data.ret_code == 0) {
+                $("#tab-4 .refresh-task-list").hide();
+                $("#tab-4 .wrapper").show();
+                me.parseTaskList(data.tasklist);
+                setTimeout(me.initIScroll(4), 2000);
+            } else {
+                showLoader(data.ret_msg);
+                setTimeout("hideLoader()", 3000);
+            }
+        });
+    },
+
+    parseTaskList : function(tasklist)
+    {
+        var arrHtml = new Array();
+        var phone_number = me.getPhoneNumber();
+        for (var i = 0; i < tasklist.length; i++) {
+            var url = tasklist[i].click_url+"phone_number="+phone_number;
+            arrHtml.push("<dl data-url='"+url+"' class='list-index' data-name='"+tasklist[i].name+"'>");
+            arrHtml.push("<dt><img src="+tasklist[i].logo_url+"></dt>");
+            arrHtml.push("<dd><div class='task_item'><span>"+tasklist[i].desc+"</span>");
+            arrHtml.push("<i class='icon-arrow'></i></div></dd></dl>");
+            var html = arrHtml.join("");
+        }
+
+        $("#tab-4 .task-list").append(html);
+        $("#tab-4 .task-list dl").fastClick(function() {
+            window.location.href = $(this).data("url");
+            // me.showBackBtn(true);
+            // if ($("#taskIFrame").attr("src") != $(this).data("url")) {
+            //     $("#taskIFrame").attr("src", $(this).data("url"));
+            // }
+            // $("#taskIFrame").css('height', 1000);//$(document).height());
+            // $("#taskWebPage").attr("data-title", $(this).data("name"));
+            // changePage("#taskWebPage");
+        });
+    },
+
     requestAppList : function()
     {
         showLoader();
@@ -958,14 +1006,19 @@ var me = {
         }
     },
 
-    // type : 1 ~ 3
-    requestAppTypePage : function(type, page)
+    getPhoneNumber : function()
     {
         if (me.isLogin) {
             var phone_number = $(".acount_list #account").text();
         } else {
             var phone_number = getItem('userName');
         }
+        return phone_number;
+    },
+    // type : 1 ~ 3
+    requestAppTypePage : function(type, page)
+    {
+        var phone_number = me.getPhoneNumber();
         var url = appServerUrl+"/applist_page?apptype="+type+"&page="+page+"&phone_number="+phone_number+"&"+callback;
         console.log("requestAppList:" + url);
 
@@ -998,10 +1051,10 @@ var me = {
                             $(window).trigger("scroll");
                         }
 
-                        var btns = $("#tab-"+type+" .app-list .installBtn[data-installed='YES']");
-                        $.each(btns, function(index, el) {
-                            me.addToAppManageTab(el);
-                        });
+                        // var btns = $("#tab-"+type+" .app-list .installBtn[data-installed='YES']");
+                        // $.each(btns, function(index, el) {
+                        //     me.addToAppManageTab(el);
+                        // });
 
                         $("#tab-"+type+" .app-list li").click(function() {  // don't use fastclick, it will eat 'touchbegin' event
                              me.clickOnApp(this);
@@ -1333,7 +1386,7 @@ var me = {
             $(el).addClass("downloading");
         });
 
-        me.addToAppManageTab(installBtn);
+        // me.addToAppManageTab(installBtn);
 
         if (window.android != undefined) {
             var appInfo = me.getAppInfoById(appId);
@@ -2098,6 +2151,14 @@ var me = {
         }
 
         return arrHtml.join("");
+    },
+
+    loadHumorPage : function()
+    {
+        if ($("#humorIFrame").attr("src") == undefined) {
+            $(".noNetwork").hide();
+            $("#humorIFrame").show().attr("src", "http://xhaz.come11.com");
+        }
     }
 
 }; // end of var me
