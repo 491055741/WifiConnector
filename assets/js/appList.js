@@ -99,8 +99,8 @@ var appInstallFinished = function (appId) {
         setTimeout("hideLoader()", 3000);
     });
     // update button status
-    var installApps = $(".installBtn[data-appid="+appId+"]");
-    $.each(installApps, function (index,el) {
+    var installBtns = $(".installBtn[data-appid="+appId+"]");
+    $.each(installBtns, function (index,el) {
         if ($(el).hasClass('bigLogo-instBtn')) { // 推荐中的
             //如果遮罩层存在就在遮罩层上获取对应的raobj对象
             $(el).siblings('.app-img').children('.canvas-mask').hide();
@@ -119,6 +119,7 @@ var appInstallFinished = function (appId) {
             $(el).addClass("hasInstalled inactive");
             $(el).children('span').text('打  开');
         }
+        $(el).trigger('click');
     });
 };
 // js-Android interface
