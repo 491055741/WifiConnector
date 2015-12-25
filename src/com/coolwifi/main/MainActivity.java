@@ -569,7 +569,6 @@ public class MainActivity extends AppCompatActivity {
 	private void init() throws JSONException {
 
 		initGPS();
-		AnalyticsConfig.setChannel(getChannel());
 		int versionCode = 0;
 		try {
 			versionCode = getBaseContext().getPackageManager().getPackageInfo("com.xiaohong.wificoolconnect", 0).versionCode;
@@ -592,7 +591,6 @@ public class MainActivity extends AppCompatActivity {
 		Log.d("tag", "mSavePath path: " + mSavePath);
 
 		UpdateManager updateManager = new UpdateManager(MainActivity.this);
-		updateManager.channel= getChannel();
 		try {
 			updateManager.checkUpdate();
 		} catch (NotFoundException e) {
@@ -658,12 +656,6 @@ public class MainActivity extends AppCompatActivity {
 		CookieManager.getInstance().setAcceptCookie(true);
 		webView.addJavascriptInterface(this, "android");
 
-	}
-
-	// @JavascriptInterface
-	public String getChannel() {
-		return "wen_zhou";
-//		return "anhui01";
 	}
 
 	// @JavascriptInterface

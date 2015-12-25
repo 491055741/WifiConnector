@@ -23,6 +23,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources.NotFoundException;
 import android.net.Uri;
@@ -79,6 +81,15 @@ public class UpdateManager
         this.mContext = context;
         mDownloader = new Downloader(context, mHandler);
         mVersionCode = 0;
+		try {
+			ApplicationInfo appInfo;
+			appInfo = context.getPackageManager()
+			        .getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+			channel = appInfo.metaData.getString("UMENG_CHANNEL");
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     public void checkUpdate() throws NotFoundException, JSONException

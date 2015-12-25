@@ -1693,7 +1693,7 @@ var me = {
             console.log("Please wait...");
             return;
         }
-
+        $(".verifyCodeBtn").addClass("text_disabled");
         var phone_number = $("#registPhoneNumber").val();
         if (phone_number == '' || phone_number == '请填写您的手机号' || !isPhoneNumber(phone_number)) {
             showLoader("请填写手机号");
@@ -1707,7 +1707,6 @@ var me = {
             if (data.ret_code == 0) {
                 showLoader("验证码已通过短信发送");
                 setTimeout("hideLoader()", 2000);
-                $(".verifyCodeBtn").addClass("text_disabled");
                 me.countDownSeconds = 120;
                 setTimeout("me.countDown()", 1000);
                 $(".verifyCodeBtn").attr("disabled","disabled");
@@ -1717,6 +1716,7 @@ var me = {
             } else {
                 showLoader(data.ret_msg);
                 setTimeout("hideLoader()", 3000);
+                $(".verifyCodeBtn").removeClass("text_disabled");
             }
         }
     )},
