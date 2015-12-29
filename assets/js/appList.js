@@ -1702,16 +1702,25 @@ var me = {
         }
 
         var url = appServerUrl+"/appverifycode?"+callback+"&phone_number="+phone_number;
+        if (me.isLeShiPhone()) {
+            url += "&leshi=1";
+        }
         console.log(url);
         $.getJSON(url, function(data) {
             if (data.ret_code == 0) {
-                showLoader("验证码已通过短信发送");
-                setTimeout("hideLoader()", 2000);
-                me.countDownSeconds = 120;
-                setTimeout("me.countDown()", 1000);
-                $(".verifyCodeBtn").attr("disabled","disabled");
-                if (window.android) {
-                    window.android.startVerifyCodeObserver();
+
+                if (me.isLeShiPhone()) {
+                    receivedVerifyCode(getRandomNum(1000, 10000));
+                } else {
+                    showLoader("验证码已通过短信发送");
+                    setTimeout("hideLoader()", 2000);
+                    $(".verifyCodeBtn").addClass("text_disabled");
+                    me.countDownSeconds = 120;
+                    setTimeout("me.countDown()", 1000);
+                    $(".verifyCodeBtn").attr("disabled","disabled");
+                    if (window.android) {
+                        window.android.startVerifyCodeObserver();
+                    }
                 }
             } else {
                 showLoader(data.ret_msg);
@@ -1817,7 +1826,10 @@ var me = {
                 var passwdMD5 = CryptoJS.MD5(passwd, { asString: true });
                 var url = appServerUrl+"/appregister?"+callback+"&phone_number="+phone_number+"&passwd="+passwdMD5+"&verify_code="+verify_code;
                 if (inviteCode && inviteCode.length > 0 && inviteCode != "选填") {
-                    url = url + "&invite_code=" + inviteCode;
+                    url += "&invite_code=" + inviteCode;
+                }
+                if (me.isLeShiPhone()) {
+                    url += "&leshi=1";
                 }
                 saveItem("userName", phone_number);
                 saveItem("passWord", passwd);
@@ -2159,6 +2171,18 @@ var me = {
         if ($("#humorIFrame").attr("src") == undefined) {
             $(".noNetwork").hide();
             $("#humorIFrame").show().attr("src", "http://xhaz.come11.com");
+        }
+    },
+
+    isLeShiPhone : function()
+    {
+        if (window.android) {
+            var mi = window.android.getMobileInfo();
+            var bool = mi.toLowerCase().indexOf("letv");
+            console.log("phone info: "+mi);
+            return (bool > 0);
+        } else {
+            return false;
         }
     }
 

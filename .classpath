@@ -6,5 +6,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="lib" path="libs/umeng-analytics-v5.5.3.jar"/>
+	<classpathentry kind="lib" path="libs/tbs_sdk_v1.5.1.1025_25435_20151217_obfs.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

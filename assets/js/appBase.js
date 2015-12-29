@@ -80,6 +80,13 @@ function isEmail(str)
     return false;
 }
 
+function getRandomNum(Min, Max)
+{   
+    var Range = Max - Min;   
+    var Rand = Math.random();   
+    return(Min + Math.round(Rand * Range));
+}
+
 function dateDiff(date1Str, date2Str)
 {
     var dateString = date1Str.replace(/-/g, "/");
