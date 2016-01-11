@@ -247,7 +247,6 @@ $("#RegisterPage").on("pagebeforeshow", function () {
 });
 
 $("#RegisterPage").on("pageshow", function () {
-
 });
 
 $("#MainPage").on("pageinit", function() {
@@ -380,6 +379,10 @@ $("#FAQPage").on("pageshow",function() {
 });
 
 /*page event END*/
+
+$("#closePopupAdBtn").fastClick(function(){
+    $("#popupAdView").hide();
+});
 
 $("#logoutBtn").fastClick(function() {
     me.isLogin = false;
@@ -544,6 +547,7 @@ var me = {
                             me.autoLogin();
                         }
                         setTimeout("me.loadHumorPage()", 1000);
+                        setTimeout("me.loadPopupAdView()", 2000);
                     },
             error : function() {
                         console.log("checkNetwork fail.");
@@ -733,9 +737,10 @@ var me = {
             var headerHeight = $("#appListHeader").height();
             var footerHeight = $("#mainFooter").height();
             // console.log("header:"+headerHeight+" footerHeight:"+footerHeight+" screenHeight:"+$(document).height());
-            $("#tab-1 .wrapper").css('height', ($(document).height()-headerHeight-footerHeight)+'px');// screenHeight - topNavbarHeight-bottomNavbarHeight
+            $("#tab-1 .wrapper").css('height', ($(window).height()-headerHeight-footerHeight)+'px');// screenHeight - topNavbarHeight-bottomNavbarHeight
         } else if (idx == 2) {// iframe page
-            $("#humorIFrame").css('height', $(document).height());
+            var footerHeight = $("#mainFooter").height();
+            $("#humorIFrame").css('height', ($(window).height()-footerHeight)+'px');
         }
         var titles = new Array("连Wifi", "赚金币", "幽默搞笑", "我的");
         setTitle(titles[idx]);
@@ -2164,6 +2169,15 @@ var me = {
         }
 
         return arrHtml.join("");
+    },
+
+    loadPopupAdView : function()
+    {
+        if ($("#popupAdIFrame").attr("src") == undefined) {
+            $("#popupAdView").css('height', $(window).height());
+            $("#popupAdView").show();
+            $("#popupAdIFrame").attr("src", "http://go.10086.cn/hao/dwz/0000lk");
+        }
     },
 
     loadHumorPage : function()

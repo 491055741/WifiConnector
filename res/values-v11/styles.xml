@@ -16,7 +16,8 @@
 
     <style name="MyActionBar"
         parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
-        <item name="background">@drawable/ab_solid_blue</item>
-        <item name="backgroundStacked">@drawable/ab_stacked_solid_blue</item>
+        <!--  <item name="background">@drawable/ab_solid_blue  ab_stacked_solid_blue</item>  -->
+        <item name="background">@drawable/actionbar_background</item>
+        <item name="backgroundStacked">@drawable/actionbar_background</item>
     </style>
 </resources>

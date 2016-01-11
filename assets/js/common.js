@@ -96,7 +96,7 @@
 			});
 		});
 		GM.method('createDom',function(settings){
-			var dom = '<div id="guideMask" class="mask-c" style="position: fixed;width: 100%;height: 100%; background-color: rgba(0,0,0,0.75);z-index: 9999;">' +
+			var dom = '<div id="guideMask" class="mask-c" style="position: fixed;width: 100%;height: 100%; background-color: rgba(0,0,0,0.75);z-index: 2000;">' +
 						'<div class="tl-h">' +
 							'<img src="' + ( settings.signImgSrc || '' ) + '">' +
 						'</div>' +

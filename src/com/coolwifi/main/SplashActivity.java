@@ -55,7 +55,7 @@ public class SplashActivity extends Activity {
         getWindow().setBackgroundDrawableResource(R.drawable.splash);  
         mMainHandler.sendEmptyMessageDelayed(0, 1000);
     }
-      
+
     // much easier to handle key events   
     @Override  
     public void onBackPressed() {  
