@@ -147,10 +147,10 @@ body{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-khtml-
 .ui-footer .ui-navbar .ui-btn {font-size: 14px; color: gray; }
 .ui-footer .ui-navbar .ui-btn.ui-btn-active {background-color: #f6f6f6; font-size: 14px; color: #0A94D7; text-shadow:0 0 0 ;}
 
-.ui-icon-choice:after {background: url(../images/tab_choice.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }
-.ui-icon-mine:after {background: url(../images/tab_mine.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }
-.ui-icon-wifi:after {background: url(../images/tab_wifi.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }
-.ui-icon-humor:after {background: url(../images/tab_humor.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }
+.ui-icon-choice:after {background: url(../images/tab_choice_active.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }
+.ui-icon-mine:after {background: url(../images/tab_mine_active.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }
+.ui-icon-wifi:after {background: url(../images/tab_wifi_active.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }
+.ui-icon-humor:after {background: url(../images/tab_humor_active.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }
 .ui-btn-active.ui-icon-choice:after {background: url(../images/tab_choice_active.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }
 .ui-btn-active.ui-icon-mine:after {background: url(../images/tab_mine_active.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }
 .ui-btn-active.ui-icon-wifi:after {background: url(../images/tab_wifi_active.png) no-repeat; background-size:22px,22px; border-radius: 0; background-position: center; height: 25px; }

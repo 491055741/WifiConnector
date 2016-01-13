@@ -286,6 +286,7 @@ $("#MainPage").on("pagebeforeshow", function () {
 $("#MainPage").on("pageshow", function () {
     console.log("main page show");
     me.refreshScroll();
+    setTimeout("me.toggleAdBannerTimer()", 5000);
 });
 
 $('#dialog').jqm({
@@ -547,7 +548,7 @@ var me = {
                             me.autoLogin();
                         }
                         setTimeout("me.loadHumorPage()", 1000);
-                        setTimeout("me.loadPopupAdView()", 2000);
+                        setTimeout("me.requestAppAd()", 1500);
                     },
             error : function() {
                         console.log("checkNetwork fail.");
@@ -744,6 +745,19 @@ var me = {
         }
         var titles = new Array("连Wifi", "赚金币", "幽默搞笑", "我的");
         setTitle(titles[idx]);
+        me.toggleAdBanner();
+    },
+
+    requestAppAd : function()
+    {
+        var phone_number = me.getPhoneNumber();
+        var url = appServerUrl+"/appad?phone_number="+phone_number+"&"+callback;
+        console.log("requestAppAd:"+url);
+        $.getJSON(url, function(data) {
+            if (data.adlist != undefined && data.adlist.length > 0) {
+                me.loadPopupAdView(data.adlist[0].ad_url);
+            }
+        });        
     },
 
     requestKulianWifi : function()
@@ -772,11 +786,7 @@ var me = {
 
     requestMessage : function()
     {
-        if (me.isLogin) {
-            var phone_number = $(".acount_list #account").text();
-        } else {
-            var phone_number = getItem('userName');
-        }
+        var phone_number = me.getPhoneNumber();
         var url = appServerUrl+"/app_broadcast?phone_number="+phone_number+"&"+callback;
         console.log("requestAppMessage:"+url);
         $.getJSON(url, function(data) {
@@ -795,7 +805,7 @@ var me = {
                 });
                 me.showMessage();
             }
-        });        
+        });
     },
 
     requestWifiList : function()
@@ -2171,12 +2181,12 @@ var me = {
         return arrHtml.join("");
     },
 
-    loadPopupAdView : function()
+    loadPopupAdView : function(url)
     {
-        if ($("#popupAdIFrame").attr("src") == undefined) {
+        if (url != undefined && $("#popupAdIFrame").attr("src") == undefined) {
             $("#popupAdView").css('height', $(window).height());
             $("#popupAdView").show();
-            $("#popupAdIFrame").attr("src", "http://go.10086.cn/hao/dwz/0000lk");
+            $("#popupAdIFrame").attr("src", url);
         }
     },
 
@@ -2198,6 +2208,18 @@ var me = {
         } else {
             return false;
         }
+    },
+
+    toggleAdBannerTimer : function()
+    {
+        me.toggleAdBanner();
+        setTimeout("me.toggleAdBannerTimer()", 5000);
+    },
+
+    toggleAdBanner : function()
+    {
+        $("#guanggaojia_adContainer").toggle();
+        $("#adgo_adContainer").toggle();
     }
 
 }; // end of var me
