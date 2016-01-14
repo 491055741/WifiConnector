@@ -745,7 +745,6 @@ var me = {
         }
         var titles = new Array("连Wifi", "赚金币", "幽默搞笑", "我的");
         setTitle(titles[idx]);
-        me.toggleAdBanner();
     },
 
     requestAppAd : function()
@@ -2185,9 +2184,14 @@ var me = {
     {
         if (url != undefined && $("#popupAdIFrame").attr("src") == undefined) {
             $("#popupAdView").css('height', $(window).height());
-            $("#popupAdView").show();
             $("#popupAdIFrame").attr("src", url);
+            setTimeout("me.showPopupAdView()", 3000);
         }
+    },
+
+    showPopupAdView : function()
+    {
+        $("#popupAdView").show();
     },
 
     loadHumorPage : function()
@@ -2212,14 +2216,17 @@ var me = {
 
     toggleAdBannerTimer : function()
     {
+        console.log("toggleAdBannerTimer");
         me.toggleAdBanner();
-        setTimeout("me.toggleAdBannerTimer()", 5000);
+        setTimeout("me.toggleAdBannerTimer()", 10000);
     },
 
     toggleAdBanner : function()
     {
-        $("#guanggaojia_adContainer").toggle();
-        $("#adgo_adContainer").toggle();
+        $("#adgo_adContainer").empty();
+        if (preload != undefined) {
+            preload();
+        }
     }
 
 }; // end of var me
