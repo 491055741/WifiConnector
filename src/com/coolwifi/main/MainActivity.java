@@ -5,6 +5,9 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -703,6 +706,23 @@ public class MainActivity extends AppCompatActivity {
 	// @JavascriptInterface
 	public boolean getIsFirstTimeRun() {
 		return mIsFirstTimeRun;
+	}
+	// @JavascriptInterface
+	public void copyToClipboard(String text) {
+	    Log.d(TAG, "copy to clipboard");
+	    ClipboardManager cbm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+	    cbm.setPrimaryClip(ClipData.newPlainText(null, text));
+	}
+	// @JavascriptInterface
+	public void openWechat() {
+	    Log.d(TAG, "open wechat");
+	    Intent intent = new Intent();
+	    ComponentName cmp = new ComponentName("com.tencent.mm","com.tencent.mm.ui.LauncherUI");
+	    intent.setAction(Intent.ACTION_MAIN);
+	    intent.addCategory(Intent.CATEGORY_LAUNCHER);
+	    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+	    intent.setComponent(cmp);
+	    startActivity(intent);  
 	}
 	private boolean initCustomActionBar() {
 

@@ -64,7 +64,7 @@ var finishDownloadProgress = function (appId) {
         // } else if ($(el).hasClass('manageTab')) { // 下载管理列表中的
         //     $(el).attr('data-downloaded', 'YES');
         //     me.removeFromAppManageTab(el);
-            // me.addToAppManageTab(el);
+            // me.addToTaskListTab(el);
         } else { // 软件列表和详情中的
             $(el).children('canvas').remove();
             $(el).siblings('.app_down').hide();
@@ -111,7 +111,7 @@ var appInstallFinished = function (appId) {
         // } else if ($(el).hasClass('manageTab')) { // 下载管理列表中的
             // $(el).attr('data-installed', 'YES');
             // me.removeFromAppManageTab(el);
-            // me.addToAppManageTab(el);
+            // me.addToTaskListTab(el);
         } else { // 软件列表中的
             $(el).children('canvas').remove();
             $(el).siblings('.app_down').hide();
@@ -293,7 +293,15 @@ $('#dialog').jqm({
     modal: true
 });
 
+$('#gzhdialog').jqm({
+    modal: true
+});
+
 $("#AppDetailPage").on("pagebeforeshow", function () {
+    me.showBackBtn(true);
+});
+
+$("#WechatTaskDetailPage").on("pagebeforeshow", function () {
     me.showBackBtn(true);
 });
 
@@ -396,6 +404,10 @@ $("#registBtn").fastClick(function() {
     me.register();
 });
 
+$("#gzh_close_dialog_btn").click(function() {
+    changePage("#MainPage");
+});
+
 $(".account_coin").fastClick(function() {
     changePage("#ExchangePage");
 });
@@ -422,7 +434,6 @@ $(".verifyCodeBtn").fastClick(function() {
     me.requestVerifyCode();
 });
 
-/*[2015-11-17] get more coin link*/
 $('#getMoreCoin').fastClick(function(){
     me.showGuide();
 });
@@ -548,7 +559,7 @@ var me = {
                             me.autoLogin();
                         }
                         setTimeout("me.loadHumorPage()", 1000);
-                        setTimeout("me.requestAppAd()", 1500);
+                        // setTimeout("me.requestAppAd()", 1500);
                     },
             error : function() {
                         console.log("checkNetwork fail.");
@@ -978,7 +989,52 @@ var me = {
                 $("#tab-4 .refresh-task-list").hide();
                 $("#tab-4 .wrapper").show();
                 me.parseTaskList(data.tasklist);
+                me.requestGzhTaskList();
+            } else {
+                showLoader(data.ret_msg);
+                setTimeout("hideLoader()", 3000);
+            }
+        });
+    },
+
+    requestGzhTaskList : function()
+    {
+        var phone_number = me.getPhoneNumber();
+        var url = appServerUrl+"/get_gzhtasklist?phone_number="+phone_number+"&"+callback;
+        console.log("requestTaskList:" + url);
+        $.getJSON(url, function(data) {
+            if (data.ret_code == 0) {
+                $("#tab-4 .refresh-task-list").hide();
+                $("#tab-4 .wrapper").show();
+                me.parseGzhTaskList(data.tasklist);
+                $("#tab-4 .app-list li").click(function() {  // don't use fastclick, it will eat 'touchbegin' event
+                    if ($(this).data("url") != undefined) {
+                        window.location.href = $(this).data("url");
+                    } else {
+                        me.clickOnGzhTask(this);
+                    }
+                });
                 setTimeout(me.initIScroll(4), 2000);
+            } else {
+                showLoader(data.ret_msg);
+                setTimeout("hideLoader()", 3000);
+            }
+        });
+    },
+
+    acceptGzhTask : function(taskid)
+    {
+        var phone_number = me.getPhoneNumber();
+        var url = appServerUrl+"/accept_gzh_task?phone_number="+phone_number+"&task_id="+taskid+"&"+callback;
+        console.log("requestTaskList:" + url);
+        $.getJSON(url, function(data) {
+            if (data.ret_code == 0) {
+                var dialogHtml="<div class='modalViewTitle'>任务领取成功</div><div class='modalViewText'>请在4小时内完成任务，超过时间任务将自动作废，无法获得金币奖励</div>";
+                $("#gzh_dialog_message").html(dialogHtml);
+                $("#gzhdialog").jqmShow();
+                if (window.android) {
+                    window.android.openWechat();
+                }
             } else {
                 showLoader(data.ret_msg);
                 setTimeout("hideLoader()", 3000);
@@ -991,25 +1047,42 @@ var me = {
         var arrHtml = new Array();
         var phone_number = me.getPhoneNumber();
         for (var i = 0; i < tasklist.length; i++) {
+
             var url = tasklist[i].click_url+"phone_number="+phone_number;
-            arrHtml.push("<dl data-url='"+url+"' class='list-index' data-name='"+tasklist[i].name+"'>");
-            arrHtml.push("<dt><img src="+tasklist[i].logo_url+"></dt>");
-            arrHtml.push("<dd><div class='task_item'><span>"+tasklist[i].desc+"</span>");
-            arrHtml.push("<i class='icon-arrow'></i></div></dd></dl>");
+
+            arrHtml.push("<li class='index-item list-index' data-url='"+url+"'>");
+            arrHtml.push("<div class='index-item-main'>");
+
+            arrHtml.push("<dl data-name='"+tasklist[i].name+"'>");
+            arrHtml.push("<dt class='item-icon'><img src="+tasklist[i].logo_url+" /></dt>");
+            arrHtml.push("<dd class='item-title item-title--t4'><div class='task_item'><span>"+tasklist[i].desc+"</span>");
+            arrHtml.push("<i class='icon-arrow'></i></div></dd>");
+
+            arrHtml.push("<div class='app_down'>");
+            arrHtml.push("<div class='app_coins'>");
+            arrHtml.push("<div class='coin_num'><span>+"+tasklist[i].coin_num+"</span> 金币</div>");
+            arrHtml.push("</div>");
+            arrHtml.push("<div class='ui-btn installBtn manageTab'><span>查看</span></div>");
+            arrHtml.push("</div>");
+
+            arrHtml.push("</dl>");
+
+            arrHtml.push("</div>");
+            arrHtml.push("</li>");
+
             var html = arrHtml.join("");
         }
 
-        $("#tab-4 .task-list").append(html);
-        $("#tab-4 .task-list dl").fastClick(function() {
-            window.location.href = $(this).data("url");
-            // me.showBackBtn(true);
-            // if ($("#taskIFrame").attr("src") != $(this).data("url")) {
-            //     $("#taskIFrame").attr("src", $(this).data("url"));
-            // }
-            // $("#taskIFrame").css('height', 1000);//$(document).height());
-            // $("#taskWebPage").attr("data-title", $(this).data("name"));
-            // changePage("#taskWebPage");
-        });
+        $("#tab-4 .app-list .section.available").show().append(html);
+    },
+
+    parseGzhTaskList : function(tasklist)
+    {
+        var arrHtml = new Array();
+        var phone_number = me.getPhoneNumber();
+        for (var i = 0; i < tasklist.length; i++) {
+            me.addToTaskListTab(tasklist[i]);
+        }
     },
 
     requestAppList : function()
@@ -1065,11 +1138,6 @@ var me = {
                             $(".app-list img.lazy").lazyload({threshold:300, effect:"fadeIn", placeholder:null });
                             $(window).trigger("scroll");
                         }
-
-                        // var btns = $("#tab-"+type+" .app-list .installBtn[data-installed='YES']");
-                        // $.each(btns, function(index, el) {
-                        //     me.addToAppManageTab(el);
-                        // });
 
                         $("#tab-"+type+" .app-list li").click(function() {  // don't use fastclick, it will eat 'touchbegin' event
                              me.clickOnApp(this);
@@ -1310,6 +1378,30 @@ var me = {
         return null;
     },
 
+    clickOnGzhTask : function (obj)
+    {
+        $("#wechatTaskContent").empty();
+        var arrHtml = new Array();
+        arrHtml.push("<div class='row'><dt><div>任务名称</div></dt><dd><div>"+$(obj).data("taskname")+"</div></dd></div>");
+        arrHtml.push("<div class='row'><dt><div>可获金币</div></dt><dd><div>"+$(obj).data("coin")+"枚</div></dd></div>");
+        arrHtml.push("<div class='row'><dt><div>任务步骤</div></dt><dd><div>1，点击“领取任务”；<br>2，关注公众号；<br>3，向公众号发送“小鸿”；<br>4，点击返回的链接，在打开的页面中输入小鸿账号（手机号）领取金币；</div></dd></div>");
+        arrHtml.push("<div class='row'><dt><div>微信公众号</div></dt><dd><div>"+$(obj).data("wechatid")+"  <a href='' id='copyToClipBdBtn' data-text="+$(obj).data("wechatid")+" class='ui-btn'>复制到剪贴板</a></div></dd></div>");
+        arrHtml.push("<div class='row'><dt><div>公众号二维码</div></dt><dd class='crcode'><img src="+$(obj).data("qrcodeurl")+"></dd></div></dl>");
+        if ($(obj).data("taskstatus")!='3') {
+            arrHtml.push("<br><center><div>还有"+$(obj).data("remainnum")+"个名额</div></center>");
+            arrHtml.push("<div class='account_exit' style='margin-top:20px; '><center><a href='' id='acceptTaskBtn' data-taskid='"+$(obj).data("taskid")+"' class='ui-btn'>领取任务</a></center></div>");
+        }
+        $("#wechatTaskContent").append(arrHtml);
+        $("#acceptTaskBtn").fastClick(function() {
+            me.acceptGzhTask($(this).data("taskid"));
+        });
+        $("#copyToClipBdBtn").fastClick(function() {
+            console.log("copy "+$(this).data("text")+" to clipboard");
+            me.copyToClipboard($(this).data("text"));
+        });
+        changePage('#WechatTaskDetailPage');
+    },
+
     clickOnApp : function (obj)
     {
         var appId = $(obj).data("appid");
@@ -1401,8 +1493,6 @@ var me = {
             $(el).addClass("downloading");
         });
 
-        // me.addToAppManageTab(installBtn);
-
         if (window.android != undefined) {
             var appInfo = me.getAppInfoById(appId);
             if (appInfo != null) {
@@ -1459,33 +1549,34 @@ var me = {
         }
     },
 
-    addToAppManageTab : function(installBtn)
+    addToTaskListTab : function(task)
     {
-        var isAppInstalled = ($(installBtn).data("installed") == 'YES');
-        var isAppDownloaded = ($(installBtn).data("downloaded") == 'YES');
-
         var arrHtml = new Array();
-        var thisInstallBtn;
-        arrHtml.push("<li data-appid='" + $(installBtn).data("appid") + "' class='index-item list-index' >");
+        arrHtml.push("<li data-taskid='"+task.id+"' data-taskname=\""+task.name+"\" ");
+        arrHtml.push("data-coin='"+task.coin_num+"' data-wechatid='"+task.weixin_id+"' data-qrcodeurl='"+task.qr_code_url+"' data-taskstatus='"+task.task_status+"' data-remainnum='"+task.remain_tasknum+"' class='index-item list-index' >");
         arrHtml.push("<div class='index-item-main'>");
         arrHtml.push("<dl class='clearfix'>");
         arrHtml.push("<dt class='item-icon'><span class='app-tags hide'></span>");
-        arrHtml.push("<img src='" + $(installBtn).data("applogo") + "' />");
+        arrHtml.push("<img src='images/wechat.png' />");
         arrHtml.push("</dt>");
         arrHtml.push("<dd class='item-title item-title--t4'>");
         arrHtml.push("<div class='item-title-sname'>");
         arrHtml.push("<div class='baiying-name'>");
-        arrHtml.push(subString.autoAddEllipsis($(installBtn).data("appname"), 30, true) + "</div></div></dd>");
+        arrHtml.push(subString.autoAddEllipsis(task.name, 30, true) + "<i class='icon-arrow'></i></div></div></dd>");
         arrHtml.push("</dl></div>");
 
         arrHtml.push("<div class='app_down'>");
         // console.log($(installBtn).data());
-        if (isAppInstalled) {
-            arrHtml.push("<div class='ui-btn installBtn manageTab inactive hasInstalled' data-installed='YES' data-applogo='"+$(installBtn).data('applogo')+"' data-appname='"+$(installBtn).data('appname')+"' data-appurl='"+$(installBtn).data('appurl')+"' data-appid="+$(installBtn).data('appid')+" data-pkgname=\""+$(installBtn).data('pkgname')+"\"><span>打  开</span></div>");
-        } else if (isAppDownloaded) {
-            arrHtml.push("<div class='ui-btn installBtn manageTab inactive' data-downloaded='YES' data-applogo='"+$(installBtn).data('applogo')+"' data-appname='"+$(installBtn).data('appname')+"' data-appurl='"+$(installBtn).data('appurl')+"' data-appid="+$(installBtn).data('appid')+" data-pkgname='"+$(installBtn).data('pkgname')+"'><span>已下载</span></div>");
+        if (task.task_status == 1) {
+            // arrHtml.push("<div class='ui-btn installBtn manageTab inactive' ><span>打  开</span></div>");
+            arrHtml.push("<div class='app_coins'>");
+            arrHtml.push("<div class='coin_num'><span>+"+task.coin_num+"</span> 金币</div>");
+            arrHtml.push("</div>");
+            arrHtml.push("<div class='ui-btn installBtn manageTab'><span>查看</span></div>");
+        } else if (task.task_status == 2) {
+            arrHtml.push("<div class='ui-btn installBtn manageTab inactive' ><span>已接任务</span></div>");
         } else {
-            arrHtml.push("<div class='ui-btn installBtn manageTab' data-installed='NO' data-applogo='"+$(installBtn).data('applogo')+"' data-appname='"+$(installBtn).data('appname')+"' data-appurl=\""+$(installBtn).data('appurl')+"\" data-appid="+$(installBtn).data('appid')+" data-pkgname='"+$(installBtn).data('pkgname')+"'></div>");
+            arrHtml.push("<div class='ui-btn installBtn manageTab' >啊</div>");
         }
 
         arrHtml.push("</div>");
@@ -1493,61 +1584,13 @@ var me = {
         arrHtml.push("</li>");
         var html = arrHtml.join("");
 
-        if (isAppInstalled) {
-            $("#tab-4 .app-list .section.hasInstalled").show().append(html);
-            thisInstallBtn = $("#tab-4 .installBtn[data-appid='" + $(installBtn).data('appid') + "']");
-        } else if (isAppDownloaded) {
-            $("#tab-4 .app-list .section.hasDownloaded").show().append(html);
-            thisInstallBtn = $("#tab-4 .installBtn[data-appid='" + $(installBtn).data('appid') + "']");
+        if (task.task_status == 1) {
+            $("#tab-4 .app-list .section.available").show().append(html);
+        } else if (task.task_status == 2) {
+            $("#tab-4 .app-list .section.inprogress").show().append(html);
         } else {
-            $("#tab-4 .app-list .section.downloading").show().append(html);
-            thisInstallBtn = $("#tab-4 .installBtn[data-appid='" + $(installBtn).data('appid') + "']");
-            //创建圆形进度条
-            thisInstallBtn.radialIndicator({
-                radius: 15,
-                displayNumber: false,
-                barColor: '#48D1CC',
-                barBgColor: '#eee',
-                barWidth: 2,
-                initValue: 0,
-                roundCorner : false,
-                percentage: false
-            });
+            $("#tab-4 .app-list .section.finished").show().append(html);
         }
-
-        thisInstallBtn.addClass("inactive");
-
-        thisInstallBtn.click(function(e) {
-            e.stopPropagation();
-            console.log('click on installBtn');
-            if ($(this).hasClass('downloading')) {
-                console.log('downloading, ignore download request...');
-                return;
-            }
-            if ($(this).attr("data-installed") == "YES") {
-                if (window.android) {
-                    showLoader("请稍候...");
-                    setTimeout("hideLoader()", 2000);
-                    console.log('start app '+$(this).data("pkgname"));
-                    window.android.startAPP($(this).data("pkgname"));
-                    appLanched($(this).data("pkgname"));
-                } else {
-                    showLoader("只能在手机中打开");
-                    setTimeout("hideLoader()", 2000);
-                }
-                return;
-            }
-            if ($(this).attr("data-downloaded") == "YES") {
-                console.log('downloaded, try to install again');
-                if (window.android) {
-                    if (window.android.installDownloadedAPP($(this).data("appid")) == false) {
-                        showLoader("请重新下载"); // todo: change status to not downloaded
-                        setTimeout("hideLoader()", 2000);
-                    }
-                }
-                return;
-            }
-        });
     },
 
     appDetailTemplate : function(data)
@@ -2224,9 +2267,18 @@ var me = {
     toggleAdBanner : function()
     {
         $("#adgo_adContainer").empty();
-        if (preload != undefined) {
+        if (typeof(preload) != "undefined") {
             preload();
         }
+    },
+
+    copyToClipboard : function(text)
+    {
+        if (window.android) {
+            window.android.copyToClipboard(text);
+        }
+        showLoader("已复制到剪贴板");
+        setTimeout("hideLoader()", 2000);
     }
 
 }; // end of var me

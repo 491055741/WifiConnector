@@ -110,13 +110,13 @@ body{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-khtml-
 .account_item {font-size: 16px; }
 .acount_list img {width: 25px; height: 25px; float: left; }
 #mineView dl {position: relative;overflow: hidden; }
-#mineView dl i, .task-list .icon-arrow {position: absolute; width: 14px; height: 24px; top:50%; margin-top:-12px; right:0;  background: url(../images/arrow-right.png) no-repeat; background-size: contain;}
+#mineView dl i, .app-list .icon-arrow {position: absolute; width: 14px; height: 24px; top:50%; margin-top:-12px; right:5px;  background: url(../images/arrow-right.png) no-repeat; background-size: contain;}
 #mineView dl.account_coin  i{width: 80px; font-size: 16px; background: url(../images/arrow-right.png) 65px no-repeat; background-size: contain;}
 #mineView dt {float: left; /*height: 30px;*/ height: 45px; line-height: 45px; margin-right: 25px; padding-left: 5px;}
 #mineView dd {right: 10px; text-align: right; /*height: 30px; *//*padding-top: 10px;*/ }
 #mineView dt div { font-size: 18px; color: #45484d; float: right; padding-left: 5px; }
 #mineView dd div, #mineView dd a { font-size: 18px; color: #5d5d5d; width: 100%;}
-#logoutBtn {background-color: #FF4952; border-radius: 12px; letter-spacing: 2px; text-shadow: 0 0 0; color: white; }
+#logoutBtn {background-color: #FF8800; color: white; text-shadow:0 0 0; border-radius: 6px; }
 
 #mineView dt img {width: 28px; vertical-align: middle;}
 #mineView dd {text-align: left;}
@@ -242,9 +242,17 @@ li { list-style: none; }
 .des-long-content { padding-bottom: 22px; }
 .content-navdes-wrapper { margin-top: 10px; padding: 0 13px; }
 
+.wechatTaskDetail {padding:15px;}
+.wechatTaskDetail dt {float:left; width:100px;  min-height: 40px; padding-top: 10px; }
+.wechatTaskDetail dd {margin-left: 120px; min-height: 40px; padding-top: 10px; color:#5d5d5d;}
+.wechatTaskDetail .row {border-bottom: 1px #d4d5d6 solid; }
+.wechatTaskDetail dd img {width:80px; height:80px;}
+#acceptTaskBtn, #gzh_close_dialog_btn {background-color: #FF8800; color: white; text-shadow:0 0 0; border-radius: 6px; }
+#gzh_close_dialog_btn {margin: 40px 10px 10px 10px; }
+#copyToClipBdBtn {width:80px; font-size: 10px; float:right; margin-top: 0px; }
 .transparent_class {  
       filter:alpha(opacity=50);  
       -moz-opacity:0.5;  
       -khtml-opacity: 0.5;  
       opacity: 0.5;  
-}  
+}

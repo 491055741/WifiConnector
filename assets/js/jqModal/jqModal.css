@@ -7,7 +7,7 @@
 .jqmWindow {
     display: none;
     position: fixed;
-    /*top: 17%;*/
+    top: 17%;
     width: 100%;
     height: 265px;
     background-color: white;

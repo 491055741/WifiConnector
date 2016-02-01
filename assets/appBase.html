@@ -228,21 +228,17 @@
                 <div id="tab-4">
                     <div class="wrapper" style="display:none;">
                         <div style="transition-timing-function: cubic-bezier(0.1, 0.57, 0.1, 1); transition-duration: 0ms; transform: translate(0px, -1047px) translateZ(0px);" class="scroller">
-
                             <div class="scroller-content">
-<!--                            <div class="app-list">
-                                    <div class="section downloading hide">
-                                        <h5>下载中</h5>
+                                <div class="app-list">
+                                    <div class="section available hide">
+                                        <h5>可接任务</h5>
                                     </div>
-                                    <div class="section hasDownloaded hide">
-                                        <h5>已下载</h5>
+                                    <div class="section inprogress hide">
+                                        <h5>已接任务</h5>
                                     </div>
-                                    <div class="section hasInstalled hide">
-                                        <h5>已安装</h5>
+                                    <div class="section finished hide">
+                                        <h5>已完成任务</h5>
                                     </div>
-                                </div> -->
-
-                                <div class="task-list">
                                 </div>
                             </div>
                         </div>
@@ -342,11 +338,20 @@
     </div>
 </div>
 
-<!-- <div data-role="page" id="taskWebPage" data-title="任务">
-    <iframe id="taskIFrame" width="100%">
-    </iframe>
+<div data-role="page" id="WechatTaskDetailPage" data-title="任务详情">
+    <div role="main" class="ui-content">
+        <div class="jqmWindow" id="gzhdialog" style="display:none;">
+            <hr />
+            <div id="gzh_dialog_message"></div>
+            <div id="gzh_close_dialog_btn" class="jqmClose ui-btn">确定</div>
+        </div>
+        <div class="wechatTaskDetail">
+            <div id="wechatTaskContent">
+            </div>
+        </div>
+    </div>
 </div>
- -->
+
 <div data-role="page" id="ExchangePage" data-title="兑换">
     <div role="main" class="ui-content">
 
@@ -425,6 +430,8 @@
 <script src="js/appList.js"></script>
 <script src="js/tabs/jquery.mobile.tabs.js"></script>
 <script src="js/plugin/radialIndicator.min.js"></script>
+
+<!--
 <script>
     var zbPostion = "relative";
     var zbId = 'ad383793';
@@ -432,6 +439,6 @@
     var zbClose = true;
 </script>
 <script src="http://wifi.bibij.cn/xmlkey/js/adgo.js"></script>
-
+-->
 </body>
 </html>
