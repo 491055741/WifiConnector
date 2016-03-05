@@ -64,6 +64,12 @@
             <input type="password" id="repeatPassword"/>
         </div>
 
+        <div id="genderFields">
+            <p style="backg"><font color="#2EB1E8" >性 别</font></p>
+            <div class="radioWrapper"><input id="male"   type="radio" name="gender" value="M"/><span>男</span></div>
+            <div class="radioWrapper"><input id="female" type="radio" name="gender" value="F"/><span>女</span></div>
+        </div>
+
         <div id="inviteCodeFields">
             <p style="backg"><font color="#2EB1E8" >邀请码</font></p>
             <input type="tel" id="inviteCode" value="可不填"/>
@@ -231,13 +237,12 @@
                             <div class="scroller-content">
                                 <div class="app-list">
                                     <div class="section available hide">
-                                        <h5>可接任务</h5>
                                     </div>
                                     <div class="section inprogress hide">
-                                        <h5>已接任务</h5>
                                     </div>
                                     <div class="section finished hide">
-                                        <h5>已完成任务</h5>
+                                    </div>
+                                    <div class="section timedout hide">
                                     </div>
                                 </div>
                             </div>
@@ -301,12 +306,7 @@
                     <dt><img src="images/help.png"></dt>
                     <dd><div class="account_item FAQ">常见问题<i class="icon-arrow"></i></div></dd>
                 </dl>
-<!-- 
-                <dl class="account_socialShare">
-                    <dt><img src="images/contact.png"></dt>
-                    <dd><div class="account_item socialShareBtn">分享<i class="icon-arrow"></i></div></dd>
-                </dl>
- -->
+
                 <dl class="account_version">
                     <dt><img src="images/version.png"></dt>
                     <dd><div class="account_item">版本<div id="version">1.0</div></div></dd>
@@ -320,7 +320,6 @@
     </div>
 
     <div data-role="footer" data-position="fixed" data-tap-toggle="false">
-        <div id="adgo_adContainer"></div>
         <div data-role="navbar" id="mainFooter" >
             <ul class="apple-navbar-ui comboSprite">
                 <li><a href="#" id="connectionBtn" data-icon="wifi" class="ui-btn-icon-top ui-btn-active">连Wifi</a></li>
@@ -380,7 +379,7 @@
 </div>
 <!-- 常见问题 -->
 <div data-role="page" id="FAQPage" class="section-FAQ"  data-title="常见问题">
-   <header>     
+   <header>
         <div class="loc_logo_nav">
             <div class="loc_logo_navbtn">
                 <div class="loc_logo">
@@ -431,14 +430,5 @@
 <script src="js/tabs/jquery.mobile.tabs.js"></script>
 <script src="js/plugin/radialIndicator.min.js"></script>
 
-<!--
-<script>
-    var zbPostion = "relative";
-    var zbId = 'ad383793';
-    var autoSize = true;
-    var zbClose = true;
-</script>
-<script src="http://wifi.bibij.cn/xmlkey/js/adgo.js"></script>
--->
 </body>
 </html>

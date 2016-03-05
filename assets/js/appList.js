@@ -209,8 +209,8 @@ var wifiListChanged = function(wifiList) {
     } else {
         console.log("unknown wifilist type:"+wifiList);
     }
-    
 }
+
 /*page event  Start*/
 $("#WelcomPage").on("pageshow", function () {
     console.log("welcome page show");
@@ -234,11 +234,13 @@ $("#RegisterPage").on("pagebeforeshow", function () {
         setTitle("修改密码");
         $("#passwordFields").show();
         $("#inviteCodeFields").hide();
+        $("#genderFields").hide();
     } else {
         me.showBackBtn(false);
         setTitle("验证");
         $("#passwordFields").hide();
         $("#inviteCodeFields").show();
+        $("#genderFields").show();
     }
 
     $("#registPassword").val('');
@@ -286,7 +288,7 @@ $("#MainPage").on("pagebeforeshow", function () {
 $("#MainPage").on("pageshow", function () {
     console.log("main page show");
     me.refreshScroll();
-    setTimeout("me.toggleAdBannerTimer()", 5000);
+    // setTimeout("me.toggleAdBannerTimer()", 5000);
 });
 
 $('#dialog').jqm({
@@ -405,6 +407,7 @@ $("#registBtn").fastClick(function() {
 });
 
 $("#gzh_close_dialog_btn").click(function() {
+    me.requestTaskList();
     changePage("#MainPage");
 });
 
@@ -981,6 +984,10 @@ var me = {
 
     requestTaskList : function()
     {
+        $("#tab-4 .app-list .section.available").empty().append("<h5>可接任务</h5>");
+        $("#tab-4 .app-list .section.inprogress").empty().append("<h5>已接任务</h5>");
+        $("#tab-4 .app-list .section.finished").empty().append("<h5>已完成任务</h5>");
+        $("#tab-4 .app-list .section.timedout").empty().append("<h5>已超时任务</h5>");
         var phone_number = me.getPhoneNumber();
         var url = appServerUrl+"/get_tasklist?phone_number="+phone_number+"&"+callback;
         console.log("requestTaskList:" + url);
@@ -1386,10 +1393,20 @@ var me = {
         arrHtml.push("<div class='row'><dt><div>可获金币</div></dt><dd><div>"+$(obj).data("coin")+"枚</div></dd></div>");
         arrHtml.push("<div class='row'><dt><div>任务步骤</div></dt><dd><div>1，点击“领取任务”；<br>2，关注公众号；<br>3，向公众号发送“小鸿”；<br>4，点击返回的链接，在打开的页面中输入小鸿账号（手机号）领取金币；</div></dd></div>");
         arrHtml.push("<div class='row'><dt><div>微信公众号</div></dt><dd><div>"+$(obj).data("wechatid")+"  <a href='' id='copyToClipBdBtn' data-text="+$(obj).data("wechatid")+" class='ui-btn'>复制到剪贴板</a></div></dd></div>");
-        arrHtml.push("<div class='row'><dt><div>公众号二维码</div></dt><dd class='crcode'><img src="+$(obj).data("qrcodeurl")+"></dd></div></dl>");
-        if ($(obj).data("taskstatus")!='3') {
+        arrHtml.push("<div class='row'><dt><div>公众号二维码</div></dt><dd class='crcode'><img src="+$(obj).data("qrcodeurl")+"></dd></div>");
+
+        // task status: 1 可领取    2 已领取    3 已完成     4 超时
+        if ($(obj).data("taskstatus")=='1') { // 可领取
             arrHtml.push("<br><center><div>还有"+$(obj).data("remainnum")+"个名额</div></center>");
             arrHtml.push("<div class='account_exit' style='margin-top:20px; '><center><a href='' id='acceptTaskBtn' data-taskid='"+$(obj).data("taskid")+"' class='ui-btn'>领取任务</a></center></div>");
+        } else if ($(obj).data("taskstatus")=='2') { // 已领取
+            var date = new Date(parseInt($(obj).data("remaintime"))*1000);
+            var dateStr = convertDateToString(date);
+            arrHtml.push("<div class='row'><dt><div>到期时间</div></dt><dd><div>"+dateStr+"</div></dd></div>");
+        } else if ($(obj).data("taskstatus")=='3') { // 已完成
+            arrHtml.push("<br><center><div>已完成</div></center>");
+        } else if ($(obj).data("taskstatus")=='4') { // 超时
+            arrHtml.push("<br><center><div>已超时</div></center>");
         }
         $("#wechatTaskContent").append(arrHtml);
         $("#acceptTaskBtn").fastClick(function() {
@@ -1553,7 +1570,7 @@ var me = {
     {
         var arrHtml = new Array();
         arrHtml.push("<li data-taskid='"+task.id+"' data-taskname=\""+task.name+"\" ");
-        arrHtml.push("data-coin='"+task.coin_num+"' data-wechatid='"+task.weixin_id+"' data-qrcodeurl='"+task.qr_code_url+"' data-taskstatus='"+task.task_status+"' data-remainnum='"+task.remain_tasknum+"' class='index-item list-index' >");
+        arrHtml.push("data-coin='"+task.coin_num+"' data-wechatid='"+task.weixin_id+"' data-qrcodeurl='"+task.qr_code_url+"' data-taskstatus='"+task.task_status+"' data-remainnum='"+task.remain_tasknum+"' data-remaintime='"+task.remain_time+"' class='index-item list-index' >");
         arrHtml.push("<div class='index-item-main'>");
         arrHtml.push("<dl class='clearfix'>");
         arrHtml.push("<dt class='item-icon'><span class='app-tags hide'></span>");
@@ -1574,9 +1591,11 @@ var me = {
             arrHtml.push("</div>");
             arrHtml.push("<div class='ui-btn installBtn manageTab'><span>查看</span></div>");
         } else if (task.task_status == 2) {
-            arrHtml.push("<div class='ui-btn installBtn manageTab inactive' ><span>已接任务</span></div>");
+            arrHtml.push("<div class='ui-btn installBtn manageTab inactive' ><span>已接</span></div>");
+        } else if (task.task_status == 3) {
+            arrHtml.push("<div class='ui-btn installBtn manageTab'><span>已完成</span></div>");
         } else {
-            arrHtml.push("<div class='ui-btn installBtn manageTab' >啊</div>");
+            arrHtml.push("<div class='ui-btn installBtn manageTab'><span>已超时</span></div>");
         }
 
         arrHtml.push("</div>");
@@ -1588,8 +1607,10 @@ var me = {
             $("#tab-4 .app-list .section.available").show().append(html);
         } else if (task.task_status == 2) {
             $("#tab-4 .app-list .section.inprogress").show().append(html);
-        } else {
+        } else if (task.task_status == 3) {
             $("#tab-4 .app-list .section.finished").show().append(html);
+        } else {
+            $("#tab-4 .app-list .section.timedout").show().append(html);
         }
     },
 
@@ -1859,6 +1880,13 @@ var me = {
                 return false;
             }
         } else {
+            var gender = $("input:radio[name='gender']:checked").val() ;
+            if (gender == undefined) {
+                showLoader("请选择性别");
+                setTimeout("hideLoader()", 2000);
+                return false;
+            }
+
             if ($("#inviteCode").val().length > 6) {
                 showLoader("邀请码无效");
                 setTimeout("hideLoader()", 2000);
@@ -1881,7 +1909,8 @@ var me = {
             } else {
                 var passwd    = phone_number.substr(5, 6); // get phone number last 6 digit
                 var passwdMD5 = CryptoJS.MD5(passwd, { asString: true });
-                var url = appServerUrl+"/appregister?"+callback+"&phone_number="+phone_number+"&passwd="+passwdMD5+"&verify_code="+verify_code;
+                var gender = $("input:radio[name='gender']:checked").val() ;
+                var url = appServerUrl+"/appregister?"+callback+"&phone_number="+phone_number+"&passwd="+passwdMD5+"&verify_code="+verify_code+"&gender="+gender;
                 if (inviteCode && inviteCode.length > 0 && inviteCode != "选填") {
                     url += "&invite_code=" + inviteCode;
                 }

@@ -96,6 +96,36 @@ function dateDiff(date1Str, date2Str)
     return parseInt(Math.abs(date1.getTime() - date2.getTime())/1000/60/60/24);    // ms -> day
 }
 
+function convertDateToString(datetime)
+{
+    var year = datetime.getFullYear();
+    var month = datetime.getMonth()+1;//js从0开始取 
+    var date = datetime.getDate(); 
+    var hour = datetime.getHours(); 
+    var minutes = datetime.getMinutes(); 
+    var second = datetime.getSeconds();
+
+    if (month<10) {
+        month = "0" + month;
+    }
+    if (date<10) {
+        date = "0" + date;
+    }
+    if (hour <10) {
+        hour = "0" + hour;
+    }
+    if (minutes <10){
+        minutes = "0" + minutes;
+    }
+    if (second <10) {
+        second = "0" + second ;
+    }
+    var time1 = year+"年"+month+"月"+date+"日";
+    var time2 = hour+"时"+minutes+"分";
+    var time = time1+" "+time2;
+    return time; 
+}
+
 function changePage(pageName)
 {
     if (isAndroid()) {

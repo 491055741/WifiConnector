@@ -715,15 +715,31 @@ public class MainActivity extends AppCompatActivity {
 	}
 	// @JavascriptInterface
 	public void openWechat() {
+	    if (isPkgAvilible("com.tencent.mm")) {
+	        Intent intent = new Intent();
+	        ComponentName cmp = new ComponentName("com.tencent.mm","com.tencent.mm.ui.LauncherUI");
+	        intent.setAction(Intent.ACTION_MAIN);
+	        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+	        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+	        intent.setComponent(cmp);
+	        startActivity(intent);  
+	    }
 	    Log.d(TAG, "open wechat");
-	    Intent intent = new Intent();
-	    ComponentName cmp = new ComponentName("com.tencent.mm","com.tencent.mm.ui.LauncherUI");
-	    intent.setAction(Intent.ACTION_MAIN);
-	    intent.addCategory(Intent.CATEGORY_LAUNCHER);
-	    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-	    intent.setComponent(cmp);
-	    startActivity(intent);  
 	}
+	// 检查包是否安装
+	private boolean isPkgAvilible(String packageName )
+    {
+        final PackageManager packageManager = getBaseContext().getPackageManager();
+        // 获取所有已安装程序的包信息
+        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);
+        for ( int i = 0; i < pinfo.size(); i++ )
+        {
+            if(pinfo.get(i).packageName.equalsIgnoreCase(packageName))
+                return true;
+        }
+        return false;
+    }
+	
 	private boolean initCustomActionBar() {
 
 		if (mActionbar == null) {
