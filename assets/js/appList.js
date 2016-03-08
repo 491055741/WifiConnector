@@ -407,6 +407,9 @@ $("#registBtn").fastClick(function() {
 });
 
 $("#gzh_close_dialog_btn").click(function() {
+    if (window.android) {
+        window.android.openWechat();
+    }
     me.requestTaskList();
     changePage("#MainPage");
 });
@@ -1036,12 +1039,10 @@ var me = {
         console.log("requestTaskList:" + url);
         $.getJSON(url, function(data) {
             if (data.ret_code == 0) {
-                var dialogHtml="<div class='modalViewTitle'>任务领取成功</div><div class='modalViewText'>请在4小时内完成任务，超过时间任务将自动作废，无法获得金币奖励</div>";
+                var dialogHtml="<div class='modalViewTitle'>任务领取成功</div><div class='modalViewText'>请在4小时内完成任务，超过时间任务将自动作废，无法获得金币奖励<br>公众号id已复制，请直接在微信中粘贴查找</div>";
                 $("#gzh_dialog_message").html(dialogHtml);
                 $("#gzhdialog").jqmShow();
-                if (window.android) {
-                    window.android.openWechat();
-                }
+                $('#copyToClipBdBtn').trigger('click');
             } else {
                 showLoader(data.ret_msg);
                 setTimeout("hideLoader()", 3000);
@@ -1391,7 +1392,7 @@ var me = {
         var arrHtml = new Array();
         arrHtml.push("<div class='row'><dt><div>任务名称</div></dt><dd><div>"+$(obj).data("taskname")+"</div></dd></div>");
         arrHtml.push("<div class='row'><dt><div>可获金币</div></dt><dd><div>"+$(obj).data("coin")+"枚</div></dd></div>");
-        arrHtml.push("<div class='row'><dt><div>任务步骤</div></dt><dd><div>1，点击“领取任务”；<br>2，关注公众号；<br>3，向公众号发送“小鸿”；<br>4，点击返回的链接，在打开的页面中输入小鸿账号（手机号）领取金币；</div></dd></div>");
+        arrHtml.push("<div class='row'><dt><div>任务步骤</div></dt><dd><div>1，点击“领取任务”；<br>2，关注公众号；<br>3，向公众号发送“小鸿”；<br>4，点击公众号回复的链接，在打开的页面中输入小鸿账号（手机号）领取金币；</div></dd></div>");
         arrHtml.push("<div class='row'><dt><div>微信公众号</div></dt><dd><div>"+$(obj).data("wechatid")+"  <a href='' id='copyToClipBdBtn' data-text="+$(obj).data("wechatid")+" class='ui-btn'>复制到剪贴板</a></div></dd></div>");
         arrHtml.push("<div class='row'><dt><div>公众号二维码</div></dt><dd class='crcode'><img src="+$(obj).data("qrcodeurl")+"></dd></div>");
 
