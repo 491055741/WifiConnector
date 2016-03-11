@@ -749,14 +749,18 @@ var me = {
         } else {
             slide.hide();
         }
-        if (idx == 1) { // choice page
+        if (idx == 0) {
+            me.refreshScroll(4);
+            var footerHeight = $("#mainFooter").height();
+           $("#task-list-wrapper .wrapper").css('height', ($(window).height()-footerHeight)+'px');
+       } else if (idx == 1) { // choice page
             me.refreshScroll();
 
             var headerHeight = $("#appListHeader").height();
             var footerHeight = $("#mainFooter").height();
             // console.log("header:"+headerHeight+" footerHeight:"+footerHeight+" screenHeight:"+$(document).height());
             $("#tab-1 .wrapper").css('height', ($(window).height()-headerHeight-footerHeight)+'px');// screenHeight - topNavbarHeight-bottomNavbarHeight
-        } else if (idx == 2) {// iframe page
+        } else if (idx == 2) {// iframe page （humor page）
             var footerHeight = $("#mainFooter").height();
             $("#humorIFrame").css('height', ($(window).height()-footerHeight)+'px');
         }
@@ -987,17 +991,17 @@ var me = {
 
     requestTaskList : function()
     {
-        $("#tab-4 .app-list .section.available").empty().append("<h5>可接任务</h5>");
-        $("#tab-4 .app-list .section.inprogress").empty().append("<h5>已接任务</h5>");
-        $("#tab-4 .app-list .section.finished").empty().append("<h5>已完成任务</h5>");
-        $("#tab-4 .app-list .section.timedout").empty().append("<h5>已超时任务</h5>");
+        $("#task-list-wrapper .task-list .section.available").empty().append("<h5>做任务赚金币</h5>");
+        $("#task-list-wrapper .task-list .section.inprogress").empty().append("<h5>已接任务</h5>");
+        $("#task-list-wrapper .task-list .section.finished").empty().append("<h5>已完成任务</h5>");
+        $("#task-list-wrapper .task-list .section.timedout").empty().append("<h5>超时任务</h5>");
         var phone_number = me.getPhoneNumber();
         var url = appServerUrl+"/get_tasklist?phone_number="+phone_number+"&"+callback;
         console.log("requestTaskList:" + url);
         $.getJSON(url, function(data) {
             if (data.ret_code == 0) {
-                $("#tab-4 .refresh-task-list").hide();
-                $("#tab-4 .wrapper").show();
+                $("#task-list-wrapper .refresh-task-list").hide();
+                $("#task-list-wrapper .wrapper").show();
                 me.parseTaskList(data.tasklist);
                 me.requestGzhTaskList();
             } else {
@@ -1014,10 +1018,10 @@ var me = {
         console.log("requestTaskList:" + url);
         $.getJSON(url, function(data) {
             if (data.ret_code == 0) {
-                $("#tab-4 .refresh-task-list").hide();
-                $("#tab-4 .wrapper").show();
+                $("#task-list-wrapper .refresh-task-list").hide();
+                $("#task-list-wrapper .wrapper").show();
                 me.parseGzhTaskList(data.tasklist);
-                $("#tab-4 .app-list li").click(function() {  // don't use fastclick, it will eat 'touchbegin' event
+                $("#task-list-wrapper .task-list li").click(function() {  // don't use fastclick, it will eat 'touchbegin' event
                     if ($(this).data("url") != undefined) {
                         window.location.href = $(this).data("url");
                     } else {
@@ -1059,29 +1063,27 @@ var me = {
             var url = tasklist[i].click_url+"phone_number="+phone_number;
 
             arrHtml.push("<li class='index-item list-index' data-url='"+url+"'>");
-            arrHtml.push("<div class='index-item-main'>");
 
-            arrHtml.push("<dl data-name='"+tasklist[i].name+"'>");
+            arrHtml.push("<div class='index-item-main'>");
+            arrHtml.push("<dl class='clearfix' data-name='"+tasklist[i].name+"'>");
             arrHtml.push("<dt class='item-icon'><img src="+tasklist[i].logo_url+" /></dt>");
             arrHtml.push("<dd class='item-title item-title--t4'><div class='task_item'><span>"+tasklist[i].desc+"</span>");
             arrHtml.push("<i class='icon-arrow'></i></div></dd>");
+            arrHtml.push("</dl></div>");
 
             arrHtml.push("<div class='app_down'>");
             arrHtml.push("<div class='app_coins'>");
             arrHtml.push("<div class='coin_num'><span>+"+tasklist[i].coin_num+"</span> 金币</div>");
-            arrHtml.push("</div>");
+            arrHtml.push("</div>");// app_coins
             arrHtml.push("<div class='ui-btn installBtn manageTab'><span>查看</span></div>");
-            arrHtml.push("</div>");
+            arrHtml.push("</div>");// app_down
 
-            arrHtml.push("</dl>");
-
-            arrHtml.push("</div>");
             arrHtml.push("</li>");
 
             var html = arrHtml.join("");
         }
 
-        $("#tab-4 .app-list .section.available").show().append(html);
+        $("#task-list-wrapper .task-list .section.available").show().append(html);
     },
 
     parseGzhTaskList : function(tasklist)
@@ -1091,6 +1093,9 @@ var me = {
         for (var i = 0; i < tasklist.length; i++) {
             me.addToTaskListTab(tasklist[i]);
         }
+        me.refreshScroll(4);
+        var footerHeight = $("#mainFooter").height();
+        $("#task-list-wrapper .wrapper").css('height', ($(window).height()-footerHeight)+'px');
     },
 
     requestAppList : function()
@@ -1551,7 +1556,7 @@ var me = {
             $(".annexWifi").show();
         }
     },
-
+/*
     removeFromAppManageTab : function(installBtn)
     {
         var li = $("#tab-4 .app-list li[data-appid='" + $(installBtn).data('appid')+"']");
@@ -1566,22 +1571,20 @@ var me = {
             $("#tab-4 .app-list .hasInstalled").hide();
         }
     },
-
+*/
     addToTaskListTab : function(task)
     {
         var arrHtml = new Array();
-        arrHtml.push("<li data-taskid='"+task.id+"' data-taskname=\""+task.name+"\" ");
+        arrHtml.push("<li class='index-item list-index' data-taskid='"+task.id+"' data-taskname=\""+task.name+"\" ");
         arrHtml.push("data-coin='"+task.coin_num+"' data-wechatid='"+task.weixin_id+"' data-qrcodeurl='"+task.qr_code_url+"' data-taskstatus='"+task.task_status+"' data-remainnum='"+task.remain_tasknum+"' data-remaintime='"+task.remain_time+"' class='index-item list-index' >");
         arrHtml.push("<div class='index-item-main'>");
         arrHtml.push("<dl class='clearfix'>");
-        arrHtml.push("<dt class='item-icon'><span class='app-tags hide'></span>");
-        arrHtml.push("<img src='images/wechat.png' />");
-        arrHtml.push("</dt>");
+        arrHtml.push("<dt class='item-icon'><img src='images/wechat.png' /></dt>");
         arrHtml.push("<dd class='item-title item-title--t4'>");
-        arrHtml.push("<div class='item-title-sname'>");
-        arrHtml.push("<div class='baiying-name'>");
-        arrHtml.push(subString.autoAddEllipsis(task.name, 30, true) + "<i class='icon-arrow'></i></div></div></dd>");
-        arrHtml.push("</dl></div>");
+        arrHtml.push("<div class='task_item'>");
+        arrHtml.push("<span>"+subString.autoAddEllipsis(task.name, 30, true) + "</span>");
+        arrHtml.push("<i class='icon-arrow'></i>");
+        arrHtml.push("</div></dd></dl></div>");
 
         arrHtml.push("<div class='app_down'>");
         // console.log($(installBtn).data());
@@ -1598,20 +1601,18 @@ var me = {
         } else {
             arrHtml.push("<div class='ui-btn installBtn manageTab'><span>已超时</span></div>");
         }
+        arrHtml.push("</div></li>");// app_down
 
-        arrHtml.push("</div>");
-        arrHtml.push("</div>");
-        arrHtml.push("</li>");
         var html = arrHtml.join("");
 
         if (task.task_status == 1) {
-            $("#tab-4 .app-list .section.available").show().append(html);
+            $("#task-list-wrapper .task-list .section.available").show().append(html);
         } else if (task.task_status == 2) {
-            $("#tab-4 .app-list .section.inprogress").show().append(html);
+            $("#task-list-wrapper .task-list .section.inprogress").show().append(html);
         } else if (task.task_status == 3) {
-            $("#tab-4 .app-list .section.finished").show().append(html);
+            $("#task-list-wrapper .task-list .section.finished").show().append(html);
         } else {
-            $("#tab-4 .app-list .section.timedout").show().append(html);
+            $("#task-list-wrapper .task-list .section.timedout").show().append(html);
         }
     },
 
@@ -1912,7 +1913,7 @@ var me = {
                 var passwdMD5 = CryptoJS.MD5(passwd, { asString: true });
                 var gender = $("input:radio[name='gender']:checked").val() ;
                 var url = appServerUrl+"/appregister?"+callback+"&phone_number="+phone_number+"&passwd="+passwdMD5+"&verify_code="+verify_code+"&gender="+gender;
-                if (inviteCode && inviteCode.length > 0 && inviteCode != "选填") {
+                if (inviteCode && inviteCode.length > 0 && inviteCode != "可不填") {
                     url += "&invite_code=" + inviteCode;
                 }
                 if (me.isLeShiPhone()) {
@@ -2148,15 +2149,23 @@ var me = {
             me.myScroll = new Array(5);
         }
 
-        var upIcon = $("#tab-"+idx+" .up-icon");
-            // var downIcon = $("#tab-"+me.curAppTabIdx+" .down-icon");
-
         if (me.myScroll[idx] != null) {
             me.myScroll[idx].destroy();
         }
-        me.myScroll[idx] = new IScroll("#tab-"+idx+" .wrapper", 
+
+        var upIcon = null;
+        if (idx != 4) {
+            upIcon = $("#tab-"+idx+" .up-icon");
+            me.myScroll[idx] = new IScroll("#tab-"+idx+" .wrapper", 
                                 {click:true, probeType: 3, mouseWheel: true, fadeScrollbars: true }
                                 );
+        } else {
+            upIcon = $("#task-list-wrapper .up-icon");
+            me.myScroll[idx] = new IScroll("#task-list-wrapper .wrapper", 
+                                {click:true, probeType: 3, mouseWheel: true, fadeScrollbars: true }
+                                );
+        }
+            // var downIcon = $("#tab-"+me.curAppTabIdx+" .down-icon");
 
         me.myScroll[idx].on("scroll",function() {
             var y = this.y,

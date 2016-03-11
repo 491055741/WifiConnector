@@ -10,11 +10,11 @@
     <link rel="stylesheet" href="js/jquery.mobile/jquery.mobile-1.4.5.min.css" />
     <link rel="stylesheet" href="css/list.css" />
     <link rel="stylesheet" href="css/swiper.min.css" />
-    <link rel="stylesheet" href="css/wificonnector.css" />
     <link rel="stylesheet" href="js/tabs/jquery.mobile.tabs.css" />
     <link rel="stylesheet" href="js/iscroll/iscroll.css" />
     <link rel="stylesheet" href="js/jqModal/jqModal.css" />
     <link rel="stylesheet" href="css/FAQ.css" />
+    <link rel="stylesheet" href="css/wificonnector.css" />
     <script src="js/jquery-1.9.0.min.js"></script>
     <script src="js/iscroll/iscroll.js"></script>
     <script src="js/jquery.mobile/jquery.mobile-1.4.5.min.js"></script>
@@ -98,8 +98,6 @@
 
         <div id="connectionView">
 
-            <div style="height:30px"><span class="user_signin">每天领金币</span></div>
-
             <div class="jqmWindow" id="dialog" style="display:none;">
                 <hr />
                 <div id="dialog_message"></div>
@@ -113,39 +111,55 @@
                 </iframe>
             </div>
 
-            <div class="ui-grid-a message_grid" style="display:none;">
-                <div class="ui-block-a" style="width:10%">
-                    <img src="images/horn.png"/>
+            <div id="task-list-wrapper">
+                <div class="wrapper">
+                    <div style="transition-timing-function: cubic-bezier(0.1, 0.57, 0.1, 1); transition-duration: 0ms; transform: translate(0px, -1047px) translateZ(0px);" class="scroller">
+                        <div class="scroller-content">
+
+                            <div style="height:30px"><span class="user_signin">每天领金币</span></div>
+
+                            <div class="ui-grid-a message_grid" style="display:none;">
+                                <div class="ui-block-a" style="width:10%">
+                                    <img src="images/horn.png"/>
+                                </div>
+                                <div class="ui-grid-b" style="width:90%">
+                                    <ul id="twitter">
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="recomWifi">
+                                <img class="recomWifi_img" src="images/wifi_state_on.png">
+                                <div class="recomWifi_txt">
+                                    <div id="statusDesc">未连接到Wifi</div>
+                                </div>
+
+                                <center style="padding-top:70px;"><div id="connectWifiBtn" class="ui-btn">连  接</div></center>
+                                <div style="clear:both;"></div>
+                            </div>
+
+
+                            <div class="task-list">
+                                <div class="section available hide">
+                                </div>
+                                <div class="section inprogress hide">
+                                </div>
+                                <div class="section finished hide">
+                                </div>
+                                <div class="section timedout hide">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="ui-grid-b" style="width:90%">
-                    <ul id="twitter">
-                    </ul>
-                </div>
+<!--                 <div class="refresh-task-list">
+                    <center>
+                        <img class="refresh-image" src="images/refresh.png">
+                        <p>点击重新加载</p>
+                    </center>
+                </div> -->
             </div>
 
-            <div class="recomWifi">
-                <img class="recomWifi_img" src="images/wifi_state_on.png">
-                <div class="recomWifi_txt">
-                    <div id="statusDesc">未连接到Wifi</div>
-                </div>
-
-                <center style="padding-top:70px;"><div id="connectWifiBtn" class="ui-btn">连  接</div></center>
-                <div style="clear:both;"></div>
-            </div>
-
-            <div class="wifiList">
-                <div class="freeWifi">
-                    <span class="freeWifi_title">0个免费WiFi</span>
-                    <ul class="freeWifi_box">
-                    </ul>
-                </div>
-
-                <div class="annexWifi">
-                    <span class="annexWifi_title">附近的WiFi</span>
-                     <ul class="annexWifi_box">
-                    </ul>
-                </div>
-            </div>
 
             <!-- <a href="" id="shenmaBtn" class="ui-btn">神码验证</a> -->
 
@@ -159,7 +173,6 @@
                         <li><a href="#tab-1" class="" data-idx='1'>推荐</a></li>
                         <li><a href="#tab-2" class="" data-idx='2'>应用</a></li>
                         <li><a href="#tab-3" class="" data-idx='3'>游戏</a></li>
-                        <li><a href="#tab-4" class="" data-idx='4'>任务</a></li>
                     </ul>
                 </div>
             </div>
@@ -231,30 +244,6 @@
                     </div>
                 </div>
                 
-                <div id="tab-4">
-                    <div class="wrapper" style="display:none;">
-                        <div style="transition-timing-function: cubic-bezier(0.1, 0.57, 0.1, 1); transition-duration: 0ms; transform: translate(0px, -1047px) translateZ(0px);" class="scroller">
-                            <div class="scroller-content">
-                                <div class="app-list">
-                                    <div class="section available hide">
-                                    </div>
-                                    <div class="section inprogress hide">
-                                    </div>
-                                    <div class="section finished hide">
-                                    </div>
-                                    <div class="section timedout hide">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="refresh-task-list">
-                        <center>
-                            <img class="refresh-image" src="images/refresh.png">
-                            <p>点击重新加载</p>
-                        </center>
-                    </div>
-                </div>
             </div>
         </div>
 

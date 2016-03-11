@@ -5,7 +5,7 @@ html,body {
 div#list-more.margin-0 { margin:0;border-top:none;;border-left:1px solid #c6c6c6;border-right:1px solid #c6c6c6; border-bottom:1px solid #c6c6c6;}
 .app-list { border-bottom: 1px solid #D4D5D6; height: 100%; }
 .list-page { padding-top: 0; }
-.app-list .item, .app-list .index-item { height: 80px; border-top: 1px #d4d5d6 solid; background-color: #fafafa; position: relative; }
+.app-list .item, .app-list .index-item, .task-list .index-item { height: 80px; border-top: 1px #d4d5d6 solid; background-color: #fafafa; position: relative; }
 .app-list .index-item .btn { position: absolute; right: 7px; font-style: normal; padding: 0 12px 0 0; background: url(/images/icon27.png) no-repeat right 3px; background-size: auto 12px; color: #666; top: 22px; }
 .app-list .index-item .btn.green { color: Green; }
 .app-list .list_from_box { height: 87px; }
@@ -36,13 +36,14 @@ div#list-more.margin-0 { margin:0;border-top:none;;border-left:1px solid #c6c6c6
 
 .app-list .list_from_box .index-item-main { padding: 16px 0; padding-right: 65px; }
 .app-list .sub-topic-list .index-item-main { padding: 6px 0; }
-.app-list .item .item-main .item-icon, .app-list .index-item .index-item-main .item-icon { float: left; margin-left: 7px; margin-top: 15px; }
-.app-list .item .item-main .item-icon img, .app-list .index-item .index-item-main .item-icon img { width: 55px; height: 55px; background: url(../images/default.png) no-repeat scroll center center rgba(0, 0, 0, 0);border-radius:3px; box-shadow:1px 1px 4px gray;}
+.app-list .item .item-main .item-icon, .app-list .index-item .index-item-main .item-icon, .task-list .index-item .index-item-main .item-icon { float: left; margin-left: 7px; margin-top: 15px; }
+.app-list .item .item-main .item-icon img, .app-list .index-item .index-item-main .item-icon img, .task-list .index-item .index-item-main .item-icon img { width: 55px; height: 55px; background: url(../images/default.png) no-repeat scroll center center rgba(0, 0, 0, 0);border-radius:3px; box-shadow:1px 1px 4px gray;}
 .app-list .item .item-main .item-title, .app-list .index-item .index-item-main .item-title { font-size: 16px; color: #45484d; padding-top: 8px; padding-bottom: 1px; }
+.task-list .index-item .index-item-main .item-title { font-size: 16px; color: #45484d; padding-top: 20px; padding-bottom: 1px; }
 .app-list .index-item .index-item-main .item-title--t4 {padding-top: 33px;}
 .app-list .item .item-main .item-title h3, .app-list .index-item .index-item-main .item-title h3 { width: 80%; text-overflow: ellipsis; overflow: hidden; }
 .app-list .item .item-main .item-title h3.sname-incompatible, .app-list .index-item .index-item-main .item-title h3.sname-incompatible { width: 44%; }
-.app-list .index-item .index-item-main dd { padding-left:70px; padding-right:6px; }
+.app-list .index-item .index-item-main dd, .task-list .index-item .index-item-main dd { padding-left:70px; padding-right:6px; }
 .app-list .item .item-main .item-incompatible, .app-list .index-item .index-item-main .item-incompatible { color: #f55; background-position: -260px -438px; padding: 0 1px 0 15px; }
 .app-list .item .item-main .item-size, .app-list .item .item-main .item-incompatible, .app-list .item .item-main .item-downnum, .app-list .index-item .index-item-main .item-size, .app-list .index-item .index-item-main .item-incompatible, .app-list .index-item .index-item-main .item-downnum { color: #919498; font-size: 14px; }
 .app-list .item .item-main dd { padding-left: 66px; padding-right: 6px; line-height: 23px; white-space: nowrap; }

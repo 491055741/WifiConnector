@@ -61,12 +61,12 @@ body{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-khtml-
 
 .scroller-pullUp {background-color: #fafafa; }
 .app-list .coin_icon {position: absolute; width: 20px; top:30px; right: 75px;}
-.app-list .coin_num { position: absolute; width: 55px; bottom: 10px; right: 10px; padding-left: 16px; color: #4d4d4d; font-size: 12px; background: url("../images/coins.png") no-repeat left center; background-size: 14px; }
-.app-list .coin_num span { color: #ff8800; vertical-align: bottom; }
-.app-list .installBtn { position: absolute; width: 65px; height: 45px; line-height: 25px; top: 0; right: 0; background: url("../images/app_download.png") no-repeat 50% 25%; background-size: 25px; border-radius: 0; border: 0; border-left: 1px solid #ccc; }
+.app-list .coin_num, .task-list .coin_num { position: absolute; width: 65px; bottom: 10px; right: 10px; padding-left: 16px; color: #4d4d4d; font-size: 12px; background: url("../images/coins.png") no-repeat left center; background-size: 14px; }
+.app-list .coin_num span, .app-list .coin_num span { color: #ff8800; vertical-align: bottom; }
+.app-list .installBtn, .task-list .installBtn { position: absolute; width: 65px; height: 45px; line-height: 25px; top: 0; right: 0; background: url("../images/app_download.png") no-repeat 50% 25%; background-size: 25px; border-radius: 0; border: 0; border-left: 1px solid #ccc; }
 .app-list .reward { /*padding-left: 6px; */color: red; }
 .app-list .installBtn.inactive { background: transparent; }
-.app-list .installBtn.manageTab { background: transparent; }
+.app-list .installBtn.manageTab, .task-list .installBtn.manageTab { background: transparent; }
 .app-list .bigLogo-instBtn { /*width: 100%; height: 100%;*/ width: 50px; height: 24px; padding: 0; margin-top: 0; top: auto; bottom: -5px; border-radius: 3px; background: #0A94D7; font: 300 12px/24px 'STHeiti'; color:#fff; text-align: center; letter-spacing: 1px; }
 .app-list li .bigLogo-instBtn:hover { background: rgba(0,0,0,0.5); }
 .app-list .h.baiying-name {font-size: 16px;height: 22px;padding-top: 2px;}
@@ -78,8 +78,11 @@ body{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-khtml-
 .app-list .installBtn.inactive span { border-radius: 10px; font-size: 14px; background: #bebebe; color: #fff; display: inline-block; padding: 3px 5px 1px 6px; margin-top: 10px; text-shadow: none; }
 .app-list .installBtn.inactive.hasInstalled span { background: rgb(245,149,13); color: #fff; }
 .app-list .installBtn.app-downing--t3 { background: #fff; }
-#tab-4 .app-list .section h5 {padding-left: 8px; }
-
+#task-list-wrapper .task-list .section h5 {padding-left: 8px; }
+#task-list-wrapper .wrapper {
+    position: absolute;
+    top: 0px;
+}
 .exchange_list .coin_icon {position: absolute; width: 20px; top:30px; right: 75px;}
 .exchange_list .coin_num { position: absolute; width: 55px; bottom: 10px; right: 10px; padding-left: 16px; color: #4d4d4d; font-size: 12px; background: url("../images/coins.png") no-repeat left center; background-size: 14px; }
 .exchange_list .coin_num span { color: #ff8800; vertical-align: bottom; }
@@ -99,9 +102,9 @@ body{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-khtml-
 .exchange_list .installBtn:hover {background: #0A94D7; color:#fff; text-shadow:none; border: none; }
 
 #tab-1 .app-list .installBtn {background-image: none; text-shadow:none; border: none; }
-#tab-4 .app-list li {overflow: hidden;}
-#tab-4 .app-list .downloading h5, #tab-4 .app-list .hasDownloaded h5, #tab-4 .app-list .hasInstalled h5 { background: #f2f2f2; padding: 7px 0 5px 10px; font-weight: bold; color: #000; border-style:solid; border-top: 1px solid #ccc; }
-#tab-4 .app-list .installBtn.inactive span { display: inline-block; padding: 3px 5px 1px 6px;margin-top: 10px;text-shadow:none;}
+#task-list-wrapper .task-list li {overflow: hidden;}
+#task-list-wrapper .task-list h5 { background: #f2f2f2; padding: 7px 0 5px 10px; font-weight: bold; color: #000; border-style:solid; border-top: 1px solid #ccc; }
+#task-list-wrapper .task-list .installBtn.inactive span { display: inline-block; padding: 3px 5px 1px 6px;margin-top: 10px;text-shadow:none;}
 .appDetail .intro {/*height: 100px;*/ overflow: hidden;}
 .appDetail .icon-brief {width: 70%; float: left; }
 .appDetail .icon-brief .icon {width: 25%;}
