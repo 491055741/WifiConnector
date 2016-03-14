@@ -241,7 +241,7 @@
         <!-- 友盟  -->
         <meta-data android:value="55877b8067e58e1674004760" android:name="UMENG_APPKEY"></meta-data>
         <!-- Channel value: anhui01  or  wen_zhou  -->
-        <meta-data android:value="wen_zhou" android:name="UMENG_CHANNEL"></meta-data>
+        <meta-data android:value="anhui01" android:name="UMENG_CHANNEL"></meta-data>
     </application>
 
 </manifest>

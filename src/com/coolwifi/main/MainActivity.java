@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
 	private SmsObserver smsObserver;
 	private MyBroadcastReceiver mConnectionReceiver;
 	private boolean mIsFirstTimeRun = false;
+
 	class SmsObserver extends ContentObserver {
 
 		public SmsObserver(Context context, Handler handler) {
@@ -299,6 +300,32 @@ public class MainActivity extends AppCompatActivity {
         }
 	}
 
+	private void sendPhiTownAuthRequest() throws Exception {
+        Log.d(TAG, "sendPhiTownAuthRequest");
+        try {
+        	
+    		String redictURL = getRedirectUrl("http://www.baidu.com");
+//    		http://phitown.phicloud.com/phone/authPage.do?routersn=czwb728nvg10028&phonemac=8c:be:be:fd:00:e2&url=www.baidu.com
+            if (redictURL == null || redictURL.length() == 0) {
+        	    Log.d(TAG, "url not redirected");
+        	    return;
+            }
+            String sn   = getUrlPara(redictURL, "routersn");
+            String mac  = getUrlPara(redictURL, "phonemac");
+            String usr  = "13800138000";
+            String pwd  = "000000";
+            String url  = "http://phitown.phicloud.com:8080/wifi-webservice/appportal/pUserRegister";
+            String data = "verNo=v1.0&appCode=YS&user="+usr+"&password="+pwd;
+            HttpRequest.post(url, data);
+
+            url = "http://phitown.phicloud.com:8080/wifi-webservice/appportal/pUserLogin";
+            data = "verNo=v1.0&appCode=YS&user="+usr+"&password="+pwd+"&snCode="+sn+"&phoneMac="+mac;
+            HttpRequest.post(url, data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+	}
+
 	private void sendRuijieAuthRequest() throws Exception {
         Log.d(TAG, "sendRuijieAuthRequest");
         try {
@@ -340,16 +367,17 @@ public class MainActivity extends AppCompatActivity {
             conn.setConnectTimeout(10000);  
             conn.setRequestMethod("GET");
             conn.setRequestProperty("accept", "*/*");  
-            String location = conn.getRequestProperty("location");  
-            int resCode = conn.getResponseCode();  
+//            String location = conn.getRequestProperty("location");  
+//            int resCode = conn.getResponseCode();  
             conn.connect();  
-            InputStream stream = conn.getInputStream();  
-            byte[] data=new byte[102400];  
-            int length=stream.read(data);  
-            String str=new String(data,0,length);   
+            InputStreamReader  bis = new InputStreamReader(conn.getInputStream(),"utf-8");
+            String result = "";
+            int c = 0;
+            while ((c = bis.read()) != -1){        
+             result=result+(char)c;   
+            }
             conn.disconnect();
-            stream.close();
-            return str;
+            return result;
         }  
         catch(Exception ee)  
         {  
@@ -463,6 +491,7 @@ public class MainActivity extends AppCompatActivity {
 		@Override
 		public void run() {
 			try {
+				sendPhiTownAuthRequest();
 				sendShenZhouAuthRequest();
 				sendHuanChuangAuthRequest();
 				sendHillStoneAuthRequest();
@@ -570,8 +599,8 @@ public class MainActivity extends AppCompatActivity {
 
 	@SuppressLint("SetJavaScriptEnabled")
 	private void init() throws JSONException {
-
 		initGPS();
+		appAuth();
 		int versionCode = 0;
 		try {
 			versionCode = getBaseContext().getPackageManager().getPackageInfo("com.xiaohong.wificoolconnect", 0).versionCode;

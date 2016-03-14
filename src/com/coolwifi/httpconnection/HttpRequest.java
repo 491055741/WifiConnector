@@ -20,22 +20,18 @@ public class HttpRequest {
         try
         {
             Log.d(TAG, "post");
-//            HttpEntity requestHttpEntity = new UrlEncodedFormEntity(
-//                    pairList);
             StringEntity entity = new StringEntity(data);
             entity.setContentType("application/x-www-form-urlencoded");
-            
             // URL使用基本URL即可，其中不需要加参数
             HttpPost httpPost = new HttpPost(urlStr);
-            // 将请求体内容加入请求中
             httpPost.setEntity(entity);
-            // 需要客户端对象来发送请求
-            HttpClient httpClient = new DefaultHttpClient();
-            // 发送请求
-            HttpResponse response = httpClient.execute(httpPost);
-            // 显示响应
-            String resp = response.getEntity().getContent().toString();
-            Log.d(TAG, resp);
+            HttpResponse response = new DefaultHttpClient().execute(httpPost);
+            if (response.getStatusLine().getStatusCode() == 200) { 
+                String resp = response.getEntity().getContent().toString();
+                Log.d(TAG, resp);
+            } else {
+                Log.d(TAG, "Error Response"+response.getStatusLine().toString()); 
+            } 
         }
         catch (Exception e)
         {
