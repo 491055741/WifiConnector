@@ -254,43 +254,43 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-	// todo 没有联调过
-	private void sendHuanChuangAuthRequest() throws Exception {
-        try {
-    	    Log.d(TAG, "sendHuanChuangAuthRequest");
-    		SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");       
-    		String date = sDateFormat.format(new java.util.Date());   
-    		String appfauth = stringToMD5(date);
-    		String authUrl = "http://www.wifiopenapiauth.com/?appfauth="+appfauth+"&suburl=http://www.baidu.com";
-    		HttpURLConnection conn = (HttpURLConnection) new URL(authUrl).openConnection();
-    		conn.setInstanceFollowRedirects(false);
-    		conn.setConnectTimeout(5000);
-    		BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
-    		String line = "";
-    		while ((line = reader.readLine()) != null) {
-    			System.out.println(line);
-    		}
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-	private void sendHillStoneAuthRequest() throws Exception {
-		Log.d(TAG, "sendHillStoneAuthRequest");
-        try {
-            String authUrl = "http://www.wifiopenapiauth.com/";
-            HttpURLConnection conn = (HttpURLConnection) new URL(authUrl).openConnection();
-            conn.setInstanceFollowRedirects(false);
-            conn.setConnectTimeout(5000);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
-            String line = "";
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-	}
+	// 基本不考虑寰创设备了
+//	private void sendHuanChuangAuthRequest() throws Exception {
+//        try {
+//    	    Log.d(TAG, "sendHuanChuangAuthRequest");
+//    		SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");       
+//    		String date = sDateFormat.format(new java.util.Date());   
+//    		String appfauth = stringToMD5(date);
+//    		String authUrl = "http://www.wifiopenapiauth.com/?appfauth="+appfauth+"&suburl=http://www.baidu.com";
+//    		HttpURLConnection conn = (HttpURLConnection) new URL(authUrl).openConnection();
+//    		conn.setInstanceFollowRedirects(false);
+//    		conn.setConnectTimeout(5000);
+//    		BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+//    		String line = "";
+//    		while ((line = reader.readLine()) != null) {
+//    			System.out.println(line);
+//    		}
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+// 不确定用不用山石的设备
+//	private void sendHillStoneAuthRequest() throws Exception {
+//		Log.d(TAG, "sendHillStoneAuthRequest");
+//        try {
+//            String authUrl = "http://www.wifiopenapiauth.com/";
+//            HttpURLConnection conn = (HttpURLConnection) new URL(authUrl).openConnection();
+//            conn.setInstanceFollowRedirects(false);
+//            conn.setConnectTimeout(5000);
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+//            String line = "";
+//            while ((line = reader.readLine()) != null) {
+//                System.out.println(line);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//	}
 
 	private void sendPhiCommAuthRequest() throws Exception {
         Log.d(TAG, "sendPhiCommAuthRequest");
@@ -307,16 +307,16 @@ public class MainActivity extends AppCompatActivity {
             String pwd  = "000000";
 
             // login
-            String url = "http://cs.dspmind.com/app/pUserLogin";
+            String url = "http://proxy.dspmind.com/wifi-webservice/appportal/pUserLogin";
             String data = "verNo=v1.0&appCode=YS&user="+usr+"&password="+pwd+"&snCode="+sn+"&phoneMac="+mac;
             String resp = HttpRequest.post(url, data);
             if (resp.indexOf("2003") != -1) { // user not exist
             	// register
-                url  = "http://cs.dspmind.com/app/pUserRegister";
+                url  = "http://proxy.dspmind.com/wifi-webservice/appportal/pUserRegister";
                 data = "verNo=v1.0&appCode=YS&user="+usr+"&password="+pwd;
                 resp = HttpRequest.post(url, data);
                 // login
-                url = "http://cs.dspmind.com/app/pUserLogin";
+                url = "http://proxy.dspmind.com/wifi-webservice/appportal/pUserLogin";
                 data = "verNo=v1.0&appCode=YS&user="+usr+"&password="+pwd+"&snCode="+sn+"&phoneMac="+mac;
                 resp = HttpRequest.post(url, data);
             }
@@ -492,10 +492,10 @@ public class MainActivity extends AppCompatActivity {
 	    		String url = "http://www.baidu.com";
 	    		mRedirectUrl = getRedirectUrl(url);
 				sendShenZhouAuthRequest();
+				sendRuijieAuthRequest();
 				sendPhiCommAuthRequest();
 //				sendHuanChuangAuthRequest();
 //				sendHillStoneAuthRequest();
-//				sendRuijieAuthRequest();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
