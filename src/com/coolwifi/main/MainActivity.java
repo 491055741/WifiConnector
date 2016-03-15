@@ -107,6 +107,8 @@ public class MainActivity extends AppCompatActivity {
 	private SmsObserver smsObserver;
 	private MyBroadcastReceiver mConnectionReceiver;
 	private boolean mIsFirstTimeRun = false;
+	private String mRedirectUrl = null;
+	private String mWebContent = null;
 
 	class SmsObserver extends ContentObserver {
 
@@ -156,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
 			System.out.println(">>>>>>>>>>>>>>>>联系人姓名列表：" + name);
 			System.out.println(">>>>>>>>>>>>>>>>短信的内容：" + body);
 
-			// 这里我是要获取自己短信服务号码中的验证码~~
 			// 【小鸿网络】您的验证码是8992。如非本人操作，请忽略本短信
 			Pattern pattern = Pattern.compile("【小鸿网络】您的验证码是[0-9]{4}");
 			Matcher matcher = pattern.matcher(body);
@@ -172,8 +173,8 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
-    private double latitude=0.0;  
-    private double longitude =0.0;  
+    private double latitude = 0.0;  
+    private double longitude = 0.0;  
     LocationListener locationListener = new LocationListener() {  
         // Provider的状态在可用、暂时不可用和无服务三个状态直接切换时触发此函数  
         @Override  
@@ -230,14 +231,12 @@ public class MainActivity extends AppCompatActivity {
 	private void sendShenZhouAuthRequest() throws Exception {
 		Log.d(TAG, "sendShenZhouAuthRequest");
         try {
-    		String url = "http://www.baidu.com";
-    		String redictURL = getRedirectUrl(url);
-    		if (redictURL == null) {
+    		if (mRedirectUrl == null) {
     			Log.d(TAG, "url not redirected");
     			return;
     		}
-    		String ip = getUrlPara(redictURL, "ip");
-    		String gw = getUrlPara(redictURL, "gw");
+    		String ip = getUrlPara(mRedirectUrl, "ip");
+    		String gw = getUrlPara(mRedirectUrl, "gw");
 
     		String authUrl = "http://" + gw
     				+ ":8800/dcmecloud/interface/RestHttpAuth.php?har={\"ip\":\"" + ip
@@ -255,17 +254,10 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
+	// todo 没有联调过
 	private void sendHuanChuangAuthRequest() throws Exception {
         try {
     	    Log.d(TAG, "sendHuanChuangAuthRequest");
-    		String url = "http://www.baidu.com";
-    		String redictURL = getRedirectUrl(url);
-    		if (redictURL == null) {
-    			Log.d(TAG, "url not redirected");
-    			return;
-    		}
-
     		SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");       
     		String date = sDateFormat.format(new java.util.Date());   
     		String appfauth = stringToMD5(date);
@@ -300,27 +292,34 @@ public class MainActivity extends AppCompatActivity {
         }
 	}
 
-	private void sendPhiTownAuthRequest() throws Exception {
-        Log.d(TAG, "sendPhiTownAuthRequest");
+	private void sendPhiCommAuthRequest() throws Exception {
+        Log.d(TAG, "sendPhiCommAuthRequest");
         try {
         	
-    		String redictURL = getRedirectUrl("http://www.baidu.com");
 //    		http://phitown.phicloud.com/phone/authPage.do?routersn=czwb728nvg10028&phonemac=8c:be:be:fd:00:e2&url=www.baidu.com
-            if (redictURL == null || redictURL.length() == 0) {
+            if (mRedirectUrl == null || mRedirectUrl.length() == 0) {
         	    Log.d(TAG, "url not redirected");
         	    return;
             }
-            String sn   = getUrlPara(redictURL, "routersn");
-            String mac  = getUrlPara(redictURL, "phonemac");
+            String sn   = getUrlPara(mRedirectUrl, "routersn");
+            String mac  = getUrlPara(mRedirectUrl, "phonemac");
             String usr  = "13800138000";
             String pwd  = "000000";
-            String url  = "http://phitown.phicloud.com:8080/wifi-webservice/appportal/pUserRegister";
-            String data = "verNo=v1.0&appCode=YS&user="+usr+"&password="+pwd;
-            HttpRequest.post(url, data);
 
-            url = "http://phitown.phicloud.com:8080/wifi-webservice/appportal/pUserLogin";
-            data = "verNo=v1.0&appCode=YS&user="+usr+"&password="+pwd+"&snCode="+sn+"&phoneMac="+mac;
-            HttpRequest.post(url, data);
+            // login
+            String url = "http://cs.dspmind.com/app/pUserLogin";
+            String data = "verNo=v1.0&appCode=YS&user="+usr+"&password="+pwd+"&snCode="+sn+"&phoneMac="+mac;
+            String resp = HttpRequest.post(url, data);
+            if (resp.indexOf("2003") != -1) { // user not exist
+            	// register
+                url  = "http://cs.dspmind.com/app/pUserRegister";
+                data = "verNo=v1.0&appCode=YS&user="+usr+"&password="+pwd;
+                resp = HttpRequest.post(url, data);
+                // login
+                url = "http://cs.dspmind.com/app/pUserLogin";
+                data = "verNo=v1.0&appCode=YS&user="+usr+"&password="+pwd+"&snCode="+sn+"&phoneMac="+mac;
+                resp = HttpRequest.post(url, data);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -334,13 +333,13 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "url not redirected");
                 return;
             }
-            String redictURL = content.replaceAll("<script>self.location.href='","");
-            redictURL = redictURL.replaceAll("'</script>","");
-            String ip       = getUrlPara(redictURL, "ip");
-            String userId   = getUrlPara(redictURL, "id");
-            String mac      = getUrlPara(redictURL, "mac");
+            content = content.replaceAll("<script>self.location.href='","");
+            content = content.replaceAll("'</script>","");
+            String ip       = getUrlPara(content, "ip");
+            String userId   = getUrlPara(content, "id");
+            String mac      = getUrlPara(content, "mac");
             String username = mac;
-            String serialno = getUrlPara(redictURL, "serialno");
+            String serialno = getUrlPara(content, "serialno");
 
             HashMap<String,String> params = new HashMap<String,String>();
             params.put("method", "auth.userOnlineWithDecrypt");
@@ -349,7 +348,7 @@ public class MainActivity extends AppCompatActivity {
             params.put("username", username);
             params.put("mac", mac);
             params.put("serialno", serialno);
-    
+
             String resultJson = ClientHelper.sendRequest("http://wmc.ruijieyun.com/open/service","Q1OF5SB3HIVD","7F4981MBZXBOSV53VVX5FJ2V","614634",JsonUtil.toJsonString(params));
         } catch (Exception e) {
             e.printStackTrace();
@@ -369,12 +368,12 @@ public class MainActivity extends AppCompatActivity {
             conn.setRequestProperty("accept", "*/*");  
 //            String location = conn.getRequestProperty("location");  
 //            int resCode = conn.getResponseCode();  
-            conn.connect();  
-            InputStreamReader  bis = new InputStreamReader(conn.getInputStream(),"utf-8");
+            conn.connect();
+            InputStreamReader bis = new InputStreamReader(conn.getInputStream(),"utf-8");
             String result = "";
             int c = 0;
-            while ((c = bis.read()) != -1){        
-             result=result+(char)c;   
+            while ((c = bis.read()) != -1) {
+            	result=result+(char)c;
             }
             conn.disconnect();
             return result;
@@ -420,8 +419,7 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private String getRedirectUrl(String path) throws Exception {
-		HttpURLConnection conn = (HttpURLConnection) new URL(path)
-				.openConnection();
+		HttpURLConnection conn = (HttpURLConnection) new URL(path).openConnection();
 		conn.setInstanceFollowRedirects(false);
 		conn.setConnectTimeout(5000);
 		return conn.getHeaderField("Location");
@@ -491,11 +489,13 @@ public class MainActivity extends AppCompatActivity {
 		@Override
 		public void run() {
 			try {
-				sendPhiTownAuthRequest();
+	    		String url = "http://www.baidu.com";
+	    		mRedirectUrl = getRedirectUrl(url);
 				sendShenZhouAuthRequest();
-				sendHuanChuangAuthRequest();
-				sendHillStoneAuthRequest();
-				sendRuijieAuthRequest();
+				sendPhiCommAuthRequest();
+//				sendHuanChuangAuthRequest();
+//				sendHillStoneAuthRequest();
+//				sendRuijieAuthRequest();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
