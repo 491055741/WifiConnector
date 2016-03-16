@@ -60,7 +60,7 @@ public class UpdateManager
             {
             case DOWNLOAD:
 	            	if (mProgress != null) {
-	                    mProgress.setProgress(msg.arg1);            		
+	                    mProgress.setProgress(msg.arg2);            		
 	            	}
                 break;
             case DOWNLOAD_FINISH:
