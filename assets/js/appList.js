@@ -287,8 +287,13 @@ $("#MainPage").on("pagebeforeshow", function () {
 
 $("#MainPage").on("pageshow", function () {
     console.log("main page show");
-    me.refreshScroll();
-    // setTimeout("me.toggleAdBannerTimer()", 5000);
+    if (me.currentTabIdx == 0 && me.isGotTaskList) {
+        var footerHeight = $("#mainFooter").height();
+        $("#task-list-wrapper .wrapper").css('height', ($(window).height()-footerHeight)+'px');
+        me.refreshScroll(4);
+    } else {
+        me.refreshScroll();
+    }
 });
 
 $('#dialog').jqm({
@@ -524,6 +529,7 @@ var me = {
     kuLianWifi : null,
     appList : null,
     isLogin : false,
+    isGotTaskList : false,
     autoLoginRetryCount : 0,
     showBackBtn : function (isShowBackBtn) {
         console.log("showBackBtn:"+isShowBackBtn);
@@ -750,16 +756,15 @@ var me = {
             slide.hide();
         }
         if (idx == 0) {
-            me.refreshScroll(4);
             var footerHeight = $("#mainFooter").height();
-           $("#task-list-wrapper .wrapper").css('height', ($(window).height()-footerHeight)+'px');
+            $("#task-list-wrapper .wrapper").css('height', ($(window).height()-footerHeight)+'px');
+            me.refreshScroll(4);
        } else if (idx == 1) { // choice page
-            me.refreshScroll();
-
             var headerHeight = $("#appListHeader").height();
             var footerHeight = $("#mainFooter").height();
             // console.log("header:"+headerHeight+" footerHeight:"+footerHeight+" screenHeight:"+$(document).height());
             $("#tab-1 .wrapper").css('height', ($(window).height()-headerHeight-footerHeight)+'px');// screenHeight - topNavbarHeight-bottomNavbarHeight
+            me.refreshScroll();
         } else if (idx == 2) {// iframe page （humor page）
             var footerHeight = $("#mainFooter").height();
             $("#humorIFrame").css('height', ($(window).height()-footerHeight)+'px');
@@ -995,6 +1000,7 @@ var me = {
         $("#task-list-wrapper .task-list .section.inprogress").empty().append("<h5>已接任务</h5>");
         $("#task-list-wrapper .task-list .section.finished").empty().append("<h5>已完成任务</h5>");
         $("#task-list-wrapper .task-list .section.timedout").empty().append("<h5>超时任务</h5>");
+        $("#task-list-wrapper .task-list .section.ended").empty().append("<h5>已结束任务</h5>");
         var phone_number = me.getPhoneNumber();
         var url = appServerUrl+"/get_tasklist?phone_number="+phone_number+"&"+callback;
         console.log("requestTaskList:" + url);
@@ -1004,6 +1010,7 @@ var me = {
                 $("#task-list-wrapper .wrapper").show();
                 me.parseTaskList(data.tasklist);
                 me.requestGzhTaskList();
+                me.isGotTaskList = true;
             } else {
                 showLoader(data.ret_msg);
                 setTimeout("hideLoader()", 3000);
@@ -1028,7 +1035,7 @@ var me = {
                         me.clickOnGzhTask(this);
                     }
                 });
-                setTimeout(me.initIScroll(4), 2000);
+                setTimeout(me.initIScroll(4), 500);
             } else {
                 showLoader(data.ret_msg);
                 setTimeout("hideLoader()", 3000);
@@ -1043,10 +1050,10 @@ var me = {
         console.log("requestTaskList:" + url);
         $.getJSON(url, function(data) {
             if (data.ret_code == 0) {
+                $('#copyToClipBdBtn').trigger('click');
                 var dialogHtml="<div class='modalViewTitle'>任务领取成功</div><div class='modalViewText'>请在4小时内完成任务，超过时间任务将自动作废，无法获得金币奖励<br>公众号id已复制，请直接在微信中粘贴查找</div>";
                 $("#gzh_dialog_message").html(dialogHtml);
                 $("#gzhdialog").jqmShow();
-                $('#copyToClipBdBtn').trigger('click');
             } else {
                 showLoader(data.ret_msg);
                 setTimeout("hideLoader()", 3000);
@@ -1093,9 +1100,9 @@ var me = {
         for (var i = 0; i < tasklist.length; i++) {
             me.addToTaskListTab(tasklist[i]);
         }
-        me.refreshScroll(4);
         var footerHeight = $("#mainFooter").height();
         $("#task-list-wrapper .wrapper").css('height', ($(window).height()-footerHeight)+'px');
+        me.refreshScroll(4);
     },
 
     requestAppList : function()
@@ -1194,9 +1201,6 @@ var me = {
                             me.showDownloadProgress(this);
                         });
                         setTimeout(me.initIScroll(type), 2000);
-                        if (me.myScroll[4] == null) {
-                            me.initIScroll(4);
-                        }
                     },
             error : function() {
                         $("#tab-"+type+" .refresh-app-list").show();
@@ -1401,7 +1405,7 @@ var me = {
         arrHtml.push("<div class='row'><dt><div>微信公众号</div></dt><dd><div>"+$(obj).data("wechatid")+"  <a href='' id='copyToClipBdBtn' data-text="+$(obj).data("wechatid")+" class='ui-btn'>复制到剪贴板</a></div></dd></div>");
         arrHtml.push("<div class='row'><dt><div>公众号二维码</div></dt><dd class='crcode'><img src="+$(obj).data("qrcodeurl")+"></dd></div>");
 
-        // task status: 1 可领取    2 已领取    3 已完成     4 超时
+        // task status: 1 可领取    2 已领取    3 已完成   4 超时（领取但未完成）   5任务已结束（未领取）
         if ($(obj).data("taskstatus")=='1') { // 可领取
             arrHtml.push("<br><center><div>还有"+$(obj).data("remainnum")+"个名额</div></center>");
             arrHtml.push("<div class='account_exit' style='margin-top:20px; '><center><a href='' id='acceptTaskBtn' data-taskid='"+$(obj).data("taskid")+"' class='ui-btn'>领取任务</a></center></div>");
@@ -1413,6 +1417,8 @@ var me = {
             arrHtml.push("<br><center><div>已完成</div></center>");
         } else if ($(obj).data("taskstatus")=='4') { // 超时
             arrHtml.push("<br><center><div>已超时</div></center>");
+        } else if ($(obj).data("taskstatus")=='5') { // 结束
+            arrHtml.push("<br><center><div>已结束</div></center>");
         }
         $("#wechatTaskContent").append(arrHtml);
         $("#acceptTaskBtn").fastClick(function() {
@@ -1574,6 +1580,10 @@ var me = {
 */
     addToTaskListTab : function(task)
     {
+        if (task.task_status > 5) {
+            console.log("unknown task status:"+task.task_status);
+            return;
+        }
         var arrHtml = new Array();
         arrHtml.push("<li class='index-item list-index' data-taskid='"+task.id+"' data-taskname=\""+task.name+"\" ");
         arrHtml.push("data-coin='"+task.coin_num+"' data-wechatid='"+task.weixin_id+"' data-qrcodeurl='"+task.qr_code_url+"' data-taskstatus='"+task.task_status+"' data-remainnum='"+task.remain_tasknum+"' data-remaintime='"+task.remain_time+"' class='index-item list-index' >");
@@ -1598,8 +1608,10 @@ var me = {
             arrHtml.push("<div class='ui-btn installBtn manageTab inactive' ><span>已接</span></div>");
         } else if (task.task_status == 3) {
             arrHtml.push("<div class='ui-btn installBtn manageTab'><span>已完成</span></div>");
-        } else {
+        } else if (task.task_status == 4) {
             arrHtml.push("<div class='ui-btn installBtn manageTab'><span>已超时</span></div>");
+        } else if (task.task_status == 5) {
+            arrHtml.push("<div class='ui-btn installBtn manageTab'><span>已结束</span></div>");
         }
         arrHtml.push("</div></li>");// app_down
 
@@ -1611,8 +1623,10 @@ var me = {
             $("#task-list-wrapper .task-list .section.inprogress").show().append(html);
         } else if (task.task_status == 3) {
             $("#task-list-wrapper .task-list .section.finished").show().append(html);
-        } else {
+        } else if (task.task_status == 4) {
             $("#task-list-wrapper .task-list .section.timedout").show().append(html);
+        } else {
+            $("#task-list-wrapper .task-list .section.ended").show().append(html);
         }
     },
 
