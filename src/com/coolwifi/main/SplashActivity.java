@@ -5,14 +5,19 @@ import org.json.JSONException;
 import com.umeng.analytics.MobclickAgent;
 import com.xiaohong.wificoolconnect.R;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources.NotFoundException;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.DisplayMetrics;
+import android.widget.ImageView;
 
 public class SplashActivity extends Activity {  
     private Handler mMainHandler = new Handler() {  
@@ -52,10 +57,43 @@ public class SplashActivity extends Activity {
     @Override  
     public void onCreate(Bundle icicle) {  
         super.onCreate(icicle);
-        getWindow().setBackgroundDrawableResource(R.drawable.splash);  
+        setContentView(R.layout.activity_splash);
+//        getWindow().setBackgroundDrawableResource(R.drawable.splash);
+        setSplashBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.splash));
         mMainHandler.sendEmptyMessageDelayed(0, 1000);
     }
 
+    /*
+     * 设置Splash背景图
+     */
+    private void setSplashBitmap(Bitmap bmp) {
+
+        // 针对不同分辨率的屏幕做Splash的适配
+        Bitmap scaledBitmap = sacleBitmap(getApplicationContext(), bmp);
+        ImageView v = ((ImageView) findViewById(R.id.iv_splashBg));
+        if (scaledBitmap == null) {
+            v.setImageBitmap(bmp);
+        } else {
+            v.setImageBitmap(scaledBitmap);
+        }
+    }
+
+    private Bitmap sacleBitmap(Context context, Bitmap bitmap) {
+        // 适配屏幕大小
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        int screenWidth = metrics.widthPixels;
+        float aspectRatio = (float) screenWidth / (float) width;
+        int scaledHeight = (int) (height * aspectRatio);
+        Bitmap scaledBitmap = null;
+        try {
+            scaledBitmap = Bitmap.createScaledBitmap(bitmap, screenWidth, scaledHeight, false);
+        } catch (OutOfMemoryError e) {
+        }
+        return scaledBitmap;
+    }
+    
     // much easier to handle key events   
     @Override  
     public void onBackPressed() {  
