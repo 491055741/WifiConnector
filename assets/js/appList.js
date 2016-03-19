@@ -1022,18 +1022,19 @@ var me = {
     {
         var phone_number = me.getPhoneNumber();
         var url = appServerUrl+"/get_gzhtasklist?phone_number="+phone_number+"&"+callback;
-        console.log("requestTaskList:" + url);
+        console.log("requestGzhTaskList:" + url);
         $.getJSON(url, function(data) {
             if (data.ret_code == 0) {
                 $("#task-list-wrapper .refresh-task-list").hide();
                 $("#task-list-wrapper .wrapper").show();
                 me.parseGzhTaskList(data.tasklist);
-                $("#task-list-wrapper .task-list li").click(function() {  // don't use fastclick, it will eat 'touchbegin' event
-                    if ($(this).data("url") != undefined) {
-                        window.location.href = $(this).data("url");
-                    } else {
-                        me.clickOnGzhTask(this);
-                    }
+                console.log("bind task item click event");
+
+                $("#task-list-wrapper .task-list .index-item").one("click", function(){
+                    me.clickOnTaskItem($(this));
+                });
+
+                $("#task-list-wrapper .task-list .index-item").click(function() {  // don't use fastclick, it will eat 'touchbegin' event
                 });
                 setTimeout(me.initIScroll(4), 500);
             } else {
@@ -1041,6 +1042,27 @@ var me = {
                 setTimeout("hideLoader()", 3000);
             }
         });
+    },
+
+    clickOnTaskItem : function(obj) {
+        console.log("click on task item");
+
+        if (obj.data("url") != undefined) {
+            if (window.android != undefined) {
+                window.android.openWebview(obj.data("url"), obj.data("name"));
+            } else {
+                window.location.href = obj.data("url");
+            }
+        } else {
+            me.clickOnGzhTask(obj);
+        }
+
+        // a wordaround for iscroll.js one click cause two click event issue
+        setTimeout(function() {
+            $("#task-list-wrapper .task-list .index-item").unbind("click").one("click", function() {
+                me.clickOnTaskItem($(this));
+            });
+        },500);
     },
 
     acceptGzhTask : function(taskid)
@@ -1069,7 +1091,7 @@ var me = {
 
             var url = tasklist[i].click_url+"phone_number="+phone_number;
 
-            arrHtml.push("<li class='index-item list-index' data-url='"+url+"'>");
+            arrHtml.push("<li class='index-item list-index' data-url='"+url+"' data-name='"+tasklist[i].name+"'>");
 
             arrHtml.push("<div class='index-item-main'>");
             arrHtml.push("<dl class='clearfix' data-name='"+tasklist[i].name+"'>");

@@ -223,6 +223,13 @@ public class MainActivity extends AppCompatActivity {
 	public String getLatLonString() {
 		return ""+latitude+","+longitude;
 	}
+    // @JavascriptInterface
+    public void openWebview(String url, String title) {
+        Intent detailIntent = new Intent(getApplicationContext(), WebviewActivity.class);
+        detailIntent.putExtra("extra.url", url);
+        detailIntent.putExtra("extra.title", title);
+        startActivity(detailIntent);
+    }
 	// @JavascriptInterface
 	public void appAuth() {
 		new Thread(authTask).start();
