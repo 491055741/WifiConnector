@@ -4,6 +4,7 @@ package com.coolwifi.main;
 import com.xiaohong.wificoolconnect.R;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.webkit.DownloadListener;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -19,6 +21,21 @@ import android.widget.TextView;
 
 public class WebviewActivity extends AppCompatActivity {
     private ActionBar mActionbar;
+    private WebView webView;
+    private class MyWebViewDownLoadListener implements DownloadListener{   
+        @Override  
+        public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype,   
+                                    long contentLength) {              
+            Log.i("tag", "url="+url);
+            Log.i("tag", "userAgent="+userAgent);
+            Log.i("tag", "contentDisposition="+contentDisposition);            
+            Log.i("tag", "mimetype="+mimetype);
+            Log.i("tag", "contentLength="+contentLength);   
+            Uri uri = Uri.parse(url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);   
+            startActivity(intent);              
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,16 +47,17 @@ public class WebviewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_webview);
         initCustomActionBar(title);
 
-        WebView webView = (WebView)findViewById(R.id.webview);
+        webView = (WebView)findViewById(R.id.webview);
         webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-    //  webView = new WebView(this);
         webView.setVerticalScrollBarEnabled(false);
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setBuiltInZoomControls(false);
         webSettings.setSupportZoom(false);
+        webView.setDownloadListener(new MyWebViewDownLoadListener()); 
         webView.setWebViewClient(new WebViewClient() {
-                public boolean shouldOverrideUrlLoading(WebView view, String url) { //  重写此方法表明点击网页里面的链接还是在当前的webview里跳转，不跳到浏览器那边
+                // 重写此方法表明点击网页里面的链接还是在当前的webview里跳转，不跳到浏览器那边
+                public boolean shouldOverrideUrlLoading(WebView view, String url) {
                     view.loadUrl(url);
                     return true;
                 }
@@ -68,7 +86,11 @@ public class WebviewActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 //                Log.d(TAG, "Click back btn.");
-                finish();
+                if (webView.canGoBack()) {
+                    webView.goBack();
+                } else {
+                    finish();
+                }
             }
         });
         return true;
@@ -76,8 +98,12 @@ public class WebviewActivity extends AppCompatActivity {
     
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-      if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_HOME) {
-          finish();
+      if (keyCode == KeyEvent.KEYCODE_BACK) {
+          if (webView.canGoBack()) {
+              webView.goBack();
+          } else {
+              finish();
+          }
           return true;
       }
       return super.onKeyDown(keyCode, event);
