@@ -607,7 +607,6 @@ public class MainActivity extends AppCompatActivity {
 	@SuppressLint("SetJavaScriptEnabled")
 	private void init() throws JSONException {
 		initGPS();
-		appAuth();
 		int versionCode = 0;
 		try {
 			versionCode = getBaseContext().getPackageManager().getPackageInfo("com.xiaohong.wificoolconnect", 0).versionCode;
