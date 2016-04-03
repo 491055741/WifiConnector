@@ -2011,12 +2011,21 @@ var me = {
             return;
         }
         console.log("autoLogin retry count:"+me.autoLoginRetryCount);
+        var nativePackageName = "com.xiaohong.kulian";
         var phone_number = getItem("userName");
         var passwd       = getItem("passWord");
         if (phone_number == undefined || phone_number == null || phone_number.length == 0) {
             changePage("#RegisterPage");
+            if (window.android != undefined && window.android.isAppInstalled(nativePackageName, 0)) {
+                window.android.startAPP(nativePackageName);
+            }
             return;
         }
+
+        if (window.android != undefined && window.android.isAppInstalled(nativePackageName, 0)) {
+            window.android.startNativeAppWithLoginInfo(nativePackageName, phone_number, passwd);
+        }
+
         var passwdMD5    = CryptoJS.MD5(passwd, { asString: true });
         var url = appServerUrl+"/applogin?"+callback+"&phone_number="+phone_number+"&passwd="+passwdMD5;
         console.log(url);
