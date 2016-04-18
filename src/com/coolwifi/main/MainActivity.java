@@ -676,15 +676,18 @@ public class MainActivity extends AppCompatActivity {
         String mSavePath = sdpath + "download";
         Log.d("tag", "mSavePath path: " + mSavePath);
 
-        UpdateManager updateManager = new UpdateManager(MainActivity.this);
-        try {
-            updateManager.checkUpdate();
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
+        // if already install native app, don't check upgrade
+        String nativePackageName = "com.xiaohong.kulian";
+        if (!isAppInstalled(nativePackageName, 0)) {
+            UpdateManager updateManager = new UpdateManager(MainActivity.this);
+            try {
+                updateManager.checkUpdate();
+            } catch (NotFoundException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
-
         checkDownloadManager();
         PushManager.getInstance().initialize(this.getApplicationContext());
 
